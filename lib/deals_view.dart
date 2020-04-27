@@ -171,15 +171,15 @@ class _DealsViewState extends State<DealsView> {
   List loadDeals() {
     return [
       new Deal("Chiara Boni La Petite Robe La Petite Robe", 456.0, 123.00, 60.0,
-          "https://image.s5a.com/is/image/saks/0400097493761_247x329.jpg", "Saks Fifth Avenue"),
+          "https://image.s5a.com/is/image/saks/0400097493761_247x329.jpg", "Saks Fifth Avenue", "https://www.yahoo.com"),
       new Deal("test2", 456.0, 123.00, 60.0,
-          "https://image.s5a.com/is/image/saks/0400097493761_247x329.jpg", "Saks Fifth Avenue"),
+          "https://image.s5a.com/is/image/saks/0400097493761_247x329.jpg", "Saks Fifth Avenue", "https://www.yahoo.com"),
       new Deal(
           "test3 test3 test3test3 test3 test3 test3 test3 test3",
           456.0,
           123.0,
           60.0,
-          "https://image.s5a.com/is/image/saks/0400097493761_247x329.jpg", "Saks Fifth Avenue"),
+          "https://image.s5a.com/is/image/saks/0400097493761_247x329.jpg", "Saks Fifth Avenue", "https://www.yahoo.com"),
     ];
 //    String url = ApiConstants.BASE_URL +
 //        ApiConstants.RESTAURANT_WITH_CHAIN_ID +

@@ -5,6 +5,8 @@ class Deal {
   double discount;
   String img;
   String store;
+  String link;
 
-  Deal(this.name, this.originalPrice, this.salePrice, this.discount, this.img, this.store);
+  Deal(this.name, this.originalPrice, this.salePrice, this.discount, this.img,
+      this.store, this.link);
 }

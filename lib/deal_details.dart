@@ -4,6 +4,7 @@ import 'package:dealcircles_flutter/Deal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DealDetails extends StatefulWidget {
   final Deal deal;
@@ -97,7 +98,7 @@ class _DealDetailsState extends State<DealDetails> {
                       SizedBox(
                         width: MediaQuery.of(context).size.width,
                         child: RaisedButton(
-                          onPressed: () {},
+                          onPressed: openLink,
                           color: Theme.of(context).primaryColor,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
@@ -120,5 +121,14 @@ class _DealDetailsState extends State<DealDetails> {
         ],
       ),
     );
+  }
+
+  void openLink() async {
+    String link = widget.deal.link;
+    if (await canLaunch(link)) {
+      await launch(link);
+    } else {
+      print('Could not launch ' + link);
+    }
   }
 }
