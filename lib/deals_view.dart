@@ -15,10 +15,19 @@ class DealsView extends StatefulWidget {
 class _DealsViewState extends State<DealsView> {
   List deals;
 
+  ScrollController _scrollController = new ScrollController();
+
   @override
   void initState() {
     deals = [];
     loadDeals();
+    _scrollController
+      ..addListener(() {
+        if (_scrollController.position.pixels >
+            0.8 * _scrollController.position.maxScrollExtent) {
+          loadDeals();
+        }
+      });
     super.initState();
   }
 
@@ -63,6 +72,7 @@ class _DealsViewState extends State<DealsView> {
   Widget generateListview(BuildContext context) {
     if (deals.length > 0) {
       return ListView.builder(
+        controller: _scrollController,
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
         itemCount: deals.length,
@@ -73,7 +83,8 @@ class _DealsViewState extends State<DealsView> {
     } else {
       return Center(
         child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+          valueColor:
+              AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
 //          backgroundColor: Theme.of(context).primaryColor,
         ),
       );
@@ -119,7 +130,10 @@ class _DealsViewState extends State<DealsView> {
                     children: <Widget>[
                       Text(
                         deal.brand,
-                        style: TextStyle(color: Colors.black54, fontSize: 20, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            color: Colors.black54,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold),
                         maxLines: 1,
                       ),
                       Text(
@@ -155,8 +169,13 @@ class _DealsViewState extends State<DealsView> {
   }
 
   void loadDeals() async {
+    String key = "";
+    if (deals.length > 0) {
+      key = "/" + deals[deals.length - 1].id;
+    }
     final response = await http.get(
-        "https://vv1uocmtb7.execute-api.us-east-1.amazonaws.com/dc_fetch_deals");
+        "https://vv1uocmtb7.execute-api.us-east-1.amazonaws.com/dc_fetch_deals" +
+            key);
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
