@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:dealcircles_flutter/deal_details.dart';
 import 'package:dealcircles_flutter/theme_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import 'Deal.dart';
 
@@ -14,54 +17,67 @@ class _DealsViewState extends State<DealsView> {
 
   @override
   void initState() {
-    deals = loadDeals();
+    deals = [];
+    loadDeals();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0.1,
-        title: Text(
-          'DealCircles',
-          style: TextStyle(
-              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 28),
-        ),
-        leading: Icon(
-          Icons.cloud_circle,
-          color: Colors.white,
-          size: 28,
-        ),
-        backgroundColor: Theme.of(context).primaryColor,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.search,
-              color: Colors.white,
-              size: 28,
-            ),
-            onPressed: () {},
+        appBar: AppBar(
+          elevation: 0.1,
+          title: Text(
+            'DealCircles',
+            style: TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 28),
           ),
-          IconButton(
-            icon: Icon(
-              Icons.filter_list,
-              color: Colors.white,
-              size: 28,
+          leading: Icon(
+            Icons.cloud_circle,
+            color: Colors.white,
+            size: 28,
+          ),
+          backgroundColor: Theme.of(context).primaryColor,
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(
+                Icons.search,
+                color: Colors.white,
+                size: 28,
+              ),
+              onPressed: () {},
             ),
-            onPressed: () {},
-          )
-        ],
-      ),
-      body: ListView.builder(
+            IconButton(
+              icon: Icon(
+                Icons.filter_list,
+                color: Colors.white,
+                size: 28,
+              ),
+              onPressed: () {},
+            )
+          ],
+        ),
+        body: generateListview(context));
+  }
+
+  Widget generateListview(BuildContext context) {
+    if (deals.length > 0) {
+      return ListView.builder(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
         itemCount: deals.length,
         itemBuilder: (BuildContext context, int index) {
           return makeCard(deals[index]);
         },
-      ),
-    );
+      );
+    } else {
+      return Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+//          backgroundColor: Theme.of(context).primaryColor,
+        ),
+      );
+    }
   }
 
   GestureDetector makeCard(Deal deal) {
@@ -83,112 +99,70 @@ class _DealsViewState extends State<DealsView> {
 
   Container makeListTile(Deal deal) {
     return Container(
-        child: Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
-      child: Row(
-        children: <Widget>[
-          Image.network(
-            deal.img,
-            fit: BoxFit.contain,
-            height: 80,
-            width: 80,
-          ),
-          SizedBox(width: 15),
-          new Flexible(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  deal.name,
-                  style: TextStyle(color: Colors.black87, fontSize: 20),
-                  maxLines: 3,
-                ),
-                Row(
-                  children: <Widget>[
-                    Text(
-                      "\$${deal.salePrice.toStringAsFixed(2)} ",
-                      style: TextStyle(
-                        color: ThemeColors.primary_color,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      "| ${deal.discount}% Off",
-                      style: TextStyle(color: Colors.black54, fontSize: 18),
-                    ),
-                  ],
-                )
-              ],
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+        child: Row(
+          children: <Widget>[
+            Image.network(
+              deal.img,
+              fit: BoxFit.contain,
+              height: 80,
+              width: 80,
             ),
-          ),
-        ],
+            SizedBox(width: 15),
+            new Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        deal.brand,
+                        style: TextStyle(color: Colors.black54, fontSize: 20, fontWeight: FontWeight.bold),
+                        maxLines: 1,
+                      ),
+                      Text(
+                        deal.name,
+                        style: TextStyle(color: Colors.black87, fontSize: 20),
+                        maxLines: 3,
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        "\$${deal.salePrice.toStringAsFixed(2)} ",
+                        style: TextStyle(
+                          color: ThemeColors.primary_color,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        "| ${deal.discount}% Off",
+                        style: TextStyle(color: Colors.black54, fontSize: 18),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
-    )
-//      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-//      leading: CircleAvatar(
-//        radius: 40,
-//        backgroundImage: NetworkImage(
-//          deal.img,
-//        ), // no matter how big it is, it won't overflow
-//      ),
-//      leading: Container(
-//        color: Colors.lightBlue,
-//        child: Image.network(
-//          deal.img,
-//          fit: BoxFit.contain,
-//        ),
-//      ),
-//      title: Text(
-//        deal.name,
-//        style: TextStyle(color: Colors.black87, fontSize: 20),
-//      ),
-//      subtitle: Row(
-//        children: <Widget>[
-//          Text(
-//            "\$${deal.salePrice.toStringAsFixed(2)} ",
-//            style: TextStyle(
-//              color: ThemeColors.primary_color,
-//              fontSize: 20,
-//              fontWeight: FontWeight.bold,
-//            ),
-//          ),
-//          Text(
-//            "| ${deal.discount}% Off",
-//            style: TextStyle(color: Colors.black54, fontSize: 18),
-//          ),
-//        ],
-//      ),
-//      onTap: () {
-////        Navigator.push(
-////            context,
-////            MaterialPageRoute(
-////                builder: (context) => DetailPage(lesson: lesson)));
-//      },
-        );
+    );
   }
 
-  List loadDeals() {
-    return [
-      new Deal("Chiara Boni La Petite Robe La Petite Robe", 456.0, 123.00, 60.0,
-          "https://image.s5a.com/is/image/saks/0400097493761_247x329.jpg", "Saks Fifth Avenue", "https://www.yahoo.com"),
-      new Deal("test2", 456.0, 123.00, 60.0,
-          "https://image.s5a.com/is/image/saks/0400097493761_247x329.jpg", "Saks Fifth Avenue", "https://www.yahoo.com"),
-      new Deal(
-          "test3 test3 test3test3 test3 test3 test3 test3 test3",
-          456.0,
-          123.0,
-          60.0,
-          "https://image.s5a.com/is/image/saks/0400097493761_247x329.jpg", "Saks Fifth Avenue", "https://www.yahoo.com"),
-    ];
-//    String url = ApiConstants.BASE_URL +
-//        ApiConstants.RESTAURANT_WITH_CHAIN_ID +
-//        '?chainId=${widget.chainId}';
-//    final response = await http.get(url);
-//
-//    if (response.statusCode == 200) {
-//      final data = json.decode(response.body);
-//      setState(() => data.forEach((r) => addresses.add(r['address'])));
-//    }
+  void loadDeals() async {
+    final response = await http.get(
+        "https://vv1uocmtb7.execute-api.us-east-1.amazonaws.com/dc_fetch_deals");
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      setState(() => data.forEach((r) => deals.add(Deal.fromJson(r))));
+    } else {
+      throw Exception('Failed to load deals');
+    }
   }
 }

@@ -59,7 +59,7 @@ class _DealDetailsState extends State<DealDetails> {
                             radius: 28,
                             backgroundColor: Theme.of(context).primaryColor,
                             child: Text(
-                              "30%",
+                              "${widget.deal.discount.toInt()}%",
                               style:
                                   TextStyle(color: Colors.white, fontSize: 20),
                             ),
@@ -74,6 +74,10 @@ class _DealDetailsState extends State<DealDetails> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
+                      Text(
+                        widget.deal.brand,
+                        style: TextStyle(fontSize: 24, color: Colors.black54, fontWeight: FontWeight.bold),
+                      ),
                       Text(
                         widget.deal.name,
                         style: TextStyle(fontSize: 24),
