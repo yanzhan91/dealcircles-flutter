@@ -15,6 +15,7 @@ class DealsView extends StatefulWidget {
 class _DealsViewState extends State<DealsView> {
   List deals;
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   ScrollController _scrollController = new ScrollController();
 
   @override
@@ -34,39 +35,102 @@ class _DealsViewState extends State<DealsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          elevation: 0.1,
-          title: Text(
-            'DealCircles',
-            style: TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 28),
-          ),
-          leading: Icon(
-            Icons.cloud_circle,
-            color: Colors.white,
-            size: 28,
-          ),
-          backgroundColor: Theme.of(context).primaryColor,
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(
-                Icons.search,
-                color: Colors.white,
-                size: 28,
-              ),
-              onPressed: () {},
+      key: _scaffoldKey,
+      appBar: AppBar(
+        elevation: 0.1,
+        title: Text(
+          'DealCircles',
+          style: TextStyle(
+              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 28),
+        ),
+        leading: Icon(
+          Icons.cloud_circle,
+          color: Colors.white,
+          size: 28,
+        ),
+        backgroundColor: Theme
+            .of(context)
+            .primaryColor,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.filter_list,
+              color: Colors.white,
+              size: 28,
             ),
-            IconButton(
-              icon: Icon(
-                Icons.filter_list,
-                color: Colors.white,
-                size: 28,
+            onPressed: () => _scaffoldKey.currentState.openEndDrawer(),
+          )
+        ],
+      ),
+      endDrawer: Drawer(
+        child: new ListView(
+          children: <Widget>[
+            Padding(
+                padding: EdgeInsets.only(left: 10, right: 10, bottom: 15),
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: "Search",
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.search),
+//                      onPressed: () => _controller.clear(),
+                    ),
+                  ),
+                )),
+            ListTile(
+              title: Text(
+                "Sort",
+                style: TextStyle(
+                    color: Theme
+                        .of(context)
+                        .primaryColor,
+                    fontWeight: FontWeight.bold),
               ),
-              onPressed: () {},
-            )
+              enabled: false,
+            ),
+            ListTile(
+              title: Text("Discount"),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text("Price Low to High"),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text("Price High to Low"),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text(
+                "Categories",
+                style: TextStyle(
+                    color: Theme
+                        .of(context)
+                        .primaryColor,
+                    fontWeight: FontWeight.bold),
+              ),
+              enabled: false,
+            ),
+            ListTile(
+              title: Text("Women's Apparel"),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text("Shoes"),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text("Beauty"),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text("Kids"),
+              onTap: () {},
+            ),
           ],
         ),
-        body: generateListview(context));
+      ),
+      body: generateListview(context),
+    );
   }
 
   Widget generateListview(BuildContext context) {
@@ -84,7 +148,9 @@ class _DealsViewState extends State<DealsView> {
       return Center(
         child: CircularProgressIndicator(
           valueColor:
-              AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+          AlwaysStoppedAnimation<Color>(Theme
+              .of(context)
+              .primaryColor),
 //          backgroundColor: Theme.of(context).primaryColor,
         ),
       );

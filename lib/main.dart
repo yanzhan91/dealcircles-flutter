@@ -21,7 +21,7 @@ class DealsCircleApp extends StatelessWidget {
         primarySwatch: ThemeColors.primary_color,
       ),
       home: home,
-      debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: false
     );
   }
 }
