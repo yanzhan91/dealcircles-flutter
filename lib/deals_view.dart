@@ -15,22 +15,26 @@ class DealsView extends StatefulWidget {
 
 class _DealsViewState extends State<DealsView> {
   List deals;
+  String sort = "popular";
+  String category;
+  String search;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   ScrollController _scrollController = new ScrollController();
+  TextEditingController _textEditingController = new TextEditingController();
   Random random = Random.secure();
 
   @override
   void initState() {
     deals = [];
     loadDeals();
-    _scrollController
-      ..addListener(() {
-        if (_scrollController.position.pixels >
-            0.8 * _scrollController.position.maxScrollExtent) {
-          loadDeals();
-        }
-      });
+//    _scrollController
+//      ..addListener(() {
+//        if (_scrollController.position.pixels >
+//            0.8 * _scrollController.position.maxScrollExtent) {
+//          loadDeals();
+//        }
+//      });
     super.initState();
   }
 
@@ -64,6 +68,8 @@ class _DealsViewState extends State<DealsView> {
             Padding(
               padding: EdgeInsets.only(left: 10, right: 10, bottom: 15),
               child: TextField(
+                controller: _textEditingController,
+                onSubmitted: (String str) => search = str,
                 decoration: InputDecoration(
                   hintText: "Search",
                   suffixIcon: IconButton(
@@ -71,87 +77,65 @@ class _DealsViewState extends State<DealsView> {
                       Icons.search,
                       color: Theme.of(context).primaryColor,
                     ),
-//                      onPressed: () => _controller.clear(),
+                    onPressed: () {
+                      search = _textEditingController.text;
+                      Navigator.pop(context);
+                    },
                   ),
                 ),
               ),
             ),
-            ListTile(
-              title: Text(
-                "Sort",
-                style: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
-              ),
-              enabled: false,
-            ),
-            ListTile(
-              title: Text(
-                "Discount",
-                style: TextStyle(fontSize: 18),
-              ),
-              selected: true,
-              onTap: () {},
-            ),
-            ListTile(
-              title: Text(
-                "Price Low to High",
-                style: TextStyle(fontSize: 18),
-              ),
-              onTap: () {},
-            ),
-            ListTile(
-              title: Text(
-                "Price High to Low",
-                style: TextStyle(fontSize: 18),
-              ),
-              onTap: () {},
-            ),
-            ListTile(
-              title: Text(
-                "Categories",
-                style: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
-              ),
-              enabled: false,
-            ),
-            ListTile(
-              title: Text(
-                "Women's Apparel",
-                style: TextStyle(fontSize: 18),
-              ),
-              onTap: () {},
-            ),
-            ListTile(
-              title: Text(
-                "Shoes",
-                style: TextStyle(fontSize: 18),
-              ),
-              onTap: () {},
-            ),
-            ListTile(
-              title: Text(
-                "Beauty",
-                style: TextStyle(fontSize: 18),
-              ),
-              onTap: () {},
-            ),
-            ListTile(
-              title: Text(
-                "Kids",
-                style: TextStyle(fontSize: 18),
-              ),
-              onTap: () {},
-            ),
+            addDrawerListTileHeader("Sort"),
+            addDrawerListTile(
+                "Most Popular", sort == "popular", () => sort = "popular"),
+            addDrawerListTile(
+                "Discount", sort == "discount", () => sort = "discount"),
+            addDrawerListTile("Price Low to High", sort == "low_high",
+                () => sort = "low_high"),
+            addDrawerListTile("Price High to Low", sort == "high_low",
+                () => sort = "high_low"),
+            addDrawerListTileHeader("Categories"),
+            addDrawerListTile("Women's Apparel", category == "Women's Apparel",
+                () => category = "Women's Apparel"),
+            addDrawerListTile(
+                "Shoes", category == "Shoes", () => category = "Shoes"),
+            addDrawerListTile(
+                "Beauty", category == "Beauty", () => category = "Beauty"),
+            addDrawerListTile("Kids", category == "Kids", () => category = "Kids"),
           ],
         ),
       ),
       body: generateListview(context),
+    );
+  }
+
+  ListTile addDrawerListTileHeader(String name) {
+    return ListTile(
+      title: Text(
+        name,
+        style: TextStyle(
+          color: Theme.of(context).primaryColor,
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+        ),
+      ),
+      enabled: false,
+    );
+  }
+
+  ListTile addDrawerListTile(String name, bool selected, Function setValue) {
+    return ListTile(
+      title: Text(
+        name,
+        style: TextStyle(fontSize: 18),
+      ),
+      selected: selected,
+      onTap: () {
+        deals.clear();
+        setValue();
+        loadDeals();
+        Navigator.pop(context);
+      },
     );
   }
 
@@ -315,21 +299,22 @@ class _DealsViewState extends State<DealsView> {
     );
   }
 
-  void loadDeals({String sort = 'discount', String filter, String search}) async {
-    String url = "https://vv1uocmtb7.execute-api.us-east-1.amazonaws.com/deals?offset=${deals.length}";
+  void loadDeals() async {
+    String url =
+        "https://vv1uocmtb7.execute-api.us-east-1.amazonaws.com/deals?offset=${deals.length}";
 
     List queryParam = [];
     if (sort != null) {
       queryParam.add("sort=$sort");
     }
-    if (filter != null) {
-      queryParam.add("filter=$filter");
+    if (category != null) {
+      queryParam.add("filter=$category");
     }
     if (search != null) {
       queryParam.add("search=$search");
     }
     if (queryParam.length > 0) {
-      url += ("&" +queryParam.join("&"));
+      url += ("&" + queryParam.join("&"));
     }
 
     print(url);
@@ -339,7 +324,8 @@ class _DealsViewState extends State<DealsView> {
       final data = json.decode(response.body);
       setState(() => data.forEach((r) => deals.add(Deal.fromJson(r))));
     } else {
-      throw Exception('Failed to load deals');
+      throw Exception(
+          'Failed to load deals ${response.statusCode}: ${response.body}');
     }
   }
 }
