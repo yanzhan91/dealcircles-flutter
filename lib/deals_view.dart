@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:dealcircles_flutter/deal_details.dart';
 import 'package:dealcircles_flutter/theme_colors.dart';
@@ -17,6 +18,7 @@ class _DealsViewState extends State<DealsView> {
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   ScrollController _scrollController = new ScrollController();
+  Random random = Random.secure();
 
   @override
   void initState() {
@@ -43,18 +45,12 @@ class _DealsViewState extends State<DealsView> {
           style: TextStyle(
               color: Colors.white, fontWeight: FontWeight.bold, fontSize: 28),
         ),
-        leading: Icon(
-          Icons.cloud_circle,
-          color: Colors.white,
-          size: 28,
-        ),
-        backgroundColor: Theme
-            .of(context)
-            .primaryColor,
+        leading: Image.asset("assets/test.png"),
+        backgroundColor: Theme.of(context).primaryColor,
         actions: <Widget>[
           IconButton(
             icon: Icon(
-              Icons.filter_list,
+              Icons.tune,
               color: Colors.white,
               size: 28,
             ),
@@ -66,64 +62,90 @@ class _DealsViewState extends State<DealsView> {
         child: new ListView(
           children: <Widget>[
             Padding(
-                padding: EdgeInsets.only(left: 10, right: 10, bottom: 15),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: "Search",
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.search),
-//                      onPressed: () => _controller.clear(),
+              padding: EdgeInsets.only(left: 10, right: 10, bottom: 15),
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: "Search",
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      Icons.search,
+                      color: Theme.of(context).primaryColor,
                     ),
+//                      onPressed: () => _controller.clear(),
                   ),
-                )),
+                ),
+              ),
+            ),
             ListTile(
               title: Text(
                 "Sort",
                 style: TextStyle(
-                    color: Theme
-                        .of(context)
-                        .primaryColor,
-                    fontWeight: FontWeight.bold),
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
               ),
               enabled: false,
             ),
             ListTile(
-              title: Text("Discount"),
+              title: Text(
+                "Discount",
+                style: TextStyle(fontSize: 18),
+              ),
+              selected: true,
               onTap: () {},
             ),
             ListTile(
-              title: Text("Price Low to High"),
+              title: Text(
+                "Price Low to High",
+                style: TextStyle(fontSize: 18),
+              ),
               onTap: () {},
             ),
             ListTile(
-              title: Text("Price High to Low"),
+              title: Text(
+                "Price High to Low",
+                style: TextStyle(fontSize: 18),
+              ),
               onTap: () {},
             ),
             ListTile(
               title: Text(
                 "Categories",
                 style: TextStyle(
-                    color: Theme
-                        .of(context)
-                        .primaryColor,
-                    fontWeight: FontWeight.bold),
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
               ),
               enabled: false,
             ),
             ListTile(
-              title: Text("Women's Apparel"),
+              title: Text(
+                "Women's Apparel",
+                style: TextStyle(fontSize: 18),
+              ),
               onTap: () {},
             ),
             ListTile(
-              title: Text("Shoes"),
+              title: Text(
+                "Shoes",
+                style: TextStyle(fontSize: 18),
+              ),
               onTap: () {},
             ),
             ListTile(
-              title: Text("Beauty"),
+              title: Text(
+                "Beauty",
+                style: TextStyle(fontSize: 18),
+              ),
               onTap: () {},
             ),
             ListTile(
-              title: Text("Kids"),
+              title: Text(
+                "Kids",
+                style: TextStyle(fontSize: 18),
+              ),
               onTap: () {},
             ),
           ],
@@ -148,10 +170,7 @@ class _DealsViewState extends State<DealsView> {
       return Center(
         child: CircularProgressIndicator(
           valueColor:
-          AlwaysStoppedAnimation<Color>(Theme
-              .of(context)
-              .primaryColor),
-//          backgroundColor: Theme.of(context).primaryColor,
+              AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
         ),
       );
     }
@@ -175,6 +194,68 @@ class _DealsViewState extends State<DealsView> {
   }
 
   Container makeListTile(Deal deal) {
+//    if (random.nextInt(6) % 5 == 0) {
+//      return makeBigListTile(deal);
+//    } else {
+    return makeSmallListTile(deal);
+//    }
+  }
+
+  Container makeBigListTile(Deal deal) {
+    return Container(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+        child: Column(
+          children: <Widget>[
+            SizedBox(
+              width: MediaQuery.of(context).size.width / 2,
+              child: Image.network(
+                deal.img,
+                fit: BoxFit.fitWidth,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    deal.brand,
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.black54,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    deal.name,
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        deal.salePrice,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Theme.of(context).primaryColor),
+                      ),
+                      Text(
+                        " | ${deal.discount.toInt()}% Off",
+                        style: TextStyle(color: Colors.black54, fontSize: 18),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Container makeSmallListTile(Deal deal) {
     return Container(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
@@ -212,7 +293,7 @@ class _DealsViewState extends State<DealsView> {
                   Row(
                     children: <Widget>[
                       Text(
-                        "\$${deal.salePrice.toStringAsFixed(2)} ",
+                        deal.salePrice,
                         style: TextStyle(
                           color: ThemeColors.primary_color,
                           fontSize: 20,
@@ -220,7 +301,7 @@ class _DealsViewState extends State<DealsView> {
                         ),
                       ),
                       Text(
-                        "| ${deal.discount}% Off",
+                        " | ${deal.discount.toInt()}% Off",
                         style: TextStyle(color: Colors.black54, fontSize: 18),
                       ),
                     ],
@@ -234,14 +315,25 @@ class _DealsViewState extends State<DealsView> {
     );
   }
 
-  void loadDeals() async {
-    String key = "";
-    if (deals.length > 0) {
-      key = "/" + deals[deals.length - 1].id;
+  void loadDeals({String sort = 'discount', String filter, String search}) async {
+    String url = "https://vv1uocmtb7.execute-api.us-east-1.amazonaws.com/deals?offset=${deals.length}";
+
+    List queryParam = [];
+    if (sort != null) {
+      queryParam.add("sort=$sort");
     }
-    final response = await http.get(
-        "https://vv1uocmtb7.execute-api.us-east-1.amazonaws.com/dc_fetch_deals" +
-            key);
+    if (filter != null) {
+      queryParam.add("filter=$filter");
+    }
+    if (search != null) {
+      queryParam.add("search=$search");
+    }
+    if (queryParam.length > 0) {
+      url += ("&" +queryParam.join("&"));
+    }
+
+    print(url);
+    final response = await http.get(url);
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);

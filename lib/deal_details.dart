@@ -84,7 +84,7 @@ class _DealDetailsState extends State<DealDetails> {
                       ),
                       SizedBox(height: 10),
                       Text(
-                        "\$${widget.deal.originalPrice.toStringAsFixed(2)}",
+                        widget.deal.originalPrice,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -92,7 +92,7 @@ class _DealDetailsState extends State<DealDetails> {
                         ),
                       ),
                       Text(
-                        "\$${widget.deal.salePrice.toStringAsFixed(2)}",
+                        widget.deal.salePrice,
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 28,
