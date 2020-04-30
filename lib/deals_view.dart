@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:dealcircles_flutter/deal_details.dart';
 import 'package:dealcircles_flutter/theme_colors.dart';
@@ -15,6 +14,7 @@ class DealsView extends StatefulWidget {
 
 class _DealsViewState extends State<DealsView> {
   List deals;
+  bool loading = false;
   String sort = "popular";
   String category;
   String search;
@@ -22,7 +22,6 @@ class _DealsViewState extends State<DealsView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   ScrollController _scrollController = new ScrollController();
   TextEditingController _textEditingController = new TextEditingController();
-  Random random = Random.secure();
 
   @override
   void initState() {
@@ -79,6 +78,9 @@ class _DealsViewState extends State<DealsView> {
                     ),
                     onPressed: () {
                       search = _textEditingController.text;
+                      category = null;
+                      deals.clear();
+                      loadDeals();
                       Navigator.pop(context);
                     },
                   ),
@@ -86,27 +88,40 @@ class _DealsViewState extends State<DealsView> {
               ),
             ),
             addDrawerListTileHeader("Sort"),
-            addDrawerListTile(
-                "Most Popular", sort == "popular", () => sort = "popular"),
-            addDrawerListTile(
-                "Discount", sort == "discount", () => sort = "discount"),
+            addDrawerListTile("Most Popular", sort == "popular",
+                () => setFilters(sort: "popular")),
+            addDrawerListTile("Discount", sort == "discount",
+                () => setFilters(sort: "discount")),
             addDrawerListTile("Price Low to High", sort == "low_high",
-                () => sort = "low_high"),
+                () => setFilters(sort: "low_high")),
             addDrawerListTile("Price High to Low", sort == "high_low",
-                () => sort = "high_low"),
+                () => setFilters(sort: "high_low")),
             addDrawerListTileHeader("Categories"),
+            addDrawerListTile(
+                "All", category == null, () => setFilters(category: null)),
             addDrawerListTile("Women's Apparel", category == "Women's Apparel",
-                () => category = "Women's Apparel"),
-            addDrawerListTile(
-                "Shoes", category == "Shoes", () => category = "Shoes"),
-            addDrawerListTile(
-                "Beauty", category == "Beauty", () => category = "Beauty"),
-            addDrawerListTile("Kids", category == "Kids", () => category = "Kids"),
+                () => setFilters(category: "Women's Apparel", search: null)),
+            addDrawerListTile("Shoes", category == "Shoes",
+                () => setFilters(category: "Shoes", search: null)),
+            addDrawerListTile("Beauty", category == "Beauty",
+                () => setFilters(category: "Beauty", search: null)),
+            addDrawerListTile("Kids", category == "Kids",
+                () => setFilters(category: "Kids", search: null)),
           ],
         ),
       ),
       body: generateListview(context),
     );
+  }
+
+  void setFilters({String sort, String category, String search}) {
+    this.sort = sort;
+    this.category = category;
+    this.search = search;
+
+    if (search == null) {
+      _textEditingController.clear();
+    }
   }
 
   ListTile addDrawerListTileHeader(String name) {
@@ -150,13 +165,15 @@ class _DealsViewState extends State<DealsView> {
           return makeCard(deals[index]);
         },
       );
-    } else {
+    } else if (loading) {
       return Center(
         child: CircularProgressIndicator(
           valueColor:
               AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
         ),
       );
+    } else {
+      return null;
     }
   }
 
@@ -300,6 +317,10 @@ class _DealsViewState extends State<DealsView> {
   }
 
   void loadDeals() async {
+    setState(() {
+      loading = true;
+    });
+
     String url =
         "https://vv1uocmtb7.execute-api.us-east-1.amazonaws.com/deals?offset=${deals.length}";
 
@@ -308,7 +329,7 @@ class _DealsViewState extends State<DealsView> {
       queryParam.add("sort=$sort");
     }
     if (category != null) {
-      queryParam.add("filter=$category");
+      queryParam.add("category=$category");
     }
     if (search != null) {
       queryParam.add("search=$search");
@@ -322,7 +343,10 @@ class _DealsViewState extends State<DealsView> {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      setState(() => data.forEach((r) => deals.add(Deal.fromJson(r))));
+      setState(() {
+        data.forEach((r) => deals.add(Deal.fromJson(r)));
+        loading = false;
+      });
     } else {
       throw Exception(
           'Failed to load deals ${response.statusCode}: ${response.body}');
