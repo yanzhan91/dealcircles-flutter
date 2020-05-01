@@ -29,8 +29,7 @@ class _DealsViewState extends State<DealsView> {
     loadDeals();
 //    _scrollController
 //      ..addListener(() {
-//        if (_scrollController.position.pixels >
-//            0.8 * _scrollController.position.maxScrollExtent) {
+//        if (_scrollController.position.extentAfter < 500) {
 //          loadDeals();
 //        }
 //      });
@@ -43,10 +42,14 @@ class _DealsViewState extends State<DealsView> {
       key: _scaffoldKey,
       appBar: AppBar(
         elevation: 0.1,
-        title: Text(
-          'DealCircles',
-          style: TextStyle(
-              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 28),
+        title: GestureDetector(
+          onTap: () => _scrollController.animateTo(0,
+              duration: Duration(seconds: 1), curve: Curves.ease),
+          child: Text(
+            'DealCircles',
+            style: TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 28),
+          ),
         ),
         leading: Image.asset("assets/test.png"),
         backgroundColor: Theme.of(context).primaryColor,
@@ -90,23 +93,39 @@ class _DealsViewState extends State<DealsView> {
             addDrawerListTileHeader("Sort"),
             addDrawerListTile("Most Popular", sort == "popular",
                 () => setFilters(sort: "popular")),
-            addDrawerListTile("Discount", sort == "discount",
-                () => setFilters(sort: "discount")),
-            addDrawerListTile("Price Low to High", sort == "low_high",
-                () => setFilters(sort: "low_high")),
-            addDrawerListTile("Price High to Low", sort == "high_low",
-                () => setFilters(sort: "high_low")),
-            addDrawerListTileHeader("Categories"),
             addDrawerListTile(
-                "All", category == null, () => setFilters(category: null)),
-            addDrawerListTile("Women's Apparel", category == "Women's Apparel",
-                () => setFilters(category: "Women's Apparel", search: null)),
+                "Discount",
+                sort == "discount",
+                () => setFilters(
+                    sort: "discount", category: category, search: search)),
+            addDrawerListTile(
+                "Price Low to High",
+                sort == "low_high",
+                () => setFilters(
+                    sort: "low_high", category: category, search: search)),
+            addDrawerListTile(
+                "Price High to Low",
+                sort == "high_low",
+                () => setFilters(
+                    sort: "high_low", category: category, search: search)),
+            addDrawerListTileHeader("Categories"),
+            addDrawerListTile("All", category == null,
+                () => setFilters(category: null, search: null, sort: sort)),
+            addDrawerListTile(
+                "Women's Apparel",
+                category == "Women's Apparel",
+                () => setFilters(
+                    category: "Women's Apparel", search: null, sort: sort)),
             addDrawerListTile("Shoes", category == "Shoes",
-                () => setFilters(category: "Shoes", search: null)),
+                () => setFilters(category: "Shoes", search: null, sort: sort)),
             addDrawerListTile("Beauty", category == "Beauty",
-                () => setFilters(category: "Beauty", search: null)),
-            addDrawerListTile("Kids", category == "Kids",
-                () => setFilters(category: "Kids", search: null)),
+                () => setFilters(category: "Beauty", search: null, sort: sort)),
+            addDrawerListTile("Accessories", category == "Accessories",
+                () => setFilters(category: "Accessories", search: null, sort: sort)),
+            addDrawerListTile("Home", category == "Home",
+                    () => setFilters(category: "Home", search: null, sort: sort)),
+            addDrawerListTile("Handbags", category == "Handbags",
+                    () => setFilters(category: "Handbags", search: null, sort: sort)),
           ],
         ),
       ),
@@ -160,9 +179,22 @@ class _DealsViewState extends State<DealsView> {
         controller: _scrollController,
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
-        itemCount: deals.length,
+        itemCount: deals.length + 1,
         itemBuilder: (BuildContext context, int index) {
-          return makeCard(deals[index]);
+          if (index < deals.length) {
+            return makeCard(deals[index]);
+          } else {
+            return Card(
+              elevation: 4.0,
+              margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+              color: Theme.of(context).primaryColor,
+              child: FlatButton(
+                child: Text("Load More",
+                  style: TextStyle(color: Colors.white, fontSize: 18),),
+                onPressed: () => loadDeals(),
+              ),
+            );
+          }
         },
       );
     } else if (loading) {
