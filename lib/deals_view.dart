@@ -49,7 +49,7 @@ class _DealsViewState extends State<DealsView> {
                 color: Colors.white, fontWeight: FontWeight.bold, fontSize: 28),
           ),
         ),
-        leading: Image.asset("assets/test.png"),
+        leading: Image.asset("assets/logo.png"),
         backgroundColor: Theme.of(context).primaryColor,
         actions: <Widget>[
           IconButton(
