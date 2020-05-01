@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'api_service.dart';
+
 class DealDetails extends StatefulWidget {
   final Deal deal;
 
@@ -128,6 +130,7 @@ class _DealDetailsState extends State<DealDetails> {
   }
 
   void openLink() async {
+    ApiService.addClicks(widget.deal);
     String link = widget.deal.link;
     if (await canLaunch(link)) {
       await launch(link);

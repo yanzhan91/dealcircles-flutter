@@ -1,11 +1,9 @@
-import 'dart:convert';
-
 import 'package:dealcircles_flutter/deal_details.dart';
 import 'package:dealcircles_flutter/theme_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 import 'Deal.dart';
+import 'api_service.dart';
 
 class DealsView extends StatefulWidget {
   @override
@@ -120,12 +118,18 @@ class _DealsViewState extends State<DealsView> {
                 () => setFilters(category: "Shoes", search: null, sort: sort)),
             addDrawerListTile("Beauty", category == "Beauty",
                 () => setFilters(category: "Beauty", search: null, sort: sort)),
-            addDrawerListTile("Accessories", category == "Accessories",
-                () => setFilters(category: "Accessories", search: null, sort: sort)),
+            addDrawerListTile(
+                "Accessories",
+                category == "Accessories",
+                () => setFilters(
+                    category: "Accessories", search: null, sort: sort)),
             addDrawerListTile("Home", category == "Home",
-                    () => setFilters(category: "Home", search: null, sort: sort)),
-            addDrawerListTile("Handbags", category == "Handbags",
-                    () => setFilters(category: "Handbags", search: null, sort: sort)),
+                () => setFilters(category: "Home", search: null, sort: sort)),
+            addDrawerListTile(
+                "Handbags",
+                category == "Handbags",
+                () =>
+                    setFilters(category: "Handbags", search: null, sort: sort)),
           ],
         ),
       ),
@@ -189,8 +193,10 @@ class _DealsViewState extends State<DealsView> {
               margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
               color: Theme.of(context).primaryColor,
               child: FlatButton(
-                child: Text("Load More",
-                  style: TextStyle(color: Colors.white, fontSize: 18),),
+                child: Text(
+                  "Load More",
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
                 onPressed: () => loadDeals(),
               ),
             );
@@ -212,6 +218,7 @@ class _DealsViewState extends State<DealsView> {
   GestureDetector makeCard(Deal deal) {
     return GestureDetector(
       onTap: () {
+        ApiService.addClicks(deal);
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => DealDetails(deal)));
       },
@@ -353,35 +360,11 @@ class _DealsViewState extends State<DealsView> {
       loading = true;
     });
 
-    String url =
-        "https://vv1uocmtb7.execute-api.us-east-1.amazonaws.com/deals?offset=${deals.length}";
+    List newDeals = await ApiService.loadDeals(sort, category, search, deals.length);
 
-    List queryParam = [];
-    if (sort != null) {
-      queryParam.add("sort=$sort");
-    }
-    if (category != null) {
-      queryParam.add("category=$category");
-    }
-    if (search != null) {
-      queryParam.add("search=$search");
-    }
-    if (queryParam.length > 0) {
-      url += ("&" + queryParam.join("&"));
-    }
-
-    print(url);
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      setState(() {
-        data.forEach((r) => deals.add(Deal.fromJson(r)));
-        loading = false;
-      });
-    } else {
-      throw Exception(
-          'Failed to load deals ${response.statusCode}: ${response.body}');
-    }
+    setState(() {
+      deals.addAll(newDeals);
+      loading = false;
+    });
   }
 }
