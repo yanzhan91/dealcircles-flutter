@@ -59,90 +59,93 @@ class _DealsViewState extends State<DealsView> {
           )
         ],
       ),
-      endDrawer: Drawer(
-        child: new ListView(
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(left: 10, right: 10, bottom: 15),
-              child: TextField(
-                controller: _textEditingController,
-                onChanged: (text) {
-                  setState(() {});
-                },
-                decoration: InputDecoration(
-                  hintText: "Search",
-                  prefixIcon: Icon(
-                    Icons.search,
-                    size: 20,
-                    color: Theme.of(context).primaryColor,
+      endDrawer: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.6,
+        child: Drawer(
+          child: new ListView(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(left: 10, right: 10, bottom: 15),
+                child: TextField(
+                  controller: _textEditingController,
+                  onChanged: (text) {
+                    setState(() {});
+                  },
+                  decoration: InputDecoration(
+                    hintText: "Search",
+                    prefixIcon: Icon(
+                      Icons.search,
+                      size: 20,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    suffixIcon: _textEditingController.text.length > 0
+                        ? IconButton(
+                      icon: Icon(
+                        Icons.clear,
+                        size: 20,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _textEditingController.clear();
+                          search = null;
+                        });
+                      },
+                    )
+                        : null,
                   ),
-                  suffixIcon: _textEditingController.text.length > 0
-                      ? IconButton(
-                          icon: Icon(
-                            Icons.clear,
-                            size: 20,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _textEditingController.clear();
-                              search = null;
-                            });
-                          },
-                        )
-                      : null,
+                  onEditingComplete: filterWithSearch,
                 ),
-                onEditingComplete: filterWithSearch,
               ),
-            ),
-            addDrawerListTileHeader("Sort"),
-            addDrawerListTile(
-                "Most Popular",
-                sort == "popular",
-                () => setFilters(
-                    sort: "popular", category: category, search: search)),
-            addDrawerListTile(
-                "Discount",
-                sort == "discount",
-                () => setFilters(
-                    sort: "discount", category: category, search: search)),
-            addDrawerListTile(
-                "Price Low to High",
-                sort == "low_high",
-                () => setFilters(
-                    sort: "low_high", category: category, search: search)),
-            addDrawerListTile(
-                "Price High to Low",
-                sort == "high_low",
-                () => setFilters(
-                    sort: "high_low", category: category, search: search)),
-            addDrawerListTileHeader("Categories"),
-            addDrawerListTile("All", category == null,
-                () => setFilters(category: null, search: null, sort: sort)),
-            addDrawerListTile(
-                "Women's Apparel",
-                category == "Women%27%27s%20Apparel",
-                () => setFilters(
-                    category: "Women%27%27s%20Apparel",
-                    search: null,
-                    sort: sort)),
-            addDrawerListTile("Shoes", category == "Shoes",
-                () => setFilters(category: "Shoes", search: null, sort: sort)),
-            addDrawerListTile("Beauty", category == "Beauty",
-                () => setFilters(category: "Beauty", search: null, sort: sort)),
-            addDrawerListTile(
-                "Accessories",
-                category == "Accessories",
-                () => setFilters(
-                    category: "Accessories", search: null, sort: sort)),
-            addDrawerListTile("Home", category == "Home",
-                () => setFilters(category: "Home", search: null, sort: sort)),
-            addDrawerListTile(
-              "Handbags",
-              category == "Handbags",
-              () => setFilters(category: "Handbags", search: null, sort: sort),
-            ),
-          ],
+              addDrawerListTileHeader("Sort"),
+              addDrawerListTile(
+                  "Most Popular",
+                  sort == "popular",
+                      () => setFilters(
+                      sort: "popular", category: category, search: search)),
+              addDrawerListTile(
+                  "Discount",
+                  sort == "discount",
+                      () => setFilters(
+                      sort: "discount", category: category, search: search)),
+              addDrawerListTile(
+                  "Price Low to High",
+                  sort == "low_high",
+                      () => setFilters(
+                      sort: "low_high", category: category, search: search)),
+              addDrawerListTile(
+                  "Price High to Low",
+                  sort == "high_low",
+                      () => setFilters(
+                      sort: "high_low", category: category, search: search)),
+              addDrawerListTileHeader("Categories"),
+              addDrawerListTile("All", category == null,
+                      () => setFilters(category: null, search: null, sort: sort)),
+              addDrawerListTile(
+                  "Women's Apparel",
+                  category == "Women%27%27s%20Apparel",
+                      () => setFilters(
+                      category: "Women%27%27s%20Apparel",
+                      search: null,
+                      sort: sort)),
+              addDrawerListTile("Shoes", category == "Shoes",
+                      () => setFilters(category: "Shoes", search: null, sort: sort)),
+              addDrawerListTile("Beauty", category == "Beauty",
+                      () => setFilters(category: "Beauty", search: null, sort: sort)),
+              addDrawerListTile(
+                  "Accessories",
+                  category == "Accessories",
+                      () => setFilters(
+                      category: "Accessories", search: null, sort: sort)),
+              addDrawerListTile("Home", category == "Home",
+                      () => setFilters(category: "Home", search: null, sort: sort)),
+              addDrawerListTile(
+                "Handbags",
+                category == "Handbags",
+                    () => setFilters(category: "Handbags", search: null, sort: sort),
+              ),
+            ],
+          ),
         ),
       ),
       body: generateListview(context),
