@@ -46,11 +46,14 @@ class _DealDetailsState extends State<DealDetails> {
                 Center(
                   child: Stack(
                     children: <Widget>[
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        child: Image.network(
-                          widget.deal.img,
-                          fit: BoxFit.fitWidth,
+                      GestureDetector(
+                        onTap: openLink,
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          child: Image.network(
+                            widget.deal.img,
+                            fit: BoxFit.fitWidth,
+                          ),
                         ),
                       ),
                       Align(
