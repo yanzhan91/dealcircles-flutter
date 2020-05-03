@@ -239,65 +239,7 @@ class _DealsViewState extends State<DealsView> {
   }
 
   Container makeListTile(Deal deal) {
-    if (sort != 'discount' && deal.discount > 60) {
-      return makeBigListTile(deal);
-    } else {
-      return makeSmallListTile(deal);
-    }
-  }
-
-  Container makeBigListTile(Deal deal) {
-    return Container(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              width: MediaQuery.of(context).size.width / 2,
-              child: Image.network(
-                deal.img,
-                fit: BoxFit.fitWidth,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    deal.brand,
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.black54,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    deal.name,
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: <Widget>[
-                      Text(
-                        deal.salePrice,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: Theme.of(context).primaryColor),
-                      ),
-                      Text(
-                        " | ${deal.discount.toInt()}% Off",
-                        style: TextStyle(color: Colors.black54, fontSize: 18),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    return makeSmallListTile(deal);
   }
 
   Container makeSmallListTile(Deal deal) {
@@ -324,13 +266,13 @@ class _DealsViewState extends State<DealsView> {
                         deal.brand,
                         style: TextStyle(
                             color: Colors.black54,
-                            fontSize: 20,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold),
                         maxLines: 1,
                       ),
                       Text(
                         deal.name,
-                        style: TextStyle(color: Colors.black87, fontSize: 20),
+                        style: TextStyle(color: Colors.black87, fontSize: 18),
                         maxLines: 3,
                       ),
                     ],
@@ -341,13 +283,13 @@ class _DealsViewState extends State<DealsView> {
                         deal.salePrice,
                         style: TextStyle(
                           color: ThemeColors.primary_color,
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
                         " | ${deal.discount.toInt()}% Off",
-                        style: TextStyle(color: Colors.black54, fontSize: 18),
+                        style: TextStyle(color: Colors.black54, fontSize: 16),
                       ),
                     ],
                   )
