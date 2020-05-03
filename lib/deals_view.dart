@@ -73,22 +73,10 @@ class _DealsViewState extends State<DealsView> {
                       Icons.search,
                       color: Theme.of(context).primaryColor,
                     ),
-                    onPressed: () {
-                      search = _textEditingController.text;
-                      category = null;
-                      deals.clear();
-                      loadDeals();
-                      Navigator.pop(context);
-                    },
+                    onPressed: searchFilter,
                   ),
                 ),
-                onEditingComplete: () {
-                  search = _textEditingController.text;
-                  category = null;
-                  deals.clear();
-                  loadDeals();
-                  Navigator.pop(context);
-                },
+                onEditingComplete: searchFilter,
               ),
             ),
             addDrawerListTileHeader("Sort"),
@@ -181,6 +169,16 @@ class _DealsViewState extends State<DealsView> {
         Navigator.pop(context);
       },
     );
+  }
+
+  void searchFilter() {
+    search = _textEditingController.text;
+    if (search != null && search != '') {
+      category = null;
+      deals.clear();
+      loadDeals();
+      Navigator.pop(context);
+    }
   }
 
   Widget generateListview(BuildContext context) {
