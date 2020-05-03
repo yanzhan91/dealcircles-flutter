@@ -107,9 +107,9 @@ class _DealsViewState extends State<DealsView> {
                 () => setFilters(category: null, search: null, sort: sort)),
             addDrawerListTile(
                 "Women's Apparel",
-                category == "Women's Apparel",
+                category == "Women%27%27s%20Apparel",
                 () => setFilters(
-                    category: "Women's Apparel", search: null, sort: sort)),
+                    category: "Women%27%27s%20Apparel", search: null, sort: sort)),
             addDrawerListTile("Shoes", category == "Shoes",
                 () => setFilters(category: "Shoes", search: null, sort: sort)),
             addDrawerListTile("Beauty", category == "Beauty",
