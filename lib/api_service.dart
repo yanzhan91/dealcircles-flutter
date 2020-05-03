@@ -28,6 +28,7 @@ class ApiService {
     }
     if (queryParam.length > 0) {
       url += ("&" + queryParam.join("&"));
+      url = Uri.encodeFull(url);
     }
 
     print(url);
