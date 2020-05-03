@@ -238,7 +238,7 @@ class _DealsViewState extends State<DealsView> {
   }
 
   Container makeListTile(Deal deal) {
-    if (sort != 'Discount' && deal.discount > 60) {
+    if (sort != 'discount' && deal.discount > 60) {
       return makeBigListTile(deal);
     } else {
       return makeSmallListTile(deal);
