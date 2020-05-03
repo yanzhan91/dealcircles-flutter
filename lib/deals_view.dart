@@ -15,6 +15,7 @@ class DealsView extends StatefulWidget {
 class _DealsViewState extends State<DealsView> {
   List deals;
   bool loading = false;
+  bool ableToLoadMore = true;
   String sort = "popular";
   String category;
   String search;
@@ -187,7 +188,7 @@ class _DealsViewState extends State<DealsView> {
         controller: _scrollController,
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
-        itemCount: deals.length + 1,
+        itemCount: deals.length + (ableToLoadMore ? 1 : 0),
         itemBuilder: (BuildContext context, int index) {
           if (index < deals.length) {
             return makeCard(deals[index]);
@@ -367,9 +368,16 @@ class _DealsViewState extends State<DealsView> {
     List newDeals =
         await ApiService.loadDeals(sort, category, search, deals.length);
 
-    setState(() {
-      deals.addAll(newDeals);
-      loading = false;
-    });
+    if (newDeals.length == 0) {
+      ableToLoadMore = false;
+      setState(() {
+        loading = false;
+      });
+    } else {
+      setState(() {
+        deals.addAll(newDeals);
+        loading = false;
+      });
+    }
   }
 }
