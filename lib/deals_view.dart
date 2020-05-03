@@ -81,8 +81,11 @@ class _DealsViewState extends State<DealsView> {
               ),
             ),
             addDrawerListTileHeader("Sort"),
-            addDrawerListTile("Most Popular", sort == "popular",
-                () => setFilters(sort: "popular")),
+            addDrawerListTile(
+                "Most Popular",
+                sort == "popular",
+                () => setFilters(
+                    sort: "popular", category: category, search: search)),
             addDrawerListTile(
                 "Discount",
                 sort == "discount",
@@ -316,6 +319,7 @@ class _DealsViewState extends State<DealsView> {
         loading = false;
       });
     } else {
+      ableToLoadMore = true;
       setState(() {
         deals.addAll(newDeals);
         loading = false;
