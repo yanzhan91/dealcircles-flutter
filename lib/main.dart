@@ -16,7 +16,7 @@ class DealsCircleApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Planti App',
+      title: 'DealCircles',
       theme: ThemeData(
         primarySwatch: ThemeColors.primary_color,
       ),

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:dealcircles_flutter/deal_details.dart';
 import 'package:dealcircles_flutter/theme_colors.dart';
 import 'package:flutter/material.dart';
@@ -25,12 +27,6 @@ class _DealsViewState extends State<DealsView> {
   void initState() {
     deals = [];
     loadDeals();
-//    _scrollController
-//      ..addListener(() {
-//        if (_scrollController.position.extentAfter < 500) {
-//          loadDeals();
-//        }
-//      });
     super.initState();
   }
 
@@ -154,6 +150,7 @@ class _DealsViewState extends State<DealsView> {
         style: TextStyle(
           color: Theme.of(context).primaryColor,
           fontWeight: FontWeight.bold,
+          decoration: TextDecoration.underline,
           fontSize: 20,
         ),
       ),
@@ -234,11 +231,11 @@ class _DealsViewState extends State<DealsView> {
   }
 
   Container makeListTile(Deal deal) {
-//    if (random.nextInt(6) % 5 == 0) {
-//      return makeBigListTile(deal);
-//    } else {
-    return makeSmallListTile(deal);
-//    }
+    if (sort != 'Discount' && deal.discount > 60) {
+      return makeBigListTile(deal);
+    } else {
+      return makeSmallListTile(deal);
+    }
   }
 
   Container makeBigListTile(Deal deal) {

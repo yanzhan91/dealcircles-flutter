@@ -32,7 +32,7 @@ class _DealDetailsState extends State<DealDetails> {
             onPressed: () {
               String message = "${widget.deal.name} - " +
                   "${widget.deal.discount}% Off\n${widget.deal.link}\n" +
-                      "View more deals on DealCircles App";
+                      "Find more deals on DealCircles App";
               Share.share(message, subject: "Look what I found!");
             },
           ),
