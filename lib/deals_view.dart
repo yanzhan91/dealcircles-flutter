@@ -82,6 +82,13 @@ class _DealsViewState extends State<DealsView> {
                     },
                   ),
                 ),
+                onEditingComplete: () {
+                  search = _textEditingController.text;
+                  category = null;
+                  deals.clear();
+                  loadDeals();
+                  Navigator.pop(context);
+                },
               ),
             ),
             addDrawerListTileHeader("Sort"),
@@ -109,7 +116,9 @@ class _DealsViewState extends State<DealsView> {
                 "Women's Apparel",
                 category == "Women%27%27s%20Apparel",
                 () => setFilters(
-                    category: "Women%27%27s%20Apparel", search: null, sort: sort)),
+                    category: "Women%27%27s%20Apparel",
+                    search: null,
+                    sort: sort)),
             addDrawerListTile("Shoes", category == "Shoes",
                 () => setFilters(category: "Shoes", search: null, sort: sort)),
             addDrawerListTile("Beauty", category == "Beauty",
@@ -357,7 +366,8 @@ class _DealsViewState extends State<DealsView> {
       loading = true;
     });
 
-    List newDeals = await ApiService.loadDeals(sort, category, search, deals.length);
+    List newDeals =
+        await ApiService.loadDeals(sort, category, search, deals.length);
 
     setState(() {
       deals.addAll(newDeals);
