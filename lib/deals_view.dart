@@ -80,69 +80,90 @@ class _DealsViewState extends State<DealsView> {
                     ),
                     suffixIcon: _textEditingController.text.length > 0
                         ? IconButton(
-                      icon: Icon(
-                        Icons.clear,
-                        size: 20,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _textEditingController.clear();
-                          search = null;
-                        });
-                      },
-                    )
+                            icon: Icon(
+                              Icons.clear,
+                              size: 20,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _textEditingController.clear();
+                                search = null;
+                              });
+                            },
+                          )
                         : null,
                   ),
-                  onEditingComplete: filterWithSearch,
+                  onEditingComplete: () {
+                    search = _textEditingController.text;
+                    if (search == null || search == '') {
+                      search = null;
+                      _textEditingController.clear();
+                      FocusScopeNode currentFocus = FocusScope.of(context);
+
+                      if (!currentFocus.hasPrimaryFocus) {
+                        currentFocus.unfocus();
+                      }
+                    } else {
+                      category = null;
+                      deals.clear();
+                      loadDeals();
+                      Navigator.pop(context);
+                    }
+                  },
                 ),
               ),
               addDrawerListTileHeader("Sort"),
               addDrawerListTile(
                   "Most Popular",
                   sort == "popular",
-                      () => setFilters(
+                  () => setFilters(
                       sort: "popular", category: category, search: search)),
               addDrawerListTile(
                   "Discount",
                   sort == "discount",
-                      () => setFilters(
+                  () => setFilters(
                       sort: "discount", category: category, search: search)),
               addDrawerListTile(
                   "Price Low to High",
                   sort == "low_high",
-                      () => setFilters(
+                  () => setFilters(
                       sort: "low_high", category: category, search: search)),
               addDrawerListTile(
                   "Price High to Low",
                   sort == "high_low",
-                      () => setFilters(
+                  () => setFilters(
                       sort: "high_low", category: category, search: search)),
               addDrawerListTileHeader("Categories"),
               addDrawerListTile("All", category == null,
-                      () => setFilters(category: null, search: null, sort: sort)),
+                  () => setFilters(category: null, search: null, sort: sort)),
               addDrawerListTile(
                   "Women's Apparel",
                   category == "Women''s Apparel",
-                      () => setFilters(
-                      category: "Women''s Apparel",
-                      search: null,
-                      sort: sort)),
-              addDrawerListTile("Shoes", category == "Shoes",
-                      () => setFilters(category: "Shoes", search: null, sort: sort)),
-              addDrawerListTile("Beauty", category == "Beauty",
-                      () => setFilters(category: "Beauty", search: null, sort: sort)),
+                  () => setFilters(
+                      category: "Women''s Apparel", search: null, sort: sort)),
+              addDrawerListTile(
+                  "Shoes",
+                  category == "Shoes",
+                  () =>
+                      setFilters(category: "Shoes", search: null, sort: sort)),
+              addDrawerListTile(
+                  "Beauty",
+                  category == "Beauty",
+                  () =>
+                      setFilters(category: "Beauty", search: null, sort: sort)),
               addDrawerListTile(
                   "Accessories",
                   category == "Accessories",
-                      () => setFilters(
+                  () => setFilters(
                       category: "Accessories", search: null, sort: sort)),
               addDrawerListTile("Home", category == "Home",
-                      () => setFilters(category: "Home", search: null, sort: sort)),
+                  () => setFilters(category: "Home", search: null, sort: sort)),
               addDrawerListTile(
                 "Handbags",
                 category == "Handbags",
-                    () => setFilters(category: "Handbags", search: null, sort: sort),
+                () =>
+                    setFilters(category: "Handbags", search: null, sort: sort),
               ),
             ],
           ),
@@ -191,19 +212,6 @@ class _DealsViewState extends State<DealsView> {
         Navigator.pop(context);
       },
     );
-  }
-
-  void filterWithSearch() {
-    search = _textEditingController.text;
-    if (search == '') {
-      search = null;
-      _textEditingController.clear();
-    }
-
-    category = null;
-    deals.clear();
-    loadDeals();
-    Navigator.pop(context);
   }
 
   Widget generateListview(BuildContext context) {
