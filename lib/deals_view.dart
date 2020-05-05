@@ -276,7 +276,7 @@ class _DealsViewState extends State<DealsView> {
               ),
               textColor: Colors.white,
               onPressed: () {
-                setFilters();
+                setFilters(sort: "popular");
                 loadDeals();
               },
             ),
