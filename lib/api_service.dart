@@ -3,8 +3,7 @@ import 'package:http/http.dart' as http;
 import 'Deal.dart';
 
 class ApiService {
-  static const String BASE_URL =
-      "https://vv1uocmtb7.execute-api.us-east-1.amazonaws.com";
+  static const String BASE_URL = "https://api.dealcircles.com";
 
   static void addClicks(Deal deal) async {
     String url = "$BASE_URL/clicks?id=${deal.id}";
