@@ -276,15 +276,36 @@ class _DealsViewState extends State<DealsView> {
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => DealDetails(deal)));
       },
-      child: Card(
-        elevation: 4.0,
-        margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-        child: Container(
-          decoration: BoxDecoration(color: Colors.white),
-          child: makeListTile(deal),
-        ),
-      ),
+      child: Stack(
+        children: <Widget>[
+          Card(
+            elevation: 4.0,
+            margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+            child: Container(
+              decoration: BoxDecoration(color: Colors.white),
+              child: makeListTile(deal),
+            ),
+          ),
+          addNewFlag(deal)
+        ],
+      )
     );
+  }
+
+  Widget addNewFlag(Deal deal) {
+    DateTime now = DateTime.now();
+    if (now.year == deal.createDate.year && now.month == deal.createDate.month
+      && now.day == deal.createDate.day) {
+      return Align(
+        alignment: Alignment.topLeft,
+        child: Padding(
+          padding: EdgeInsets.all(3),
+          child: Icon(Icons.fiber_new, color: ThemeColors.primary_color,),
+        ),
+      );
+    } else {
+      return new Container();
+    }
   }
 
   Container makeListTile(Deal deal) {

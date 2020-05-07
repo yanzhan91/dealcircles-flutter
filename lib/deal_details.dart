@@ -32,102 +32,99 @@ class _DealDetailsState extends State<DealDetails> {
             onPressed: () {
               String message = "${widget.deal.name} - " +
                   "${widget.deal.discount}% Off\n${widget.deal.link}\n" +
-                      "Find more deals on DealCircles App";
+                  "Find more deals on DealCircles App";
               Share.share(message, subject: "Look what I found!");
             },
           ),
         ],
       ),
-      body: Stack(
-        children: <Widget>[
-          SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                Center(
-                  child: Stack(
-                    children: <Widget>[
-                      GestureDetector(
-                        onTap: openLink,
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          child: Image.network(
-                            widget.deal.img,
-                            fit: BoxFit.fitWidth,
-                          ),
-                        ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Center(
+              child: Stack(
+                children: <Widget>[
+                  GestureDetector(
+                    onTap: openLink,
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Image.network(
+                        widget.deal.img,
+                        fit: BoxFit.fitWidth,
                       ),
-                      Align(
-                        alignment: Alignment.topRight,
-                        child: Padding(
-                          padding: EdgeInsets.only(top: 15, right: 15),
-                          child: CircleAvatar(
-                            radius: 28,
-                            backgroundColor: Theme.of(context).primaryColor,
-                            child: Text(
-                              "${widget.deal.discount.toInt()}%",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 20),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        widget.deal.brand,
-                        style: TextStyle(fontSize: 24, color: Colors.black54, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        widget.deal.name,
-                        style: TextStyle(fontSize: 24),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        widget.deal.originalPrice,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          decoration: TextDecoration.lineThrough,
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 15, right: 15),
+                      child: CircleAvatar(
+                        radius: 28,
+                        backgroundColor: Theme.of(context).primaryColor,
+                        child: Text(
+                          "${widget.deal.discount.toInt()}%",
+                          style: TextStyle(color: Colors.white, fontSize: 20),
                         ),
                       ),
-                      Text(
-                        widget.deal.salePrice,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 28,
-                            color: Theme.of(context).primaryColor),
-                      ),
-                      SizedBox(height: 10),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        child: RaisedButton(
-                          onPressed: openLink,
-                          color: Theme.of(context).primaryColor,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Padding(
-                            padding: EdgeInsets.all(10),
-                            child: Text(
-                              "See Deal at ${widget.deal.store}",
-                              style:
-                                  TextStyle(fontSize: 20, color: Colors.white),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+            Padding(
+              padding: EdgeInsets.all(15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    widget.deal.brand,
+                    style: TextStyle(
+                        fontSize: 24,
+                        color: Colors.black54,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    widget.deal.name,
+                    style: TextStyle(fontSize: 24),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    widget.deal.originalPrice,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      decoration: TextDecoration.lineThrough,
+                    ),
+                  ),
+                  Text(
+                    widget.deal.salePrice,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 28,
+                        color: Theme.of(context).primaryColor),
+                  ),
+                  SizedBox(height: 10),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: RaisedButton(
+                      onPressed: openLink,
+                      color: Theme.of(context).primaryColor,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Text(
+                          "See Deal at ${widget.deal.store}",
+                          style: TextStyle(fontSize: 20, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
