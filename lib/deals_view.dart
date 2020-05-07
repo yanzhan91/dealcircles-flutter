@@ -14,6 +14,7 @@ class DealsView extends StatefulWidget {
 
 class _DealsViewState extends State<DealsView> {
   List deals;
+  List categories;
   bool loading = false;
   bool ableToLoadMore = true;
   String sort = "newest";
@@ -27,7 +28,9 @@ class _DealsViewState extends State<DealsView> {
   @override
   void initState() {
     deals = [];
+    categories = [];
     loadDeals();
+    loadCategories();
     super.initState();
   }
 
@@ -62,116 +65,7 @@ class _DealsViewState extends State<DealsView> {
       endDrawer: SizedBox(
         width: MediaQuery.of(context).size.width * 0.6,
         child: Drawer(
-          child: new ListView(
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(left: 10, right: 10, bottom: 15),
-                child: TextField(
-                  controller: _textEditingController,
-                  onChanged: (text) {
-                    setState(() {});
-                  },
-                  decoration: InputDecoration(
-                    hintText: "Search",
-                    prefixIcon: Icon(
-                      Icons.search,
-                      size: 20,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    suffixIcon: _textEditingController.text.length > 0
-                        ? IconButton(
-                            icon: Icon(
-                              Icons.clear,
-                              size: 20,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _textEditingController.clear();
-                                search = null;
-                              });
-                            },
-                          )
-                        : null,
-                  ),
-                  onEditingComplete: () {
-                    search = _textEditingController.text;
-                    if (search == null || search == '') {
-                      search = null;
-                      _textEditingController.clear();
-                      FocusScopeNode currentFocus = FocusScope.of(context);
-
-                      if (!currentFocus.hasPrimaryFocus) {
-                        currentFocus.unfocus();
-                      }
-                    } else {
-                      category = null;
-                      deals.clear();
-                      loadDeals();
-                      Navigator.pop(context);
-                    }
-                  },
-                ),
-              ),
-              addDrawerListTileHeader("Sort"),
-              addDrawerListTile(
-                  "Newest",
-                  sort == "newest",
-                      () => setFilters(
-                      sort: "newest", category: category, search: search)),
-              addDrawerListTile(
-                  "Most Popular",
-                  sort == "popular",
-                  () => setFilters(
-                      sort: "popular", category: category, search: search)),
-              addDrawerListTile(
-                  "Discount",
-                  sort == "discount",
-                  () => setFilters(
-                      sort: "discount", category: category, search: search)),
-              addDrawerListTile(
-                  "Price Low to High",
-                  sort == "low_high",
-                  () => setFilters(
-                      sort: "low_high", category: category, search: search)),
-              addDrawerListTile(
-                  "Price High to Low",
-                  sort == "high_low",
-                  () => setFilters(
-                      sort: "high_low", category: category, search: search)),
-              addDrawerListTileHeader("Categories"),
-              addDrawerListTile("All", category == null,
-                  () => setFilters(category: null, search: null, sort: sort)),
-              addDrawerListTile(
-                  "Women's Apparel",
-                  category == "Women''s Apparel",
-                  () => setFilters(
-                      category: "Women''s Apparel", search: null, sort: sort)),
-              addDrawerListTile(
-                  "Shoes",
-                  category == "Shoes",
-                  () =>
-                      setFilters(category: "Shoes", search: null, sort: sort)),
-              addDrawerListTile(
-                  "Beauty",
-                  category == "Beauty",
-                  () =>
-                      setFilters(category: "Beauty", search: null, sort: sort)),
-              addDrawerListTile(
-                  "Accessories",
-                  category == "Accessories",
-                  () => setFilters(
-                      category: "Accessories", search: null, sort: sort)),
-              addDrawerListTile("Home", category == "Home",
-                  () => setFilters(category: "Home", search: null, sort: sort)),
-              addDrawerListTile(
-                "Handbags",
-                category == "Handbags",
-                () =>
-                    setFilters(category: "Handbags", search: null, sort: sort),
-              ),
-            ],
-          ),
+          child: generateFilterListView(context),
         ),
       ),
       body: generateListview(context),
@@ -217,6 +111,90 @@ class _DealsViewState extends State<DealsView> {
         Navigator.pop(context);
       },
     );
+  }
+
+  Widget generateFilterListView(BuildContext context) {
+    List<Widget> widgets = [];
+    widgets.add(Padding(
+      padding: EdgeInsets.only(left: 10, right: 10, bottom: 15),
+      child: TextField(
+        controller: _textEditingController,
+        onChanged: (text) {
+          setState(() {});
+        },
+        decoration: InputDecoration(
+          hintText: "Search",
+          prefixIcon: Icon(
+            Icons.search,
+            size: 20,
+            color: Theme.of(context).primaryColor,
+          ),
+          suffixIcon: _textEditingController.text.length > 0
+              ? IconButton(
+                  icon: Icon(
+                    Icons.clear,
+                    size: 20,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _textEditingController.clear();
+                      search = null;
+                    });
+                  },
+                )
+              : null,
+        ),
+        onEditingComplete: () {
+          search = _textEditingController.text;
+          if (search == null || search == '') {
+            search = null;
+            _textEditingController.clear();
+            FocusScopeNode currentFocus = FocusScope.of(context);
+
+            if (!currentFocus.hasPrimaryFocus) {
+              currentFocus.unfocus();
+            }
+          } else {
+            category = null;
+            deals.clear();
+            loadDeals();
+            Navigator.pop(context);
+          }
+        },
+      ),
+    ));
+    widgets.add(addDrawerListTileHeader("Sort"));
+    widgets.add(addDrawerListTile("Newest", sort == "newest",
+        () => setFilters(sort: "newest", category: category, search: search)));
+    widgets.add(addDrawerListTile("Most Popular", sort == "popular",
+        () => setFilters(sort: "popular", category: category, search: search)));
+    widgets.add(addDrawerListTile(
+        "Discount",
+        sort == "discount",
+        () =>
+            setFilters(sort: "discount", category: category, search: search)));
+    widgets.add(addDrawerListTile(
+        "Price Low to High",
+        sort == "low_high",
+        () =>
+            setFilters(sort: "low_high", category: category, search: search)));
+    widgets.add(addDrawerListTile(
+        "Price High to Low",
+        sort == "high_low",
+        () =>
+            setFilters(sort: "high_low", category: category, search: search)));
+
+    widgets.add(addDrawerListTileHeader("Categories"));
+    widgets.add(addDrawerListTile("All", category == null,
+        () => setFilters(category: null, search: null, sort: sort)));
+
+    for (String c in categories) {
+      widgets.add(addDrawerListTile(c, category == c,
+          () => setFilters(category: c, search: null, sort: sort)));
+    }
+
+    return new ListView(children: widgets);
   }
 
   Widget generateListview(BuildContext context) {
@@ -393,5 +371,12 @@ class _DealsViewState extends State<DealsView> {
         loading = false;
       });
     }
+  }
+
+  void loadCategories() async {
+    List temp = await ApiService.loadCategories();
+    setState(() {
+      categories = temp;
+    });
   }
 }

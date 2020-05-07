@@ -42,4 +42,17 @@ class ApiService {
       return [];
     }
   }
+
+  static Future<List> loadCategories() async {
+    String url = "$BASE_URL/categories";
+    print(url);
+
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      print('Failed to load deals ${response.statusCode}: ${response.body}');
+      return [];
+    }
+  }
 }
