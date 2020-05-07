@@ -16,7 +16,7 @@ class _DealsViewState extends State<DealsView> {
   List deals;
   bool loading = false;
   bool ableToLoadMore = true;
-  String sort = "popular";
+  String sort = "newest";
   String category;
   String search;
 
@@ -114,6 +114,11 @@ class _DealsViewState extends State<DealsView> {
                 ),
               ),
               addDrawerListTileHeader("Sort"),
+              addDrawerListTile(
+                  "Newest",
+                  sort == "newest",
+                      () => setFilters(
+                      sort: "newest", category: category, search: search)),
               addDrawerListTile(
                   "Most Popular",
                   sort == "popular",
@@ -272,11 +277,11 @@ class _DealsViewState extends State<DealsView> {
               color: Theme.of(context).primaryColor,
               child: Padding(
                 padding: EdgeInsets.all(10),
-                child: Text("Check out popular deals"),
+                child: Text("Check out latest deals"),
               ),
               textColor: Colors.white,
               onPressed: () {
-                setFilters(sort: "popular");
+                setFilters(sort: "newest");
                 loadDeals();
               },
             ),
