@@ -71,62 +71,95 @@ class _DealDetailsState extends State<DealDetails> {
                 ],
               ),
             ),
-            Padding(
-              padding: EdgeInsets.all(15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    widget.deal.brand,
-                    style: TextStyle(
-                        fontSize: 24,
-                        color: Colors.black54,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    widget.deal.name,
-                    style: TextStyle(fontSize: 24),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    widget.deal.originalPrice,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      decoration: TextDecoration.lineThrough,
-                    ),
-                  ),
-                  Text(
-                    widget.deal.salePrice,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 28,
-                        color: Theme.of(context).primaryColor),
-                  ),
-                  SizedBox(height: 10),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: RaisedButton(
-                      onPressed: openLink,
-                      color: Theme.of(context).primaryColor,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Text(
-                          "See Deal at ${widget.deal.store}",
-                          style: TextStyle(fontSize: 20, color: Colors.white),
+            Stack(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.all(15),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        widget.deal.brand,
+                        style: TextStyle(
+                            fontSize: 24,
+                            color: Colors.black54,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        widget.deal.name,
+                        style: TextStyle(fontSize: 24),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        widget.deal.originalPrice,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          decoration: TextDecoration.lineThrough,
                         ),
                       ),
+                      Text(
+                        widget.deal.salePrice,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 28,
+                            color: Theme.of(context).primaryColor),
+                      ),
+                      SizedBox(height: 10),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: RaisedButton(
+                          onPressed: openLink,
+                          color: Theme.of(context).primaryColor,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Text(
+                              "See Deal at ${widget.deal.store}",
+                              style:
+                                  TextStyle(fontSize: 20, color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 15, right: 15),
+                    child: Text(
+                      fetchDaysAgo(widget.deal),
+                      style: TextStyle(fontSize: 12, color: Colors.black),
                     ),
                   ),
-                ],
-              ),
+                )
+              ],
             ),
           ],
         ),
       ),
     );
+  }
+
+  String fetchDaysAgo(Deal deal) {
+    DateTime now = new DateTime.now();
+    Duration duration = now.difference(deal.createDate);
+    int days = duration.inDays;
+    if (duration.inHours > 0 || duration.inMinutes > 0
+        || duration.inSeconds > 0 || duration.inMilliseconds > 0) {
+      days++;
+    }
+    switch (days) {
+      case 0:
+        return "Today";
+      case 1:
+        return "1 day ago";
+      default:
+        return "$days days ago";
+    }
   }
 
   void openLink() async {
