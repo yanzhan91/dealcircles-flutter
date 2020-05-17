@@ -199,29 +199,33 @@ class _DealsViewState extends State<DealsView> {
 
   Widget generateListview(BuildContext context) {
     if (deals.length > 0) {
-      return ListView.builder(
-        controller: _scrollController,
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: deals.length + (ableToLoadMore ? 1 : 0),
-        itemBuilder: (BuildContext context, int index) {
-          if (index < deals.length) {
-            return makeCard(deals[index]);
-          } else {
-            return Card(
-              elevation: 4.0,
-              margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-              color: Theme.of(context).primaryColor,
-              child: FlatButton(
-                child: Text(
-                  "Load More",
-                  style: TextStyle(color: Colors.white, fontSize: 18),
+      return RefreshIndicator(
+        child: ListView.builder(
+          controller: _scrollController,
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          itemCount: deals.length + (ableToLoadMore ? 1 : 0),
+          itemBuilder: (BuildContext context, int index) {
+            if (index < deals.length) {
+              return makeCard(deals[index]);
+            } else {
+              return Card(
+                elevation: 4.0,
+                margin:
+                    new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                color: Theme.of(context).primaryColor,
+                child: FlatButton(
+                  child: Text(
+                    "Load More",
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                  onPressed: () => loadDeals(),
                 ),
-                onPressed: () => loadDeals(),
-              ),
-            );
-          }
-        },
+              );
+            }
+          },
+        ),
+        onRefresh: loadDealsFuture,
       );
     } else if (loading) {
       return Center(
@@ -232,75 +236,79 @@ class _DealsViewState extends State<DealsView> {
       );
     } else {
       return Center(
-          child: Padding(
-        padding: EdgeInsets.only(top: 80),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Icon(
-              Icons.remove_circle_outline,
-              size: 60,
-              color: Theme.of(context).primaryColor,
-            ),
-            SizedBox(height: 20),
-            Text(
-              "No Results Found",
-              style: TextStyle(fontSize: 20),
-            ),
-            SizedBox(height: 20),
-            RaisedButton(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+        child: Padding(
+          padding: EdgeInsets.only(top: 80),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Icon(
+                Icons.remove_circle_outline,
+                size: 60,
+                color: Theme.of(context).primaryColor,
               ),
-              color: Theme.of(context).primaryColor,
-              child: Padding(
-                padding: EdgeInsets.all(10),
-                child: Text("Check out latest deals"),
+              SizedBox(height: 20),
+              Text(
+                "No Results Found",
+                style: TextStyle(fontSize: 20),
               ),
-              textColor: Colors.white,
-              onPressed: () {
-                setFilters(sort: "newest");
-                loadDeals();
-              },
-            ),
-          ],
+              SizedBox(height: 20),
+              RaisedButton(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                color: Theme.of(context).primaryColor,
+                child: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Text("Check out latest deals"),
+                ),
+                textColor: Colors.white,
+                onPressed: () {
+                  setFilters(sort: "newest");
+                  loadDeals();
+                },
+              ),
+            ],
+          ),
         ),
-      ));
+      );
     }
   }
 
   GestureDetector makeCard(Deal deal) {
     return GestureDetector(
-      onTap: () {
-        ApiService.addClicks(deal);
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => DealDetails(deal)));
-      },
-      child: Stack(
-        children: <Widget>[
-          Card(
-            elevation: 4.0,
-            margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-            child: Container(
-              decoration: BoxDecoration(color: Colors.white),
-              child: makeListTile(deal),
+        onTap: () {
+          ApiService.addClicks(deal);
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => DealDetails(deal)));
+        },
+        child: Stack(
+          children: <Widget>[
+            Card(
+              elevation: 4.0,
+              margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+              child: Container(
+                decoration: BoxDecoration(color: Colors.white),
+                child: makeListTile(deal),
+              ),
             ),
-          ),
-          addNewFlag(deal)
-        ],
-      )
-    );
+            addNewFlag(deal)
+          ],
+        ));
   }
 
   Widget addNewFlag(Deal deal) {
     DateTime now = DateTime.now();
-    if (now.year == deal.createDate.year && now.month == deal.createDate.month
-      && now.day == deal.createDate.day) {
+    if (now.year == deal.createDate.year &&
+        now.month == deal.createDate.month &&
+        now.day == deal.createDate.day) {
       return Align(
         alignment: Alignment.topLeft,
         child: Padding(
           padding: EdgeInsets.all(3),
-          child: Icon(Icons.fiber_new, color: ThemeColors.primary_color,),
+          child: Icon(
+            Icons.fiber_new,
+            color: ThemeColors.primary_color,
+          ),
         ),
       );
     } else {
@@ -392,6 +400,11 @@ class _DealsViewState extends State<DealsView> {
         loading = false;
       });
     }
+  }
+
+  Future<void> loadDealsFuture() async {
+    deals.clear();
+    loadDeals();
   }
 
   void loadCategories() async {
