@@ -46,13 +46,18 @@ class _DealDetailsState extends State<DealDetails> {
                 children: <Widget>[
                   GestureDetector(
                     onTap: openLink,
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: Image.network(
-                        widget.deal.img,
-                        fit: BoxFit.fitWidth,
+                    child: Center(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 10),
+                        child: SizedBox(
+                          height: MediaQuery.of(context).size.height / 2,
+                          child: Image.network(
+                            widget.deal.img,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
                       ),
-                    ),
+                    )
                   ),
                   Align(
                     alignment: Alignment.topRight,
