@@ -150,13 +150,12 @@ class _DealDetailsState extends State<DealDetails> {
   }
 
   String fetchDaysAgo(Deal deal) {
-    DateTime now = new DateTime.now();
-    Duration duration = now.difference(deal.createDate);
-    int days = duration.inDays;
-    if (duration.inHours > 0 || duration.inMinutes > 0
-        || duration.inSeconds > 0 || duration.inMilliseconds > 0) {
-      days++;
-    }
+    DateTime now = DateTime.now().toUtc();
+    DateTime date = deal.createDate;
+    int days = DateTime(now.year, now.month, now.day)
+        .difference(DateTime(date.year, date.month, date.day))
+        .inDays;
+
     switch (days) {
       case 0:
         return "Today";
