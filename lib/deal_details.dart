@@ -170,7 +170,7 @@ class _DealDetailsState extends State<DealDetails> {
     ApiService.addClicks(widget.deal);
     String link = widget.deal.link;
     if (await canLaunch(link)) {
-      await launch(link);
+      await launch(link, forceSafariVC: false);
     } else {
       print('Could not launch ' + link);
     }
