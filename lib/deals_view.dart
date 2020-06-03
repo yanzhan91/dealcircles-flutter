@@ -366,7 +366,7 @@ class _DealsViewState extends State<DealsView> {
                         ),
                       ),
                       Text(
-                        " | ${deal.discount.toInt()}% Off",
+                        " | ${deal.discount}% Off",
                         style: TextStyle(color: Colors.black54, fontSize: 16),
                       ),
                     ],

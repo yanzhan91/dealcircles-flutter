@@ -31,9 +31,9 @@ class _DealDetailsState extends State<DealDetails> {
             ),
             onPressed: () {
               String message = "${widget.deal.name} - " +
-                  "${widget.deal.discount}% Off\n${widget.deal.link}\n" +
-                  "Find more deals on DealCircles App";
-              Share.share(message, subject: "Look what I found!");
+                  "${widget.deal.discount}% Off\n${widget.deal.link}\n\n" +
+                  "Find more deals on DealCircles App\nhttps://www.dealcircles.com";
+              Share.share(message, subject: "Look what I found on DealCircles app!");
             },
           ),
         ],
@@ -67,7 +67,7 @@ class _DealDetailsState extends State<DealDetails> {
                         radius: 28,
                         backgroundColor: Theme.of(context).primaryColor,
                         child: Text(
-                          "${widget.deal.discount.toInt()}%",
+                          "${widget.deal.discount}%",
                           style: TextStyle(color: Colors.white, fontSize: 20),
                         ),
                       ),

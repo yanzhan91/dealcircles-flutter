@@ -4,7 +4,7 @@ class Deal {
   String brand;
   String originalPrice;
   String salePrice;
-  double discount;
+  int discount;
   String img;
   String store;
   String link;
@@ -14,7 +14,7 @@ class Deal {
       this.store, this.link, this.createDate);
 
   factory Deal.fromJson(Map<String, dynamic> json) {
-    return Deal(json['id'], json['name'], json['brand'], json['original'], json['new'], json['discount'].toDouble(),
+    return Deal(json['id'], json['name'], json['brand'], json['original'], json['new'], json['discount'].toInt(),
         json['img'], json['store'], json['link'], DateTime.parse(json['created_date']));
   }
 }
