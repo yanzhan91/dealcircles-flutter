@@ -351,7 +351,8 @@ class _DealsViewState extends State<DealsView> {
                       Text(
                         deal.name,
                         style: TextStyle(color: Colors.black87, fontSize: 18),
-                        maxLines: 3,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis
                       ),
                     ],
                   ),
