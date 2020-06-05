@@ -344,7 +344,7 @@ class _DealsViewState extends State<DealsView> {
                         deal.brand,
                         style: TextStyle(
                             color: Colors.black54,
-                            fontSize: 18,
+                            fontSize: 14,
                             fontWeight: FontWeight.bold),
                         maxLines: 1,
                       ),

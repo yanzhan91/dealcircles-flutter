@@ -86,7 +86,7 @@ class _DealDetailsState extends State<DealDetails> {
                       Text(
                         widget.deal.brand,
                         style: TextStyle(
-                            fontSize: 24,
+                            fontSize: 20,
                             color: Colors.black54,
                             fontWeight: FontWeight.bold),
                       ),
