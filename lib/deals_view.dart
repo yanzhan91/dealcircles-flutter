@@ -115,55 +115,77 @@ class _DealsViewState extends State<DealsView> {
 
   Widget generateFilterListView(BuildContext context) {
     List<Widget> widgets = [];
-    widgets.add(Padding(
-      padding: EdgeInsets.only(left: 10, right: 10, bottom: 15),
-      child: TextField(
-        controller: _textEditingController,
-        onChanged: (text) {
-          setState(() {});
-        },
-        decoration: InputDecoration(
-          hintText: "Search",
-          prefixIcon: Icon(
-            Icons.search,
-            size: 20,
-            color: Theme.of(context).primaryColor,
+    widgets.add(
+      Padding(
+        padding: EdgeInsets.only(left: 10, right: 10, bottom: 15),
+        child: TextField(
+          controller: _textEditingController,
+          onChanged: (text) {
+            setState(() {});
+          },
+          decoration: InputDecoration(
+            hintText: "Search",
+            prefixIcon: Icon(
+              Icons.search,
+              size: 20,
+              color: Theme.of(context).primaryColor,
+            ),
+            suffixIcon: _textEditingController.text.length > 0
+                ? IconButton(
+                    icon: Icon(
+                      Icons.clear,
+                      size: 20,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _textEditingController.clear();
+                        search = null;
+                      });
+                    },
+                  )
+                : null,
           ),
-          suffixIcon: _textEditingController.text.length > 0
-              ? IconButton(
-                  icon: Icon(
-                    Icons.clear,
-                    size: 20,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _textEditingController.clear();
-                      search = null;
-                    });
-                  },
-                )
-              : null,
-        ),
-        onEditingComplete: () {
-          search = _textEditingController.text;
-          if (search == null || search == '') {
-            search = null;
-            _textEditingController.clear();
-            FocusScopeNode currentFocus = FocusScope.of(context);
+          onEditingComplete: () {
+            search = _textEditingController.text;
+            if (search == null || search == '') {
+              search = null;
+              _textEditingController.clear();
+              FocusScopeNode currentFocus = FocusScope.of(context);
 
-            if (!currentFocus.hasPrimaryFocus) {
-              currentFocus.unfocus();
+              if (!currentFocus.hasPrimaryFocus) {
+                currentFocus.unfocus();
+              }
+            } else {
+              category = null;
+              deals.clear();
+              loadDeals();
+              Navigator.pop(context);
             }
-          } else {
-            category = null;
+          },
+        ),
+      ),
+    );
+
+    if ((sort != null && sort.isNotEmpty && sort != "newest") ||
+        (category != null && category.isNotEmpty && category != "All") ||
+        (search != null && search.isNotEmpty)) {
+      widgets.add(
+        ListTile(
+          title: Text(
+            "Clear",
+            style: TextStyle(fontSize: 16),
+          ),
+          onTap: () {
             deals.clear();
+            setFilters(sort: "newest", category: null, search: null);
             loadDeals();
             Navigator.pop(context);
-          }
-        },
-      ),
-    ));
+          },
+        ),
+      );
+    }
+
     widgets.add(addDrawerListTileHeader("Sort"));
     widgets.add(addDrawerListTile("Newest", sort == "newest",
         () => setFilters(sort: "newest", category: category, search: search)));
@@ -348,12 +370,10 @@ class _DealsViewState extends State<DealsView> {
                             fontWeight: FontWeight.bold),
                         maxLines: 1,
                       ),
-                      Text(
-                        deal.name,
-                        style: TextStyle(color: Colors.black87, fontSize: 18),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis
-                      ),
+                      Text(deal.name,
+                          style: TextStyle(color: Colors.black87, fontSize: 18),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis),
                     ],
                   ),
                   Row(
