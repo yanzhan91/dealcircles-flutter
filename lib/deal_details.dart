@@ -33,7 +33,8 @@ class _DealDetailsState extends State<DealDetails> {
               String message = "${widget.deal.name} - " +
                   "${widget.deal.discount}% Off\n${widget.deal.link}\n\n" +
                   "Find more deals on DealCircles App\nhttps://www.dealcircles.com";
-              Share.share(message, subject: "Look what I found on DealCircles app!");
+              Share.share(message,
+                  subject: "Look what I found on DealCircles app!");
             },
           ),
         ],
@@ -45,20 +46,19 @@ class _DealDetailsState extends State<DealDetails> {
               child: Stack(
                 children: <Widget>[
                   GestureDetector(
-                    onTap: openLink,
-                    child: Center(
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 10),
-                        child: SizedBox(
-                          height: MediaQuery.of(context).size.height / 2,
-                          child: Image.network(
-                            widget.deal.img,
-                            fit: BoxFit.contain,
+                      onTap: openLink,
+                      child: Center(
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 10),
+                          child: SizedBox(
+                            height: MediaQuery.of(context).size.height / 2,
+                            child: Image.network(
+                              widget.deal.img,
+                              fit: BoxFit.contain,
+                            ),
                           ),
                         ),
-                      ),
-                    )
-                  ),
+                      )),
                   Align(
                     alignment: Alignment.topRight,
                     child: Padding(
@@ -134,12 +134,17 @@ class _DealDetailsState extends State<DealDetails> {
                 Align(
                   alignment: Alignment.topRight,
                   child: Padding(
-                    padding: EdgeInsets.only(top: 15, right: 15),
-                    child: Text(
-                      fetchDaysAgo(widget.deal),
-                      style: TextStyle(fontSize: 12, color: Colors.black),
-                    ),
-                  ),
+                      padding: EdgeInsets.only(top: 15, right: 15),
+                      child: widget.deal.valid
+                          ? Text(
+                              fetchDaysAgo(widget.deal),
+                              style:
+                                  TextStyle(fontSize: 12, color: Colors.black),
+                            )
+                          : Text(
+                              "Expired",
+                              style: TextStyle(fontSize: 12, color: Colors.red),
+                            )),
                 )
               ],
             ),

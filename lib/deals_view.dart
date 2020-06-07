@@ -343,6 +343,25 @@ class _DealsViewState extends State<DealsView> {
   }
 
   Container makeSmallListTile(Deal deal) {
+    List<Widget> priceItems = [];
+    priceItems.add(Text(
+      deal.salePrice,
+      style: TextStyle(
+        color: ThemeColors.primary_color,
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+      ),
+    ));
+    priceItems.add(Text(
+      " | ${deal.discount}% Off" + (deal.valid ? "" : " | "),
+      style: TextStyle(color: Colors.black54, fontSize: 16),
+    ));
+    if (!deal.valid) {
+      priceItems.add(Text(
+        "Expired",
+        style: TextStyle(color: Colors.red, fontSize: 16),
+      ));
+    }
     return Container(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
@@ -377,20 +396,7 @@ class _DealsViewState extends State<DealsView> {
                     ],
                   ),
                   Row(
-                    children: <Widget>[
-                      Text(
-                        deal.salePrice,
-                        style: TextStyle(
-                          color: ThemeColors.primary_color,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        " | ${deal.discount}% Off",
-                        style: TextStyle(color: Colors.black54, fontSize: 16),
-                      ),
-                    ],
+                    children: priceItems,
                   )
                 ],
               ),
