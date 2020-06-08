@@ -222,6 +222,8 @@ class _DealsViewState extends State<DealsView> {
   Widget generateListview(BuildContext context) {
     if (deals.length > 0) {
       return RefreshIndicator(
+        color: Colors.white,
+        backgroundColor: Theme.of(context).primaryColor,
         child: ListView.builder(
           controller: _scrollController,
           scrollDirection: Axis.vertical,
