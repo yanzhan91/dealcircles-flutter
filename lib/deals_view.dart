@@ -349,7 +349,7 @@ class _DealsViewState extends State<DealsView> {
     priceItems.add(Text(
       deal.salePrice,
       style: TextStyle(
-        color: ThemeColors.primary_color,
+        color: deal.valid ? ThemeColors.primary_color : Colors.black54,
         fontSize: 18,
         fontWeight: FontWeight.bold,
       ),
