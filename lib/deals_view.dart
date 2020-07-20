@@ -370,7 +370,7 @@ class _DealsViewState extends State<DealsView> {
         child: Row(
           children: <Widget>[
             Image.network(
-              deal.img,
+              deal.images.length > 0 ? deal.images[0] : deal.img,
               fit: BoxFit.contain,
               height: 80,
               width: 80,
