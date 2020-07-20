@@ -1,12 +1,14 @@
 import 'package:dealcircles_flutter/theme_colors.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'deals_view.dart';
+import 'deals_view_web.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(DealsCircleApp(new DealsView()));
+  runApp(DealsCircleApp(kIsWeb ? new DealsViewWeb() : new DealsView()));
 }
 
 class DealsCircleApp extends StatelessWidget {

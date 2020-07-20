@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:device_info/device_info.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'Deal.dart';
 
@@ -75,7 +76,10 @@ class ApiService {
     if (deviceId == null || deviceName == null) {
       try {
         DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
-        if (Platform.isAndroid) {
+        if (kIsWeb) {
+          deviceId = 'web';
+          deviceName = 'web';
+        } else if (Platform.isAndroid) {
           AndroidDeviceInfo androidDeviceInfo =
           await deviceInfoPlugin.androidInfo;
           deviceId = androidDeviceInfo.androidId;
