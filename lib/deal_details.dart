@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dealcircles_flutter/Deal.dart';
+import 'package:dealcircles_flutter/UnorderedTextList.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';
@@ -163,6 +164,23 @@ class _DealDetailsState extends State<DealDetails> {
                           ),
                         ),
                       ),
+                      if (widget.deal.descriptions != null && widget.deal.descriptions.length > 0)
+                        Padding(
+                          padding: EdgeInsets.only(top: 10, bottom: 10),
+                          child: Text(widget.deal.descriptions.length == 0 ? "Description" : "Features",
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      if (widget.deal.descriptions != null && widget.deal.descriptions.length == 1)
+                        Text(
+                          widget.deal.descriptions[0],
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      if (widget.deal.descriptions != null && widget.deal.descriptions.length > 1)
+                        UnorderedTextList(
+                          widget.deal.descriptions,
+                          TextStyle(fontSize: 16),
+                        ),
                     ],
                   ),
                 ),
@@ -171,15 +189,16 @@ class _DealDetailsState extends State<DealDetails> {
                   child: Padding(
                       padding: EdgeInsets.only(top: 15, right: 15),
                       child: widget.deal.valid
-                          ? Text(
-                              fetchDaysAgo(widget.deal),
-                              style:
-                                  TextStyle(fontSize: 12, color: Colors.black),
-                            )
-                          : Text(
-                              "Expired",
-                              style: TextStyle(fontSize: 12, color: Colors.red),
-                            )),
+                        ? Text(
+                            fetchDaysAgo(widget.deal),
+                            style:
+                                TextStyle(fontSize: 12, color: Colors.black),
+                          )
+                        : Text(
+                            "Expired",
+                            style: TextStyle(fontSize: 12, color: Colors.red),
+                          ),
+                  ),
                 )
               ],
             ),
