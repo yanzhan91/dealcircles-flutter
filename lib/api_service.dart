@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:device_info/device_info.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'Deal.dart';
 
@@ -74,16 +75,17 @@ class ApiService {
   static Future<Map<String, String>> _getDeviceId() async {
     if (deviceId == null || deviceName == null) {
       try {
-        DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
         if (Platform.isAndroid) {
-          AndroidDeviceInfo androidDeviceInfo =
-          await deviceInfoPlugin.androidInfo;
+          AndroidDeviceInfo androidDeviceInfo = await DeviceInfoPlugin().androidInfo;
           deviceId = androidDeviceInfo.androidId;
-          deviceName = androidDeviceInfo.device;
+          deviceName = androidDeviceInfo.isPhysicalDevice ? androidDeviceInfo.device : 'virtual';
         } else if (Platform.isIOS) {
-          IosDeviceInfo iosDeviceInfo = await deviceInfoPlugin.iosInfo;
+          IosDeviceInfo iosDeviceInfo = await DeviceInfoPlugin().iosInfo;
           deviceId = iosDeviceInfo.identifierForVendor;
-          deviceName = iosDeviceInfo.name;
+          deviceName = iosDeviceInfo.isPhysicalDevice ? iosDeviceInfo.name : 'virtual';
+        } else if (kIsWeb) {
+          deviceId = 'web';
+          deviceName = 'web';
         }
       } on Exception {
         deviceId = '';
