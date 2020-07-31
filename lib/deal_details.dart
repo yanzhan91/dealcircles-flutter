@@ -82,11 +82,22 @@ class _DealDetailsState extends State<DealDetails> {
                     child: Padding(
                       padding: EdgeInsets.only(top: 15, right: 15),
                       child: CircleAvatar(
-                        radius: 28,
+                        radius: 32,
                         backgroundColor: Theme.of(context).primaryColor,
-                        child: Text(
-                          "${widget.deal.discount}%",
-                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              "${widget.deal.discount}%",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.white, fontSize: 20),
+                            ),
+                            Text(
+                              "OFF",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.white, fontSize: 16),
+                            )
+                          ],
                         ),
                       ),
                     ),
