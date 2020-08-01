@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:dealcircles_flutter/deal_details.dart';
 import 'package:dealcircles_flutter/theme_colors.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'Deal.dart';
@@ -383,13 +384,113 @@ class _DealsViewState extends State<DealsView> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        deal.brand,
-                        style: TextStyle(
-                            color: Colors.black54,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold),
-                        maxLines: 1,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            deal.brand,
+                            style: TextStyle(
+                                color: Colors.black54,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold),
+                            maxLines: 1,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              showDialog(context: context, builder: (BuildContext context) {
+                                return AlertDialog(
+                                  content: Container(
+                                    height: 152,
+                                    child: Stack(
+                                      overflow: Overflow.visible,
+                                      alignment: Alignment.center,
+                                      children: <Widget>[
+                                        Column(
+                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          children: <Widget>[
+                                            Row(
+                                              children: <Widget>[
+                                                Icon(
+                                                  Icons.whatshot,
+                                                  color: Theme.of(context).primaryColor,
+                                                ),
+                                                SizedBox(width: 10,),
+                                                Text('Top Brand', style: TextStyle(color: Theme.of(context).primaryColor,),),
+                                              ],
+                                            ),
+                                            Row(
+                                              children: <Widget>[
+                                                Icon(
+                                                  Icons.star,
+                                                  color: Theme.of(context).primaryColor,
+                                                ),
+                                                SizedBox(width: 10,),
+                                                Text('4+ Stars', style: TextStyle(color: Theme.of(context).primaryColor,),),
+                                              ],
+                                            ),
+                                            Row(
+                                              children: <Widget>[
+                                                Icon(
+                                                  Icons.attach_money,
+                                                  color: Theme.of(context).primaryColor,
+                                                ),
+                                                SizedBox(width: 10,),
+                                                Text('Deal of the Day', style: TextStyle(color: Theme.of(context).primaryColor,),),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                        Positioned(
+                                          top: -90,
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(10),
+                                            child: Image.asset(
+                                              "assets/icon_120.jpg",
+                                              fit: BoxFit.cover,
+                                              height: 80,
+                                              width: 80,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  contentPadding: EdgeInsets.fromLTRB(40, 50, 40, 0),
+                                  actions: <Widget>[
+                                    FlatButton(
+                                      child: Text("OK"),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    )
+                                  ],
+                                );
+                              });
+                            },
+                            child: Row(
+                              children: <Widget>[
+                                if (deal.themes.contains("TopBrand"))
+                                  Icon(
+                                    Icons.whatshot,
+                                    size: 14,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                if (deal.themes.contains("FourStars"))
+                                  Icon(
+                                    Icons.star,
+                                    size: 14,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                if (deal.themes.contains("DealOfTheDay"))
+                                  Icon(
+                                    Icons.attach_money,
+                                    size: 14,
+                                    color: Theme.of(context).primaryColor,
+                                  )
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                       Text(deal.name,
                           style: TextStyle(color: Colors.black87, fontSize: 18),
