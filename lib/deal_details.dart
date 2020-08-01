@@ -150,12 +150,42 @@ class _DealDetailsState extends State<DealDetails> {
                           decoration: TextDecoration.lineThrough,
                         ),
                       ),
-                      Text(
-                        widget.deal.salePrice,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 28,
-                            color: Theme.of(context).primaryColor),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Text(
+                            widget.deal.salePrice,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 28,
+                                color: Theme.of(context).primaryColor),
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.star,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              Icon(
+                                Icons.star,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              Icon(
+                                Icons.star,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              Icon(
+                                Icons.star,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              Icon(
+                                Icons.star_border,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ],
+                          )
+                        ],
                       ),
                       SizedBox(height: 10),
                       SizedBox(
