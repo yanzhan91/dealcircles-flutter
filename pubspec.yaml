@@ -29,6 +29,7 @@ dependencies:
   google_fonts: ^1.0.0
   device_info: '>=0.4.2+4 <2.0.0'
   carousel_slider: ^2.2.1
+  firebase_messaging: ^6.0.16
 
 dev_dependencies:
   flutter_test:

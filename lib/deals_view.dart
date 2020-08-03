@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:dealcircles_flutter/deal_details.dart';
 import 'package:dealcircles_flutter/theme_colors.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -26,8 +27,59 @@ class _DealsViewState extends State<DealsView> {
   ScrollController _scrollController = new ScrollController();
   TextEditingController _textEditingController = new TextEditingController();
 
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
+  void _navigateWithId(String id) async {
+    Deal deal = await ApiService.loadSingleDeal(id);
+    Navigator.popUntil(context, (route) => route is PageRoute);
+    Navigator.push(context, MaterialPageRoute<void>(
+        builder: (BuildContext context) => DealDetails(deal)
+    ));
+  }
+
   @override
   void initState() {
+    _firebaseMessaging.requestNotificationPermissions();
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print('AppPushs onMessage : $message');
+        showDialog<bool>(
+            context: context,
+            builder: (_) {
+              return AlertDialog(
+                content: Text('Testing123'),
+                actions: <Widget>[
+                  FlatButton(
+                    child: const Text('Close'),
+                    onPressed: () {
+                      Navigator.pop(context, false);
+                    },
+                  ),
+                  FlatButton(
+                    child: const Text('Show'),
+                    onPressed: () {
+                      Navigator.pop(context, true);
+                    },
+                  ),
+                ],
+              );
+            })
+        .then((bool shouldNavigate) {
+          if (shouldNavigate) {
+            _navigateWithId('');
+          }
+        });
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print('AppPushs onResume : $message');
+        _navigateWithId('');
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        print('AppPushs onLaunch : $message');
+        _navigateWithId('');
+      },
+    );
+
     deals = [];
     categories = [];
     loadDeals();

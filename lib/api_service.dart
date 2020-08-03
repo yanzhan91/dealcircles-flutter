@@ -59,6 +59,22 @@ class ApiService {
     }
   }
 
+  static Future<Deal> loadSingleDeal(String id) async {
+//    Map<String, String> deviceInfo = await _getDeviceId();
+//    String url = "$BASE_URL/deals?id=$id&deviceId=${deviceInfo['deviceId']}&deviceName=${deviceInfo['deviceName']}";
+//    print(url);
+//    final response = await http.get(url);
+//    if (response.statusCode == 200) {
+//      final data = json.decode(response.body);
+//      return Deal.fromJson(data);
+//    } else {
+//      print('Failed to load deals ${response.statusCode}: ${response.body}');
+//      return null;
+//    }
+      final data = json.decode('{"id":"amzn-B012UTR2E0","brand":"Briarpatch","name":"Test Item","store":"Amazon","category":"2-4 Years","original":"\$26.99","new":"\$11.67","discount":57,"img":"https://m.media-amazon.com/images/I/61qQz6sZcHL.jpg","link":"https://www.amazon.com/dp/B012UTR2E0?tag=dealcircles-20&linkCode=osi&th=1&psc=1","clicks":8,"created_date":"2020-08-03 06:44:09.851727","valid":true,"source":"api","theme_id":null,"images":["https://m.media-amazon.com/images/I/51KOOhnGJoL.jpg"],"descriptions":["Test"],"themes":null}');
+      return Deal.fromJson(data);
+  }
+
   static Future<List> loadCategories() async {
     String url = "$BASE_URL/categories";
     print(url);
