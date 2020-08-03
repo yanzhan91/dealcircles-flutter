@@ -44,6 +44,16 @@ class _DealDetailsState extends State<DealDetails> {
             },
           ),
         ],
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+            size: 28,
+          ),
+          onPressed: () {
+            Navigator.popUntil(context, (route) => route.isFirst);
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(

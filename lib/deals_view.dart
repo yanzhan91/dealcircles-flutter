@@ -29,57 +29,70 @@ class _DealsViewState extends State<DealsView> {
 
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
-  void _navigateWithId(String id) async {
-    Deal deal = await ApiService.loadSingleDeal(id);
-    Navigator.popUntil(context, (route) => route is PageRoute);
-    Navigator.push(context, MaterialPageRoute<void>(
-        builder: (BuildContext context) => DealDetails(deal)
-    ));
-  }
-
-  @override
-  void initState() {
+  void _setupFirebaseMessage() {
     _firebaseMessaging.requestNotificationPermissions();
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
         print('AppPushs onMessage : $message');
-        showDialog<bool>(
-            context: context,
-            builder: (_) {
-              return AlertDialog(
-                content: Text('Testing123'),
-                actions: <Widget>[
-                  FlatButton(
-                    child: const Text('Close'),
-                    onPressed: () {
-                      Navigator.pop(context, false);
-                    },
-                  ),
-                  FlatButton(
-                    child: const Text('Show'),
-                    onPressed: () {
-                      Navigator.pop(context, true);
-                    },
-                  ),
-                ],
-              );
-            })
-        .then((bool shouldNavigate) {
-          if (shouldNavigate) {
-            _navigateWithId('');
-          }
-        });
+        if (message.containsKey('id')) {
+          _showItemDialog(message);
+        }
       },
       onResume: (Map<String, dynamic> message) async {
         print('AppPushs onResume : $message');
-        _navigateWithId('');
+        if (message.containsKey('id')) {
+          _navigateWithId(message['id']);
+        }
       },
       onLaunch: (Map<String, dynamic> message) async {
         print('AppPushs onLaunch : $message');
-        _navigateWithId('');
+        if (message.containsKey('id')) {
+          _navigateWithId(message['id']);
+        }
       },
     );
+  }
 
+  void _navigateWithId(String id) async {
+    Deal deal = await ApiService.loadSingleDeal(id);
+    Navigator.popUntil(context, (route) => route is PageRoute);
+    Navigator.push(
+        context,
+        MaterialPageRoute<void>(
+            builder: (BuildContext context) => DealDetails(deal)));
+  }
+
+  void _showItemDialog(Map<String, dynamic> message) {
+    showDialog<bool>(
+        context: context,
+        builder: (_) {
+          return AlertDialog(
+            content: Text('Testing123'),
+            actions: <Widget>[
+              FlatButton(
+                child: const Text('Close'),
+                onPressed: () {
+                  Navigator.pop(context, false);
+                },
+              ),
+              FlatButton(
+                child: const Text('Show'),
+                onPressed: () {
+                  Navigator.pop(context, true);
+                },
+              ),
+            ],
+          );
+        }).then((bool shouldNavigate) {
+      if (shouldNavigate) {
+        _navigateWithId(message['id']);
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    _setupFirebaseMessage();
     deals = [];
     categories = [];
     loadDeals();
