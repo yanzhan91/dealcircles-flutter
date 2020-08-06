@@ -31,6 +31,7 @@ class _DealsViewState extends State<DealsView> {
 
   void _setupFirebaseMessage() {
     _firebaseMessaging.requestNotificationPermissions();
+    _firebaseMessaging.getToken().then((value) => print(value));
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
         print('AppPushs onMessage : $message');
@@ -54,12 +55,14 @@ class _DealsViewState extends State<DealsView> {
   }
 
   void _navigateWithId(String id) async {
-    Deal deal = await ApiService.loadSingleDeal(id);
-    Navigator.popUntil(context, (route) => route is PageRoute);
-    Navigator.push(
-        context,
-        MaterialPageRoute<void>(
-            builder: (BuildContext context) => DealDetails(deal)));
+    List<Deal> deals = await ApiService.loadDeals(id, null, null, null, null);
+    if (deals.length > 0) {
+      Navigator.popUntil(context, (route) => route is PageRoute);
+      Navigator.push(
+          context,
+          MaterialPageRoute<void>(
+              builder: (BuildContext context) => DealDetails(deals[0])));
+    }
   }
 
   void _showItemDialog(Map<String, dynamic> message) {
@@ -79,11 +82,12 @@ class _DealsViewState extends State<DealsView> {
                   ),
                 ),
                 SizedBox(height: 20,),
-                Image.network(
-                  'https://m.media-amazon.com/images/I/41ijWyIC02L.jpg',
-                  fit: BoxFit.contain,
-                ),
-                Text('Ravensburger Snail\'s Pace Race Game for Age 3 & Up - Quick Children\'s Racing Game Where Everyone Wins!',
+                if (message.containsKey('image'))
+                  Image.network(
+                    message['image'],
+                    fit: BoxFit.fill,
+                  ),
+                Text(message['name'],
                     style: TextStyle(color: Colors.black87, fontSize: 18),
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis),
@@ -91,7 +95,7 @@ class _DealsViewState extends State<DealsView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      '\$100.00',
+                      "${message['price']}",
                       style: TextStyle(
                         color: ThemeColors.primary_color,
                         fontSize: 18,
@@ -99,7 +103,7 @@ class _DealsViewState extends State<DealsView> {
                       ),
                     ),
                     Text(
-                      " | 50% Off",
+                      " | ${message['discount']}% Off",
                       style: TextStyle(color: Colors.black54, fontSize: 16),
                     ),
                   ],
@@ -627,7 +631,7 @@ class _DealsViewState extends State<DealsView> {
     });
 
     List newDeals =
-        await ApiService.loadDeals(sort, category, search, deals.length);
+        await ApiService.loadDeals(null, sort, category, search, deals.length);
 
     if (newDeals.length == 0) {
       setState(() {
