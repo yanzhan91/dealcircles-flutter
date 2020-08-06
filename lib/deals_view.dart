@@ -67,16 +67,56 @@ class _DealsViewState extends State<DealsView> {
         context: context,
         builder: (_) {
           return AlertDialog(
-            content: Text('Testing123'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  'Deal of the Day',
+                  style: TextStyle(
+                    color: ThemeColors.primary_color,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
+                SizedBox(height: 20,),
+                Image.network(
+                  'https://m.media-amazon.com/images/I/41ijWyIC02L.jpg',
+                  fit: BoxFit.contain,
+                ),
+                Text('Ravensburger Snail\'s Pace Race Game for Age 3 & Up - Quick Children\'s Racing Game Where Everyone Wins!',
+                    style: TextStyle(color: Colors.black87, fontSize: 18),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      '\$100.00',
+                      style: TextStyle(
+                        color: ThemeColors.primary_color,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      " | 50% Off",
+                      style: TextStyle(color: Colors.black54, fontSize: 16),
+                    ),
+                  ],
+                )
+              ],
+            ),
             actions: <Widget>[
               FlatButton(
                 child: const Text('Close'),
+                textColor: ThemeColors.primary_color,
                 onPressed: () {
                   Navigator.pop(context, false);
                 },
               ),
               FlatButton(
                 child: const Text('Show'),
+                textColor: ThemeColors.primary_color,
                 onPressed: () {
                   Navigator.pop(context, true);
                 },
@@ -84,10 +124,10 @@ class _DealsViewState extends State<DealsView> {
             ],
           );
         }).then((bool shouldNavigate) {
-      if (shouldNavigate) {
-        _navigateWithId(message['id']);
-      }
-    });
+          if (shouldNavigate != null && shouldNavigate) {
+            _navigateWithId(message['id']);
+          }
+        });
   }
 
   @override
