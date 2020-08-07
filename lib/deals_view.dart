@@ -36,36 +36,55 @@ class _DealsViewState extends State<DealsView> {
       onMessage: (Map<String, dynamic> message) async {
         print('AppPushs onMessage : $message');
         if (message.containsKey('id')) {
-          _showItemDialog(message);
+          _showItemDialog(message['id'], message['image'], message['name'],
+              message['price'], message['discount']);
+        } else if (message.containsKey('data')) {
+          Map<dynamic, dynamic> data = message['data'];
+          if (data.containsKey('id')) {
+            _showItemDialog(data['id'], data['image'], data['name'],
+                data['price'], data['discount']);
+          }
         }
       },
       onResume: (Map<String, dynamic> message) async {
         print('AppPushs onResume : $message');
         if (message.containsKey('id')) {
           _navigateWithId(message['id']);
+        } else if (message.containsKey('data')) {
+          Map<dynamic, dynamic> data = message['data'];
+          if (data.containsKey('id')) {
+            _navigateWithId(data['id']);
+          }
         }
       },
       onLaunch: (Map<String, dynamic> message) async {
         print('AppPushs onLaunch : $message');
         if (message.containsKey('id')) {
           _navigateWithId(message['id']);
+        } else if (message.containsKey('data')) {
+          Map<dynamic, dynamic> data = message['data'];
+          if (data.containsKey('id')) {
+            _navigateWithId(data['id']);
+          }
         }
       },
     );
   }
 
   void _navigateWithId(String id) async {
-    List<Deal> deals = await ApiService.loadDeals(id, null, null, null, null);
-    if (deals.length > 0) {
-      Navigator.popUntil(context, (route) => route is PageRoute);
-      Navigator.push(
-          context,
-          MaterialPageRoute<void>(
-              builder: (BuildContext context) => DealDetails(deals[0])));
+    if (id != null && id.length > 0) {
+      List<Deal> deals = await ApiService.loadDeals(id, null, null, null, null);
+      if (deals.length > 0) {
+        Navigator.popUntil(context, (route) => route is PageRoute);
+        Navigator.push(
+            context,
+            MaterialPageRoute<void>(
+                builder: (BuildContext context) => DealDetails(deals[0])));
+      }
     }
   }
 
-  void _showItemDialog(Map<String, dynamic> message) {
+  void _showItemDialog(String id, String image, String name, String price, String discount) {
     showDialog<bool>(
         context: context,
         builder: (_) {
@@ -82,12 +101,12 @@ class _DealsViewState extends State<DealsView> {
                   ),
                 ),
                 SizedBox(height: 20,),
-                if (message.containsKey('image'))
+                if (image != null)
                   Image.network(
-                    message['image'],
+                    image,
                     fit: BoxFit.fill,
                   ),
-                Text(message['name'],
+                Text(name,
                     style: TextStyle(color: Colors.black87, fontSize: 18),
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis),
@@ -95,7 +114,7 @@ class _DealsViewState extends State<DealsView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      "${message['price']}",
+                      "$price",
                       style: TextStyle(
                         color: ThemeColors.primary_color,
                         fontSize: 18,
@@ -103,7 +122,7 @@ class _DealsViewState extends State<DealsView> {
                       ),
                     ),
                     Text(
-                      " | ${message['discount']}% Off",
+                      " | $discount% Off",
                       style: TextStyle(color: Colors.black54, fontSize: 16),
                     ),
                   ],
@@ -129,7 +148,7 @@ class _DealsViewState extends State<DealsView> {
           );
         }).then((bool shouldNavigate) {
           if (shouldNavigate != null && shouldNavigate) {
-            _navigateWithId(message['id']);
+            _navigateWithId(id);
           }
         });
   }
