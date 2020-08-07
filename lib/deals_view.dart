@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:dealcircles_flutter/deal_details.dart';
-import 'package:dealcircles_flutter/theme_colors.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -95,7 +94,7 @@ class _DealsViewState extends State<DealsView> {
                 Text(
                   'Deal of the Day',
                   style: TextStyle(
-                    color: ThemeColors.primary_color,
+                    color: Theme.of(context).primaryColor,
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
                   ),
@@ -116,7 +115,7 @@ class _DealsViewState extends State<DealsView> {
                     Text(
                       "$price",
                       style: TextStyle(
-                        color: ThemeColors.primary_color,
+                        color: Theme.of(context).primaryColor,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -132,14 +131,14 @@ class _DealsViewState extends State<DealsView> {
             actions: <Widget>[
               FlatButton(
                 child: const Text('Close'),
-                textColor: ThemeColors.primary_color,
+                textColor: Theme.of(context).primaryColor,
                 onPressed: () {
                   Navigator.pop(context, false);
                 },
               ),
               FlatButton(
                 child: const Text('Show'),
-                textColor: ThemeColors.primary_color,
+                textColor: Theme.of(context).primaryColor,
                 onPressed: () {
                   Navigator.pop(context, true);
                 },
@@ -460,7 +459,7 @@ class _DealsViewState extends State<DealsView> {
           padding: EdgeInsets.all(3),
           child: Icon(
             Icons.fiber_new,
-            color: ThemeColors.primary_color,
+            color: Theme.of(context).primaryColor,
           ),
         ),
       );
@@ -478,7 +477,7 @@ class _DealsViewState extends State<DealsView> {
     priceItems.add(Text(
       deal.salePrice,
       style: TextStyle(
-        color: deal.valid ? ThemeColors.primary_color : Colors.black54,
+        color: deal.valid ? Theme.of(context).primaryColor : Colors.black54,
         fontSize: 18,
         fontWeight: FontWeight.bold,
       ),
