@@ -449,10 +449,11 @@ class _DealsViewState extends State<DealsView> {
   }
 
   Widget addNewFlag(Deal deal) {
-    DateTime now = DateTime.now().toUtc();
-    if (now.year == deal.createDate.year &&
-        now.month == deal.createDate.month &&
-        now.day == deal.createDate.day) {
+    DateTime now = DateTime.now();
+    DateTime posted = deal.createDate.toLocal();
+    if (now.year == posted.year &&
+        now.month == posted.month &&
+        now.day == posted.day) {
       return Align(
         alignment: Alignment.topLeft,
         child: Padding(
