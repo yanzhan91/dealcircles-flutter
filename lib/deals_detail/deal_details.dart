@@ -2,14 +2,14 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:dealcircles_flutter/Deal.dart';
-import 'package:dealcircles_flutter/UnorderedTextList.dart';
+import 'package:dealcircles_flutter/models/Deal.dart';
+import 'package:dealcircles_flutter/deals_detail/UnorderedTextList.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'api_service.dart';
+import '../services/api_service.dart';
 
 class DealDetails extends StatefulWidget {
   final Deal deal;

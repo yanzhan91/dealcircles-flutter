@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'deals_view.dart';
+import 'deals_view/deals_view.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'Deal.dart';
+import '../models/Deal.dart';
 
 class ApiService {
   static const String BASE_URL = "https://api.dealcircles.com";

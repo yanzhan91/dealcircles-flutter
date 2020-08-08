@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'Deal.dart';
-import 'api_service.dart';
-import 'deal_details.dart';
+import '../models/Deal.dart';
+import '../services/api_service.dart';
+import '../deals_detail/deal_details.dart';
 
 class DealsCard extends StatelessWidget {
   final Deal deal;

@@ -1,15 +1,15 @@
 import 'dart:ui';
 
-import 'package:dealcircles_flutter/deal_details.dart';
-import 'package:dealcircles_flutter/deals_list_view.dart';
-import 'package:dealcircles_flutter/zero_deal_view.dart';
+import 'package:dealcircles_flutter/deals_detail/deal_details.dart';
+import 'package:dealcircles_flutter/deals_view/deals_list_view.dart';
+import 'package:dealcircles_flutter/deals_view/zero_deal_view.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'Deal.dart';
-import 'api_service.dart';
+import '../models/Deal.dart';
+import '../services/api_service.dart';
 
 class DealsView extends StatefulWidget {
   @override
