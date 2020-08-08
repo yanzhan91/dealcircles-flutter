@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:dealcircles_flutter/deal_details.dart';
+import 'package:dealcircles_flutter/deals_list_view.dart';
+import 'package:dealcircles_flutter/zero_deal_view.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -24,9 +26,8 @@ class _DealsViewState extends State<DealsView> {
   String search;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  ScrollController _scrollController = new ScrollController();
-  TextEditingController _textEditingController = new TextEditingController();
-
+  final ScrollController _scrollController = new ScrollController();
+  final TextEditingController _textEditingController = new TextEditingController();
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   void _setupFirebaseMessage() {
@@ -194,53 +195,15 @@ class _DealsViewState extends State<DealsView> {
         ],
       ),
       endDrawer: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.6,
+        width: MediaQuery
+            .of(context)
+            .size
+            .width * 0.6,
         child: Drawer(
           child: generateFilterListView(context),
         ),
       ),
       body: generateListview(context),
-    );
-  }
-
-  void setFilters({String sort, String category, String search}) {
-    this.sort = sort;
-    this.category = category;
-    this.search = search;
-
-    if (search == null) {
-      _textEditingController.clear();
-    }
-  }
-
-  ListTile addDrawerListTileHeader(String name) {
-    return ListTile(
-      title: Text(
-        name,
-        style: TextStyle(
-          color: Theme.of(context).primaryColor,
-          fontWeight: FontWeight.bold,
-          decoration: TextDecoration.underline,
-          fontSize: 18,
-        ),
-      ),
-      enabled: false,
-    );
-  }
-
-  ListTile addDrawerListTile(String name, bool selected, Function setValue) {
-    return ListTile(
-      title: Text(
-        name,
-        style: TextStyle(fontSize: 16),
-      ),
-      selected: selected,
-      onTap: () {
-        deals.clear();
-        setValue();
-        loadDeals();
-        Navigator.pop(context);
-      },
     );
   }
 
@@ -259,22 +222,26 @@ class _DealsViewState extends State<DealsView> {
             prefixIcon: Icon(
               Icons.search,
               size: 20,
-              color: Theme.of(context).primaryColor,
+              color: Theme
+                  .of(context)
+                  .primaryColor,
             ),
             suffixIcon: _textEditingController.text.length > 0
                 ? IconButton(
-                    icon: Icon(
-                      Icons.clear,
-                      size: 20,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _textEditingController.clear();
-                        search = null;
-                      });
-                    },
-                  )
+              icon: Icon(
+                Icons.clear,
+                size: 20,
+                color: Theme
+                    .of(context)
+                    .primaryColor,
+              ),
+              onPressed: () {
+                setState(() {
+                  _textEditingController.clear();
+                  search = null;
+                });
+              },
+            )
                 : null,
           ),
           onEditingComplete: () {
@@ -319,69 +286,84 @@ class _DealsViewState extends State<DealsView> {
 
     widgets.add(addDrawerListTileHeader("Sort"));
     widgets.add(addDrawerListTile("Newest", sort == "newest",
-        () => setFilters(sort: "newest", category: category, search: search)));
+            () =>
+            setFilters(sort: "newest", category: category, search: search)));
     widgets.add(addDrawerListTile("Most Popular", sort == "popular",
-        () => setFilters(sort: "popular", category: category, search: search)));
+            () =>
+            setFilters(sort: "popular", category: category, search: search)));
     widgets.add(addDrawerListTile(
         "Discount",
         sort == "discount",
-        () =>
+            () =>
             setFilters(sort: "discount", category: category, search: search)));
     widgets.add(addDrawerListTile(
         "Price Low to High",
         sort == "low_high",
-        () =>
+            () =>
             setFilters(sort: "low_high", category: category, search: search)));
     widgets.add(addDrawerListTile(
         "Price High to Low",
         sort == "high_low",
-        () =>
+            () =>
             setFilters(sort: "high_low", category: category, search: search)));
 
     widgets.add(addDrawerListTileHeader("Categories"));
     widgets.add(addDrawerListTile("All", category == null,
-        () => setFilters(category: null, search: null, sort: sort)));
+            () => setFilters(category: null, search: null, sort: sort)));
 
     for (String c in categories) {
       widgets.add(addDrawerListTile(c, category == c,
-          () => setFilters(category: c, search: null, sort: sort)));
+              () => setFilters(category: c, search: null, sort: sort)));
     }
 
     return new ListView(children: widgets);
   }
 
+  ListTile addDrawerListTileHeader(String name) {
+    return ListTile(
+      title: Text(
+        name,
+        style: TextStyle(
+          color: Theme.of(context).primaryColor,
+          fontWeight: FontWeight.bold,
+          decoration: TextDecoration.underline,
+          fontSize: 18,
+        ),
+      ),
+      enabled: false,
+    );
+  }
+
+  ListTile addDrawerListTile(String name, bool selected, Function setValue) {
+    return ListTile(
+      title: Text(
+        name,
+        style: TextStyle(fontSize: 16),
+      ),
+      selected: selected,
+      onTap: () {
+        deals.clear();
+        setValue();
+        loadDeals();
+        Navigator.pop(context);
+      },
+    );
+  }
+
+  void setFilters({String sort, String category, String search}) {
+    this.sort = sort;
+    this.category = category;
+    this.search = search;
+
+    if (search == null) {
+      _textEditingController.clear();
+    }
+  }
+
   Widget generateListview(BuildContext context) {
     if (deals.length > 0) {
-      return RefreshIndicator(
-        color: Colors.white,
-        backgroundColor: Theme.of(context).primaryColor,
-        child: ListView.builder(
-          controller: _scrollController,
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemCount: deals.length + (ableToLoadMore ? 1 : 0),
-          itemBuilder: (BuildContext context, int index) {
-            if (index < deals.length) {
-              return makeCard(deals[index]);
-            } else {
-              return Card(
-                elevation: 4.0,
-                margin:
-                    new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-                color: Theme.of(context).primaryColor,
-                child: FlatButton(
-                  child: Text(
-                    "Load More",
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                  ),
-                  onPressed: () => loadDeals(),
-                ),
-              );
-            }
-          },
-        ),
-        onRefresh: loadDealsFuture,
-      );
+      return DealsListView(_scrollController, deals, ableToLoadMore, loadDeals,
+          loadDealsFuture);
     } else if (loading) {
       return Center(
         child: CircularProgressIndicator(
@@ -390,262 +372,9 @@ class _DealsViewState extends State<DealsView> {
         ),
       );
     } else {
-      return Center(
-        child: Padding(
-          padding: EdgeInsets.only(top: 80),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Icon(
-                Icons.remove_circle_outline,
-                size: 60,
-                color: Theme.of(context).primaryColor,
-              ),
-              SizedBox(height: 20),
-              Text(
-                "No Results Found",
-                style: TextStyle(fontSize: 20),
-              ),
-              SizedBox(height: 20),
-              RaisedButton(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                color: Theme.of(context).primaryColor,
-                child: Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Text("Check out latest deals"),
-                ),
-                textColor: Colors.white,
-                onPressed: () {
-                  setFilters(sort: "newest");
-                  loadDeals();
-                },
-              ),
-            ],
-          ),
-        ),
-      );
+      setFilters(sort: 'newest');
+      return ZeroDealView(loadDeals);
     }
-  }
-
-  GestureDetector makeCard(Deal deal) {
-    return GestureDetector(
-        onTap: () {
-          ApiService.addClicks(deal);
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => DealDetails(deal)));
-        },
-        child: Stack(
-          children: <Widget>[
-            Card(
-              elevation: 4.0,
-              margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-              child: Container(
-                decoration: BoxDecoration(color: Colors.white),
-                child: makeListTile(deal),
-              ),
-            ),
-            addNewFlag(deal)
-          ],
-        ));
-  }
-
-  Widget addNewFlag(Deal deal) {
-    DateTime now = DateTime.now();
-    DateTime posted = deal.createDate.toLocal();
-    if (now.year == posted.year &&
-        now.month == posted.month &&
-        now.day == posted.day) {
-      return Align(
-        alignment: Alignment.topLeft,
-        child: Padding(
-          padding: EdgeInsets.all(3),
-          child: Icon(
-            Icons.fiber_new,
-            color: Theme.of(context).primaryColor,
-          ),
-        ),
-      );
-    } else {
-      return new Container();
-    }
-  }
-
-  Container makeListTile(Deal deal) {
-    return makeSmallListTile(deal);
-  }
-
-  Container makeSmallListTile(Deal deal) {
-    List<Widget> priceItems = [];
-    priceItems.add(Text(
-      deal.salePrice,
-      style: TextStyle(
-        color: deal.valid ? Theme.of(context).primaryColor : Colors.black54,
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-      ),
-    ));
-    priceItems.add(Text(
-      " | ${deal.discount}% Off" + (deal.valid ? "" : " | "),
-      style: TextStyle(color: Colors.black54, fontSize: 16),
-    ));
-    if (!deal.valid) {
-      priceItems.add(Text(
-        "Expired",
-        style: TextStyle(color: Colors.red, fontSize: 16),
-      ));
-    }
-    return Container(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
-        child: Stack(
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Image.network(
-                  deal.images.length > 0 ? deal.images[0] : deal.img,
-                  fit: BoxFit.contain,
-                  height: 80,
-                  width: 80,
-                ),
-                SizedBox(width: 15),
-                Flexible(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          deal.brand,
-                          style: TextStyle(
-                              color: Colors.black54,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold),
-                          maxLines: 1,
-                        ),
-                        Text(deal.name,
-                            style: TextStyle(color: Colors.black87, fontSize: 18),
-                            maxLines: 2,
-                            overflow: kIsWeb ? TextOverflow.clip : TextOverflow.ellipsis
-                        ),
-                        Row(
-                          children: priceItems,
-                        )
-                      ]
-                  ),
-                ),
-              ],
-            ),
-            GestureDetector(
-              onTap: () {
-                showDialog(context: context, builder: (BuildContext context) {
-                  return AlertDialog(
-                    content: Container(
-                      height: 152,
-                      child: Stack(
-                        overflow: Overflow.visible,
-                        alignment: Alignment.center,
-                        children: <Widget>[
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  Icon(
-                                    Icons.whatshot,
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                  SizedBox(width: 10,),
-                                  Text('Top Brand', style: TextStyle(color: Theme.of(context).primaryColor,),),
-                                ],
-                              ),
-                              Row(
-                                children: <Widget>[
-                                  Icon(
-                                    Icons.star,
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                  SizedBox(width: 10,),
-                                  Text('4+ Stars', style: TextStyle(color: Theme.of(context).primaryColor,),),
-                                ],
-                              ),
-                              Row(
-                                children: <Widget>[
-                                  Icon(
-                                    Icons.attach_money,
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                  SizedBox(width: 10,),
-                                  Text('Deal of the Day', style: TextStyle(color: Theme.of(context).primaryColor,),),
-                                ],
-                              )
-                            ],
-                          ),
-                          Positioned(
-                            top: -90,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.asset(
-                                "assets/icon_120.jpg",
-                                fit: BoxFit.cover,
-                                height: 80,
-                                width: 80,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    contentPadding: EdgeInsets.fromLTRB(40, 50, 40, 0),
-                    actions: <Widget>[
-                      FlatButton(
-                        child: Text("OK"),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      )
-                    ],
-                  );
-                });
-              },
-              child: Align(
-                alignment: Alignment.topRight,
-                child: Container(
-                  width: 60,
-                  height: 40,
-                  color: Colors.transparent,
-                  child: Align(
-                    alignment: Alignment.topRight,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        if (deal.themes.contains("TopBrand"))
-                          Icon(
-                            Icons.whatshot,
-                            size: 14,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        if (deal.themes.contains("FourStars"))
-                          Icon(
-                            Icons.star,
-                            size: 14,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        if (deal.themes.contains("DealOfTheDay"))
-                          Icon(
-                            Icons.attach_money,
-                            size: 14,
-                            color: Theme.of(context).primaryColor,
-                          )
-                      ],
-                    ),
-                  ),
-                )
-              )
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   void loadDeals() async {
