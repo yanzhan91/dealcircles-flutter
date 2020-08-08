@@ -1,8 +1,8 @@
 import 'dart:math';
 
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:dealcircles_flutter/models/constants.dart';
-import 'package:flutter/foundation.dart';
+import 'package:dealcircles_flutter/models/screen_size.dart';
+import 'package:dealcircles_flutter/services/screen_size_service.dart';
 import 'package:flutter/material.dart';
 
 class DealCarouselSlider extends StatefulWidget {
@@ -25,8 +25,8 @@ class _DealCarouselSliderState extends State<DealCarouselSlider> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        kIsWeb && MediaQuery.of(context).size.width >= Constants.screenMedium
-            ? _createWebCarouselSlider(context) : _createAppCarouselSlider(context),
+        ScreenSizeService.compareSize(context, ScreenSize.SMALL)
+            ? _createAppCarouselSlider(context) : _createWebCarouselSlider(context),
         _createPaginationIcons()
       ],
     );

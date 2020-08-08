@@ -1,6 +1,7 @@
 import 'package:dealcircles_flutter/deals_detail/deal_content.dart';
 import 'package:dealcircles_flutter/models/Deal.dart';
-import 'package:dealcircles_flutter/models/constants.dart';
+import 'package:dealcircles_flutter/models/screen_size.dart';
+import 'package:dealcircles_flutter/services/screen_size_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -20,9 +21,7 @@ class DealDetails extends StatelessWidget {
   }
 
   Widget _createAppBar(BuildContext context) {
-    if (kIsWeb && MediaQuery.of(context).size.width >= Constants.screenMedium) {
-      return null;
-    } else {
+    if (ScreenSizeService.compareSize(context, ScreenSize.SMALL)) {
       return AppBar(
         actions: <Widget>[
           if (!kIsWeb)
@@ -52,6 +51,8 @@ class DealDetails extends StatelessWidget {
           },
         ),
       );
+    } else {
+      return null;
     }
   }
 }

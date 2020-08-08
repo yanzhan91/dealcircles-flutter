@@ -3,7 +3,8 @@ import 'dart:ui';
 import 'package:dealcircles_flutter/deals_detail/deal_details.dart';
 import 'package:dealcircles_flutter/deals_view/deals_list_view.dart';
 import 'package:dealcircles_flutter/deals_view/zero_deal_view.dart';
-import 'package:dealcircles_flutter/models/constants.dart';
+import 'package:dealcircles_flutter/models/screen_size.dart';
+import 'package:dealcircles_flutter/services/screen_size_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -28,7 +29,8 @@ class _DealsViewState extends State<DealsView> {
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final ScrollController _scrollController = new ScrollController();
-  final TextEditingController _textEditingController = new TextEditingController();
+  final TextEditingController _textEditingController =
+      new TextEditingController();
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   void _setupFirebaseMessage() {
@@ -86,7 +88,8 @@ class _DealsViewState extends State<DealsView> {
     }
   }
 
-  void _showItemDialog(String id, String image, String name, String price, String discount) {
+  void _showItemDialog(
+      String id, String image, String name, String price, String discount) {
     showDialog<bool>(
         context: context,
         builder: (_) {
@@ -102,7 +105,9 @@ class _DealsViewState extends State<DealsView> {
                     fontSize: 20,
                   ),
                 ),
-                SizedBox(height: 20,),
+                SizedBox(
+                  height: 20,
+                ),
                 if (image != null)
                   Image.network(
                     image,
@@ -149,10 +154,10 @@ class _DealsViewState extends State<DealsView> {
             ],
           );
         }).then((bool shouldNavigate) {
-          if (shouldNavigate != null && shouldNavigate) {
-            _navigateWithId(id);
-          }
-        });
+      if (shouldNavigate != null && shouldNavigate) {
+        _navigateWithId(id);
+      }
+    });
   }
 
   @override
@@ -196,10 +201,9 @@ class _DealsViewState extends State<DealsView> {
         ],
       ),
       endDrawer: SizedBox(
-        width: MediaQuery
-            .of(context)
-            .size
-            .width * (kIsWeb && MediaQuery.of(context).size.width >= Constants.screenMedium ? 0.25 : 0.6),
+        width: MediaQuery.of(context).size.width *
+            (ScreenSizeService.compareSize(context, ScreenSize.SMALL)
+                ? 0.6 : 0.25),
         child: Drawer(
           child: generateFilterListView(context),
         ),
@@ -223,26 +227,22 @@ class _DealsViewState extends State<DealsView> {
             prefixIcon: Icon(
               Icons.search,
               size: 20,
-              color: Theme
-                  .of(context)
-                  .primaryColor,
+              color: Theme.of(context).primaryColor,
             ),
             suffixIcon: _textEditingController.text.length > 0
                 ? IconButton(
-              icon: Icon(
-                Icons.clear,
-                size: 20,
-                color: Theme
-                    .of(context)
-                    .primaryColor,
-              ),
-              onPressed: () {
-                setState(() {
-                  _textEditingController.clear();
-                  search = null;
-                });
-              },
-            )
+                    icon: Icon(
+                      Icons.clear,
+                      size: 20,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _textEditingController.clear();
+                        search = null;
+                      });
+                    },
+                  )
                 : null,
           ),
           onEditingComplete: () {
@@ -287,34 +287,32 @@ class _DealsViewState extends State<DealsView> {
 
     widgets.add(addDrawerListTileHeader("Sort"));
     widgets.add(addDrawerListTile("Newest", sort == "newest",
-            () =>
-            setFilters(sort: "newest", category: category, search: search)));
+        () => setFilters(sort: "newest", category: category, search: search)));
     widgets.add(addDrawerListTile("Most Popular", sort == "popular",
-            () =>
-            setFilters(sort: "popular", category: category, search: search)));
+        () => setFilters(sort: "popular", category: category, search: search)));
     widgets.add(addDrawerListTile(
         "Discount",
         sort == "discount",
-            () =>
+        () =>
             setFilters(sort: "discount", category: category, search: search)));
     widgets.add(addDrawerListTile(
         "Price Low to High",
         sort == "low_high",
-            () =>
+        () =>
             setFilters(sort: "low_high", category: category, search: search)));
     widgets.add(addDrawerListTile(
         "Price High to Low",
         sort == "high_low",
-            () =>
+        () =>
             setFilters(sort: "high_low", category: category, search: search)));
 
     widgets.add(addDrawerListTileHeader("Categories"));
     widgets.add(addDrawerListTile("All", category == null,
-            () => setFilters(category: null, search: null, sort: sort)));
+        () => setFilters(category: null, search: null, sort: sort)));
 
     for (String c in categories) {
       widgets.add(addDrawerListTile(c, category == c,
-              () => setFilters(category: c, search: null, sort: sort)));
+          () => setFilters(category: c, search: null, sort: sort)));
     }
 
     return new ListView(children: widgets);
@@ -363,8 +361,8 @@ class _DealsViewState extends State<DealsView> {
 
   Widget generateListview(BuildContext context) {
     if (deals.length > 0) {
-      return DealsListView(_scrollController, deals, ableToLoadMore,
-          loadDeals, loadDealsFuture);
+      return DealsListView(
+          _scrollController, deals, ableToLoadMore, loadDeals, loadDealsFuture);
     } else if (loading) {
       return Center(
         child: CircularProgressIndicator(

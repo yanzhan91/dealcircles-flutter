@@ -1,4 +1,5 @@
-import 'package:dealcircles_flutter/models/constants.dart';
+import 'package:dealcircles_flutter/models/screen_size.dart';
+import 'package:dealcircles_flutter/services/screen_size_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,10 @@ class DealsCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         ApiService.addClicks(deal);
-        if (kIsWeb && kIsWeb && MediaQuery.of(context).size.width >= Constants.screenMedium) {
+        if (ScreenSizeService.compareSize(context, ScreenSize.SMALL)) {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => DealDetails(deal)));
+        } else {
           showDialog(context: context,builder: (BuildContext context) {
             return AlertDialog(
               content: Container(
@@ -26,9 +30,6 @@ class DealsCard extends StatelessWidget {
               ),
             );
           });
-        } else {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => DealDetails(deal)));
         }
       },
       child: Stack(
@@ -72,9 +73,9 @@ class DealsCard extends StatelessWidget {
     return Container(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
-        child: kIsWeb && MediaQuery.of(context).size.width >= Constants.screenMedium
-            ? _createBoxTile(context, priceItems)
-            : _createRowTile(context, priceItems),
+        child: ScreenSizeService.compareSize(context, ScreenSize.SMALL)
+            ? _createRowTile(context, priceItems)
+            : _createBoxTile(context, priceItems),
       ),
     );
   }
@@ -127,11 +128,10 @@ class DealsCard extends StatelessWidget {
       children: <Widget>[
         Column(
           children: <Widget>[
-            Expanded(
-              child: Image.network(
-                deal.images.length > 0 ? deal.images[0] : deal.img,
-                fit: BoxFit.contain,
-              ),
+            Image.network(
+              deal.images.length > 0 ? deal.images[0] : deal.img,
+              fit: BoxFit.fitHeight,
+              height: 200,
             ),
             SizedBox(width: 15),
             Flexible(

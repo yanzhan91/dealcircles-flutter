@@ -1,8 +1,9 @@
+import 'package:dealcircles_flutter/models/screen_size.dart';
+import 'package:dealcircles_flutter/services/screen_size_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import '../models/constants.dart';
 import 'deal_card.dart';
 
 class DealsListView extends StatelessWidget {
@@ -17,8 +18,8 @@ class DealsListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return kIsWeb && MediaQuery.of(context).size.width > Constants.screenMedium
-        ? _webView(context) : _appView(context);
+    return ScreenSizeService.compareSize(context, ScreenSize.SMALL)
+        ? _appView(context) : _webView(context);
   }
 
   Widget _appView(BuildContext context) {
@@ -44,29 +45,38 @@ class DealsListView extends StatelessWidget {
 
   Widget _webView(BuildContext context) {
     int crossCount = 1;
-    if (MediaQuery.of(context).size.width >= Constants.screenFull) {
-      crossCount = 8;
-    }  else if (MediaQuery.of(context).size.width >= Constants.screenHigh) {
-      crossCount = 6;
-    } else if (MediaQuery.of(context).size.width >= Constants.screenMedium) {
+    if (ScreenSizeService.compareSize(context, ScreenSize.FULL)) {
+      crossCount = 7;
+    }  else if (ScreenSizeService.compareSize(context, ScreenSize.HIGH)) {
+      crossCount = 4;
+    } else if (ScreenSizeService.compareSize(context, ScreenSize.MEDIUM)) {
       crossCount = 4;
     }
 
-    double ratio = MediaQuery.of(context).size.width / crossCount / 260;
+    double ratio = MediaQuery.of(context).size.width / crossCount / 380;
 
     List<Widget> widgets = List();
     widgets.addAll(deals.map((deal) => DealsCard(deal)).toList());
     widgets.add(_loadMoreCard(context));
+    EdgeInsets edgeInsets;
+    if (ScreenSizeService.compareSize(context, ScreenSize.MEDIUM)) {
+      edgeInsets = EdgeInsets.only(left: 0, right: 0);
+    } else {
+      edgeInsets = EdgeInsets.only(left: 100, right: 100);
+    }
     return Container(
-      child: CustomScrollView(
-        slivers: [
-          SliverGrid.count(
-            crossAxisCount: crossCount,
-            mainAxisSpacing: 2.0,
-            childAspectRatio: ratio,
-            children: widgets,
-          ),
-        ],
+      child: Padding(
+        padding: edgeInsets,
+        child: CustomScrollView(
+          slivers: [
+            SliverGrid.count(
+              crossAxisCount: crossCount,
+              mainAxisSpacing: 2.0,
+              childAspectRatio: ratio,
+              children: widgets,
+            ),
+          ],
+        ),
       ),
     );
   }
