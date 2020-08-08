@@ -17,8 +17,19 @@ class DealsCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         ApiService.addClicks(deal);
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => DealDetails(deal)));
+        if (kIsWeb && kIsWeb && MediaQuery.of(context).size.width >= Constants.screenMedium) {
+          showDialog(context: context,builder: (BuildContext context) {
+            return AlertDialog(
+              content: Container(
+                width: MediaQuery.of(context).size.width / 1.75,
+                child: DealDetails(deal),
+              ),
+            );
+          });
+        } else {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => DealDetails(deal)));
+        }
       },
       child: Stack(
         children: <Widget>[
