@@ -56,11 +56,23 @@ class DealsListView extends StatelessWidget {
 
   Widget _webView(BuildContext context) {
     int crossCount = 1;
+    double ratio = 0.7;
     if (MediaQuery.of(context).size.width >= Constants.screenFull) {
       crossCount = 8;
+      ratio = 0.66 + (MediaQuery.of(context).size.width - Constants.screenFull) / Constants.screenFull;
+    }  else if (MediaQuery.of(context).size.width >= Constants.screenHigh) {
+      crossCount = 6;
+      ratio = 0.6 + (MediaQuery.of(context).size.width - Constants.screenHigh) / Constants.screenHigh;
     } else if (MediaQuery.of(context).size.width >= Constants.screenMedium) {
-      crossCount = 5;
+      crossCount = 4;
+      ratio = 0.6 + (MediaQuery.of(context).size.width - Constants.screenMedium) / Constants.screenMedium;
     }
+
+    // width / count / 200 = 0.6
+
+    ratio = MediaQuery.of(context).size.width / crossCount / 230;
+    print(MediaQuery.of(context).size.width);
+    print(ratio);
 
     return Container(
       child: CustomScrollView(
@@ -68,7 +80,7 @@ class DealsListView extends StatelessWidget {
           SliverGrid.count(
             crossAxisCount: crossCount,
             mainAxisSpacing: 2.0,
-            childAspectRatio: .7,
+            childAspectRatio: ratio,
             children: deals.map((deal) => DealsCard(deal)).toList(),
           ),
         ],

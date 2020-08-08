@@ -48,11 +48,13 @@ class DealsCard extends StatelessWidget {
     ));
     priceItems.add(Text(
       " | ${deal.discount}% Off" + (deal.valid ? "" : " | "),
+      overflow: TextOverflow.clip,
       style: TextStyle(color: Colors.black54, fontSize: 14),
     ));
     if (!deal.valid) {
       priceItems.add(Text(
         "Expired",
+        overflow: TextOverflow.clip,
         style: TextStyle(color: Colors.red, fontSize: 14),
       ));
     }
@@ -80,26 +82,27 @@ class DealsCard extends StatelessWidget {
             SizedBox(width: 15),
             Flexible(
               child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      deal.brand,
-                      style: TextStyle(
-                          color: Colors.black54,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold),
-                      maxLines: 1,
-                    ),
-                    Text(deal.name,
-                        style: TextStyle(color: Colors.black87, fontSize: 18),
-                        maxLines: 2,
-                        // TODO ellipsis not working on web
-                        overflow:
-                            kIsWeb ? TextOverflow.clip : TextOverflow.ellipsis),
-                    Row(
-                      children: priceItems,
-                    )
-                  ]),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    deal.brand,
+                    style: TextStyle(
+                        color: Colors.black54,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold),
+                    maxLines: 1,
+                  ),
+                  Text(deal.name,
+                      style: TextStyle(color: Colors.black87, fontSize: 18),
+                      maxLines: 2,
+                      // TODO ellipsis not working on web
+                      overflow:
+                          kIsWeb ? TextOverflow.clip : TextOverflow.ellipsis),
+                  Row(
+                    children: priceItems,
+                  )
+                ],
+              ),
             ),
           ],
         ),
