@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:dealcircles_flutter/deals_detail/deal_details.dart';
 import 'package:dealcircles_flutter/deals_view/deals_list_view.dart';
 import 'package:dealcircles_flutter/deals_view/zero_deal_view.dart';
+import 'package:dealcircles_flutter/models/constants.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -198,7 +199,7 @@ class _DealsViewState extends State<DealsView> {
         width: MediaQuery
             .of(context)
             .size
-            .width * 0.6,
+            .width * (kIsWeb && MediaQuery.of(context).size.width >= Constants.screenMedium ? 0.25 : 0.6),
         child: Drawer(
           child: generateFilterListView(context),
         ),
