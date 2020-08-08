@@ -362,8 +362,8 @@ class _DealsViewState extends State<DealsView> {
 
   Widget generateListview(BuildContext context) {
     if (deals.length > 0) {
-      return DealsListView(_scrollController, deals, ableToLoadMore, loadDeals,
-          loadDealsFuture);
+      return DealsListView(_scrollController, deals, ableToLoadMore,
+          loadDeals, loadDealsFuture);
     } else if (loading) {
       return Center(
         child: CircularProgressIndicator(

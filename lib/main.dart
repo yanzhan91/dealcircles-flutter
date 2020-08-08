@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'deals_view.dart';
-import 'deals_view_web.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +18,7 @@ class DealsCircleApp extends StatelessWidget {
         primaryColor: Color(0xFF632ade),
         fontFamily: GoogleFonts.openSans().fontFamily
       ),
-      home: kIsWeb && false ? new DealsViewWeb() : new DealsView(),
+      home: DealsView(),
       debugShowCheckedModeBanner: false
     );
   }

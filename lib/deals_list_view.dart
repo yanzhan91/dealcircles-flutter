@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'deal_card.dart';
@@ -15,6 +16,10 @@ class DealsListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return kIsWeb ? _webView(context) : _appView(context);
+  }
+
+  Widget _appView(BuildContext context) {
     return RefreshIndicator(
       color: Colors.white,
       backgroundColor: Theme.of(context).primaryColor,
@@ -47,4 +52,18 @@ class DealsListView extends StatelessWidget {
     );
   }
 
+  Widget _webView(BuildContext context) {
+    return Container(
+      child: CustomScrollView(
+        slivers: [
+          SliverGrid.count(
+            crossAxisCount: MediaQuery.of(context).size.width >= 800 ? 7 : 1,
+            mainAxisSpacing: 2.0,
+            childAspectRatio: .7,
+            children: deals.map((deal) => DealsCard(deal)).toList(),
+          ),
+        ],
+      ),
+    );
+  }
 }
