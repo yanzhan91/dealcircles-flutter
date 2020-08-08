@@ -116,11 +116,11 @@ class DealsCard extends StatelessWidget {
       children: <Widget>[
         Column(
           children: <Widget>[
-            Image.network(
-              deal.images.length > 0 ? deal.images[0] : deal.img,
-              fit: BoxFit.contain,
-              height: 100,
-              width: 100,
+            Expanded(
+              child: Image.network(
+                deal.images.length > 0 ? deal.images[0] : deal.img,
+                fit: BoxFit.contain,
+              ),
             ),
             SizedBox(width: 15),
             Flexible(

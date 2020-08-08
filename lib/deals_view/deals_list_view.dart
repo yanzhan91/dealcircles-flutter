@@ -52,7 +52,7 @@ class DealsListView extends StatelessWidget {
       crossCount = 4;
     }
 
-    double ratio = MediaQuery.of(context).size.width / crossCount / 230;
+    double ratio = MediaQuery.of(context).size.width / crossCount / 260;
 
     List<Widget> widgets = List();
     widgets.addAll(deals.map((deal) => DealsCard(deal)).toList());
