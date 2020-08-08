@@ -25,13 +25,16 @@ class ApiService {
     );
   }
 
-  static Future<List> loadDeals(String sort, String category, String search,
+  static Future<List<Deal>> loadDeals(String id, String sort, String category, String search,
       int length) async {
     Map<String, String> deviceInfo = await _getDeviceId();
     String url = "$BASE_URL/deals?"
         "deviceId=${deviceInfo['deviceId']}&deviceName=${deviceInfo['deviceName']}&offset=$length";
 
     List queryParam = [];
+    if (id != null) {
+      queryParam.add("id=$id");
+    }
     if (sort != null) {
       queryParam.add("sort=$sort");
     }
@@ -48,7 +51,7 @@ class ApiService {
 
     print(url);
     final response = await http.get(url);
-    List deals = [];
+    List<Deal> deals = [];
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       data.forEach((r) => deals.add(Deal.fromJson(r)));
@@ -75,19 +78,20 @@ class ApiService {
   static Future<Map<String, String>> _getDeviceId() async {
     if (deviceId == null || deviceName == null) {
       try {
-        DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
         if (kIsWeb) {
           deviceId = 'web';
           deviceName = 'web';
         } else if (Platform.isAndroid) {
-          AndroidDeviceInfo androidDeviceInfo =
-          await deviceInfoPlugin.androidInfo;
+          AndroidDeviceInfo androidDeviceInfo = await DeviceInfoPlugin().androidInfo;
           deviceId = androidDeviceInfo.androidId;
-          deviceName = androidDeviceInfo.device;
+          deviceName = androidDeviceInfo.isPhysicalDevice ? androidDeviceInfo.device : 'virtual';
         } else if (Platform.isIOS) {
-          IosDeviceInfo iosDeviceInfo = await deviceInfoPlugin.iosInfo;
+          IosDeviceInfo iosDeviceInfo = await DeviceInfoPlugin().iosInfo;
           deviceId = iosDeviceInfo.identifierForVendor;
-          deviceName = iosDeviceInfo.name;
+          deviceName = iosDeviceInfo.isPhysicalDevice ? iosDeviceInfo.name : 'virtual';
+        } else if (kIsWeb) {
+          deviceId = 'web';
+          deviceName = 'web';
         }
       } on Exception {
         deviceId = '';

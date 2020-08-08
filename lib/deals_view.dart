@@ -1,7 +1,9 @@
 import 'dart:ui';
 
 import 'package:dealcircles_flutter/deal_details.dart';
-import 'package:dealcircles_flutter/theme_colors.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'Deal.dart';
@@ -25,8 +27,137 @@ class _DealsViewState extends State<DealsView> {
   ScrollController _scrollController = new ScrollController();
   TextEditingController _textEditingController = new TextEditingController();
 
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
+  void _setupFirebaseMessage() {
+    _firebaseMessaging.requestNotificationPermissions();
+    _firebaseMessaging.getToken().then((value) => print(value));
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print('AppPushs onMessage : $message');
+        if (message.containsKey('id')) {
+          _showItemDialog(message['id'], message['image'], message['name'],
+              message['price'], message['discount']);
+        } else if (message.containsKey('data')) {
+          Map<dynamic, dynamic> data = message['data'];
+          if (data.containsKey('id')) {
+            _showItemDialog(data['id'], data['image'], data['name'],
+                data['price'], data['discount']);
+          }
+        }
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print('AppPushs onResume : $message');
+        if (message.containsKey('id')) {
+          _navigateWithId(message['id']);
+        } else if (message.containsKey('data')) {
+          Map<dynamic, dynamic> data = message['data'];
+          if (data.containsKey('id')) {
+            _navigateWithId(data['id']);
+          }
+        }
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        print('AppPushs onLaunch : $message');
+        if (message.containsKey('id')) {
+          _navigateWithId(message['id']);
+        } else if (message.containsKey('data')) {
+          Map<dynamic, dynamic> data = message['data'];
+          if (data.containsKey('id')) {
+            _navigateWithId(data['id']);
+          }
+        }
+      },
+    );
+  }
+
+  void _navigateWithId(String id) async {
+    if (id != null && id.length > 0) {
+      List<Deal> deals = await ApiService.loadDeals(id, null, null, null, null);
+      if (deals.length > 0) {
+        Navigator.popUntil(context, (route) => route is PageRoute);
+        Navigator.push(
+            context,
+            MaterialPageRoute<void>(
+                builder: (BuildContext context) => DealDetails(deals[0])));
+      }
+    }
+  }
+
+  void _showItemDialog(String id, String image, String name, String price, String discount) {
+    showDialog<bool>(
+        context: context,
+        builder: (_) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  'Deal of the Day',
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
+                SizedBox(height: 20,),
+                if (image != null)
+                  Image.network(
+                    image,
+                    fit: BoxFit.fill,
+                  ),
+                Text(name,
+                    style: TextStyle(color: Colors.black87, fontSize: 18),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      "$price",
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      " | $discount% Off",
+                      style: TextStyle(color: Colors.black54, fontSize: 16),
+                    ),
+                  ],
+                )
+              ],
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: const Text('Close'),
+                textColor: Theme.of(context).primaryColor,
+                onPressed: () {
+                  Navigator.pop(context, false);
+                },
+              ),
+              FlatButton(
+                child: const Text('Show'),
+                textColor: Theme.of(context).primaryColor,
+                onPressed: () {
+                  Navigator.pop(context, true);
+                },
+              ),
+            ],
+          );
+        }).then((bool shouldNavigate) {
+          if (shouldNavigate != null && shouldNavigate) {
+            _navigateWithId(id);
+          }
+        });
+  }
+
   @override
   void initState() {
+    if (!kIsWeb) {
+      _setupFirebaseMessage();
+    }
     deals = [];
     categories = [];
     loadDeals();
@@ -321,17 +452,18 @@ class _DealsViewState extends State<DealsView> {
   }
 
   Widget addNewFlag(Deal deal) {
-    DateTime now = DateTime.now().toUtc();
-    if (now.year == deal.createDate.year &&
-        now.month == deal.createDate.month &&
-        now.day == deal.createDate.day) {
+    DateTime now = DateTime.now();
+    DateTime posted = deal.createDate.toLocal();
+    if (now.year == posted.year &&
+        now.month == posted.month &&
+        now.day == posted.day) {
       return Align(
         alignment: Alignment.topLeft,
         child: Padding(
           padding: EdgeInsets.all(3),
           child: Icon(
             Icons.fiber_new,
-            color: ThemeColors.primary_color,
+            color: Theme.of(context).primaryColor,
           ),
         ),
       );
@@ -349,7 +481,7 @@ class _DealsViewState extends State<DealsView> {
     priceItems.add(Text(
       deal.salePrice,
       style: TextStyle(
-        color: deal.valid ? ThemeColors.primary_color : Colors.black54,
+        color: deal.valid ? Theme.of(context).primaryColor : Colors.black54,
         fontSize: 18,
         fontWeight: FontWeight.bold,
       ),
@@ -367,41 +499,148 @@ class _DealsViewState extends State<DealsView> {
     return Container(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
-        child: Row(
+        child: Stack(
           children: <Widget>[
-            Image.network(
-              deal.img,
-              fit: BoxFit.contain,
-              height: 80,
-              width: 80,
-            ),
-            SizedBox(width: 15),
-            new Flexible(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        deal.brand,
-                        style: TextStyle(
-                            color: Colors.black54,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold),
-                        maxLines: 1,
-                      ),
-                      Text(deal.name,
-                          style: TextStyle(color: Colors.black87, fontSize: 18),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis),
-                    ],
+            Row(
+              children: <Widget>[
+                Image.network(
+                  deal.images.length > 0 ? deal.images[0] : deal.img,
+                  fit: BoxFit.contain,
+                  height: 80,
+                  width: 80,
+                ),
+                SizedBox(width: 15),
+                Flexible(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          deal.brand,
+                          style: TextStyle(
+                              color: Colors.black54,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold),
+                          maxLines: 1,
+                        ),
+                        Text(deal.name,
+                            style: TextStyle(color: Colors.black87, fontSize: 18),
+                            maxLines: 2,
+                            overflow: kIsWeb ? TextOverflow.clip : TextOverflow.ellipsis
+                        ),
+                        Row(
+                          children: priceItems,
+                        )
+                      ]
                   ),
-                  Row(
-                    children: priceItems,
-                  )
-                ],
-              ),
+                ),
+              ],
+            ),
+            GestureDetector(
+              onTap: () {
+                showDialog(context: context, builder: (BuildContext context) {
+                  return AlertDialog(
+                    content: Container(
+                      height: 152,
+                      child: Stack(
+                        overflow: Overflow.visible,
+                        alignment: Alignment.center,
+                        children: <Widget>[
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.whatshot,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                  SizedBox(width: 10,),
+                                  Text('Top Brand', style: TextStyle(color: Theme.of(context).primaryColor,),),
+                                ],
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.star,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                  SizedBox(width: 10,),
+                                  Text('4+ Stars', style: TextStyle(color: Theme.of(context).primaryColor,),),
+                                ],
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.attach_money,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                  SizedBox(width: 10,),
+                                  Text('Deal of the Day', style: TextStyle(color: Theme.of(context).primaryColor,),),
+                                ],
+                              )
+                            ],
+                          ),
+                          Positioned(
+                            top: -90,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.asset(
+                                "assets/icon_120.jpg",
+                                fit: BoxFit.cover,
+                                height: 80,
+                                width: 80,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    contentPadding: EdgeInsets.fromLTRB(40, 50, 40, 0),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text("OK"),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      )
+                    ],
+                  );
+                });
+              },
+              child: Align(
+                alignment: Alignment.topRight,
+                child: Container(
+                  width: 60,
+                  height: 40,
+                  color: Colors.transparent,
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        if (deal.themes.contains("TopBrand"))
+                          Icon(
+                            Icons.whatshot,
+                            size: 14,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        if (deal.themes.contains("FourStars"))
+                          Icon(
+                            Icons.star,
+                            size: 14,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        if (deal.themes.contains("DealOfTheDay"))
+                          Icon(
+                            Icons.attach_money,
+                            size: 14,
+                            color: Theme.of(context).primaryColor,
+                          )
+                      ],
+                    ),
+                  ),
+                )
+              )
             ),
           ],
         ),
@@ -415,7 +654,7 @@ class _DealsViewState extends State<DealsView> {
     });
 
     List newDeals =
-        await ApiService.loadDeals(sort, category, search, deals.length);
+        await ApiService.loadDeals(null, sort, category, search, deals.length);
 
     if (newDeals.length == 0) {
       setState(() {

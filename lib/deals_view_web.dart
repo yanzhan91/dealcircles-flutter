@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'Deal.dart';
 import 'api_service.dart';
 import 'deal_details.dart';
-import 'theme_colors.dart';
 
 class DealsViewWeb extends StatefulWidget {
   @override
@@ -224,7 +223,7 @@ class _DealsviewWebState extends State<DealsViewWeb> {
         child: CustomScrollView(
           slivers: [
             SliverGrid.count(
-              crossAxisCount: MediaQuery.of(context).size.width >= 800 ? 8 : 1,
+              crossAxisCount: MediaQuery.of(context).size.width >= 800 ? 7 : 1,
               mainAxisSpacing: 2.0,
               childAspectRatio: .7,
               children: deals.map((deal) => makeCard(deal)).toList(),
@@ -312,7 +311,7 @@ class _DealsviewWebState extends State<DealsViewWeb> {
           padding: EdgeInsets.all(3),
           child: Icon(
             Icons.fiber_new,
-            color: ThemeColors.primary_color,
+            color: Theme.of(context).primaryColor,
           ),
         ),
       );
@@ -326,7 +325,7 @@ class _DealsviewWebState extends State<DealsViewWeb> {
     priceItems.add(Text(
       deal.salePrice,
       style: TextStyle(
-        color: deal.valid ? ThemeColors.primary_color : Colors.black54,
+        color: deal.valid ? Theme.of(context).primaryColor : Colors.black54,
         fontSize: 18,
         fontWeight: FontWeight.bold,
       ),
@@ -365,7 +364,7 @@ class _DealsviewWebState extends State<DealsViewWeb> {
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
                       ),
-                      maxLines: 2,
+                      maxLines: 1,
                     ),
                     Text(
                       deal.name,
@@ -373,9 +372,8 @@ class _DealsviewWebState extends State<DealsViewWeb> {
                         color: Colors.black87,
                         fontSize: 14,
                       ),
-                      maxLines: 4,
-                      softWrap: true,
-                      overflow: TextOverflow.ellipsis,
+                      maxLines: 3,
+//                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
@@ -396,7 +394,7 @@ class _DealsviewWebState extends State<DealsViewWeb> {
     });
 
     List newDeals =
-        await ApiService.loadDeals(sort, category, search, deals.length);
+        await ApiService.loadDeals(null, sort, category, search, deals.length);
 
 //    List newDeals = [
 //      Deal(

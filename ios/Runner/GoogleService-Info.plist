@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>814068818499-h07ssvk9dn8i88q8of5gksjf2dfbsbm6.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.814068818499-h07ssvk9dn8i88q8of5gksjf2dfbsbm6</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCN9TkbH1aFBeJKClzxYGS6jMQU5zmuVls</string>
+	<key>GCM_SENDER_ID</key>
+	<string>814068818499</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.dealcircles.dealcirclesFlutter</string>
+	<key>PROJECT_ID</key>
+	<string>dealcircles-c2d17</string>
+	<key>STORAGE_BUCKET</key>
+	<string>dealcircles-c2d17.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:814068818499:ios:c4db67b85df91a59736af6</string>
+	<key>DATABASE_URL</key>
+	<string>https://dealcircles-c2d17.firebaseio.com</string>
+</dict>
+</plist>

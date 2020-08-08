@@ -1,6 +1,9 @@
+import 'dart:math';
 import 'dart:ui';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dealcircles_flutter/Deal.dart';
+import 'package:dealcircles_flutter/UnorderedTextList.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';
@@ -18,6 +21,9 @@ class DealDetails extends StatefulWidget {
 }
 
 class _DealDetailsState extends State<DealDetails> {
+
+  int _current = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,6 +44,16 @@ class _DealDetailsState extends State<DealDetails> {
             },
           ),
         ],
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+            size: 28,
+          ),
+          onPressed: () {
+            Navigator.popUntil(context, (route) => route.isFirst);
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -46,29 +62,52 @@ class _DealDetailsState extends State<DealDetails> {
               child: Stack(
                 children: <Widget>[
                   GestureDetector(
-                      onTap: openLink,
-                      child: Center(
-                        child: Padding(
-                          padding: EdgeInsets.only(top: 10),
-                          child: SizedBox(
-                            height: MediaQuery.of(context).size.height / 2,
-                            child: Image.network(
-                              widget.deal.img,
-                              fit: BoxFit.contain,
-                            ),
-                          ),
+                    onTap: openLink,
+                    child: CarouselSlider.builder(
+                      itemCount: max(widget.deal.images.length, 1),
+                      itemBuilder: (BuildContext context, int itemIndex) => Container(
+                        child: Image.network(
+                          widget.deal.images.length > 0 ? widget.deal.images[itemIndex] : widget.deal.img,
+                          fit: BoxFit.contain,
                         ),
-                      )),
+                      ),
+                      options: CarouselOptions(
+                        height: MediaQuery.of(context).size.width,
+                        autoPlay: false,
+                        viewportFraction: 1,
+                        initialPage: 0,
+                        enableInfiniteScroll: false,
+                        reverse: false,
+                        scrollDirection: Axis.horizontal,
+                        onPageChanged: (index, reason) {
+                          setState(() {
+                            _current = index;
+                          });
+                        }
+                      ),
+                    ),
+                  ),
                   Align(
                     alignment: Alignment.topRight,
                     child: Padding(
                       padding: EdgeInsets.only(top: 15, right: 15),
                       child: CircleAvatar(
-                        radius: 28,
+                        radius: 32,
                         backgroundColor: Theme.of(context).primaryColor,
-                        child: Text(
-                          "${widget.deal.discount}%",
-                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              "${widget.deal.discount}%",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.white, fontSize: 20),
+                            ),
+                            Text(
+                              "OFF",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.white, fontSize: 16),
+                            )
+                          ],
                         ),
                       ),
                     ),
@@ -76,6 +115,24 @@ class _DealDetailsState extends State<DealDetails> {
                 ],
               ),
             ),
+            if (widget.deal.images.length > 1)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: widget.deal.images.map((url) {
+                  int index = widget.deal.images.indexOf(url);
+                  return Container(
+                    width: 8.0,
+                    height: 8.0,
+                    margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: _current == index
+                          ? Theme.of(context).primaryColor
+                          : Color.fromRGBO(0, 0, 0, 0.25),
+                    ),
+                  );
+                }).toList(),
+              ),
             Stack(
               children: <Widget>[
                 Padding(
@@ -103,12 +160,42 @@ class _DealDetailsState extends State<DealDetails> {
                           decoration: TextDecoration.lineThrough,
                         ),
                       ),
-                      Text(
-                        widget.deal.salePrice,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 28,
-                            color: Theme.of(context).primaryColor),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Text(
+                            widget.deal.salePrice,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 28,
+                                color: Theme.of(context).primaryColor),
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.star,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              Icon(
+                                Icons.star,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              Icon(
+                                Icons.star,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              Icon(
+                                Icons.star,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              Icon(
+                                Icons.star_border,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ],
+                          )
+                        ],
                       ),
                       SizedBox(height: 10),
                       SizedBox(
@@ -128,6 +215,23 @@ class _DealDetailsState extends State<DealDetails> {
                           ),
                         ),
                       ),
+                      if (widget.deal.descriptions != null && widget.deal.descriptions.length > 0)
+                        Padding(
+                          padding: EdgeInsets.only(top: 10, bottom: 10),
+                          child: Text(widget.deal.descriptions.length == 0 ? "Description" : "Features",
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      if (widget.deal.descriptions != null && widget.deal.descriptions.length == 1)
+                        Text(
+                          widget.deal.descriptions[0],
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      if (widget.deal.descriptions != null && widget.deal.descriptions.length > 1)
+                        UnorderedTextList(
+                          widget.deal.descriptions,
+                          TextStyle(fontSize: 16),
+                        ),
                     ],
                   ),
                 ),
@@ -136,15 +240,16 @@ class _DealDetailsState extends State<DealDetails> {
                   child: Padding(
                       padding: EdgeInsets.only(top: 15, right: 15),
                       child: widget.deal.valid
-                          ? Text(
-                              fetchDaysAgo(widget.deal),
-                              style:
-                                  TextStyle(fontSize: 12, color: Colors.black),
-                            )
-                          : Text(
-                              "Expired",
-                              style: TextStyle(fontSize: 12, color: Colors.red),
-                            )),
+                        ? Text(
+                            fetchDaysAgo(widget.deal),
+                            style:
+                                TextStyle(fontSize: 12, color: Colors.black),
+                          )
+                        : Text(
+                            "Expired",
+                            style: TextStyle(fontSize: 12, color: Colors.red),
+                          ),
+                  ),
                 )
               ],
             ),

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "814068818499",
+    "firebase_url": "https://dealcircles-c2d17.firebaseio.com",
+    "project_id": "dealcircles-c2d17",
+    "storage_bucket": "dealcircles-c2d17.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:814068818499:android:c2c7fb1097f3baef736af6",
+        "android_client_info": {
+          "package_name": "com.dealcircles.dealcircles_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "814068818499-s2ca82ns7qsnqrfb31h4e7ie3291kgi4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdztt7UuhtFHBV013kON1-Jt9p7SN0gew"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "814068818499-s2ca82ns7qsnqrfb31h4e7ie3291kgi4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
