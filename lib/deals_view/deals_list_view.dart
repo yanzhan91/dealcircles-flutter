@@ -34,19 +34,7 @@ class DealsListView extends StatelessWidget {
           if (index < deals.length) {
             return DealsCard(deals[index]);
           } else {
-            return Card(
-              elevation: 4.0,
-              margin:
-              new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-              color: Theme.of(context).primaryColor,
-              child: FlatButton(
-                child: Text(
-                  "Load More",
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-                onPressed: () => loadDeals(),
-              ),
-            );
+            return _loadMoreCard(context);
           }
         },
       ),
@@ -56,24 +44,19 @@ class DealsListView extends StatelessWidget {
 
   Widget _webView(BuildContext context) {
     int crossCount = 1;
-    double ratio = 0.7;
     if (MediaQuery.of(context).size.width >= Constants.screenFull) {
       crossCount = 8;
-      ratio = 0.66 + (MediaQuery.of(context).size.width - Constants.screenFull) / Constants.screenFull;
     }  else if (MediaQuery.of(context).size.width >= Constants.screenHigh) {
       crossCount = 6;
-      ratio = 0.6 + (MediaQuery.of(context).size.width - Constants.screenHigh) / Constants.screenHigh;
     } else if (MediaQuery.of(context).size.width >= Constants.screenMedium) {
       crossCount = 4;
-      ratio = 0.6 + (MediaQuery.of(context).size.width - Constants.screenMedium) / Constants.screenMedium;
     }
 
-    // width / count / 200 = 0.6
+    double ratio = MediaQuery.of(context).size.width / crossCount / 230;
 
-    ratio = MediaQuery.of(context).size.width / crossCount / 230;
-    print(MediaQuery.of(context).size.width);
-    print(ratio);
-
+    List<Widget> widgets = List();
+    widgets.addAll(deals.map((deal) => DealsCard(deal)).toList());
+    widgets.add(_loadMoreCard(context));
     return Container(
       child: CustomScrollView(
         slivers: [
@@ -81,9 +64,24 @@ class DealsListView extends StatelessWidget {
             crossAxisCount: crossCount,
             mainAxisSpacing: 2.0,
             childAspectRatio: ratio,
-            children: deals.map((deal) => DealsCard(deal)).toList(),
+            children: widgets,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _loadMoreCard(BuildContext context) {
+    return Card(
+      elevation: 4.0,
+      margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+      color: Theme.of(context).primaryColor,
+      child: FlatButton(
+        child: Text(
+          "Load More",
+          style: TextStyle(color: Colors.white, fontSize: 18),
+        ),
+        onPressed: () => loadDeals(),
       ),
     );
   }
