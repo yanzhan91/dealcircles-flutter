@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../models/constants.dart';
 import 'deal_card.dart';
 
 class DealsListView extends StatelessWidget {
@@ -16,7 +17,8 @@ class DealsListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return kIsWeb ? _webView(context) : _appView(context);
+    return kIsWeb && MediaQuery.of(context).size.width > Constants.screenMedium
+        ? _webView(context) : _appView(context);
   }
 
   Widget _appView(BuildContext context) {
@@ -53,11 +55,18 @@ class DealsListView extends StatelessWidget {
   }
 
   Widget _webView(BuildContext context) {
+    int crossCount = 1;
+    if (MediaQuery.of(context).size.width >= Constants.screenFull) {
+      crossCount = 8;
+    } else if (MediaQuery.of(context).size.width >= Constants.screenMedium) {
+      crossCount = 5;
+    }
+
     return Container(
       child: CustomScrollView(
         slivers: [
           SliverGrid.count(
-            crossAxisCount: MediaQuery.of(context).size.width >= 800 ? 7 : 1,
+            crossAxisCount: crossCount,
             mainAxisSpacing: 2.0,
             childAspectRatio: .7,
             children: deals.map((deal) => DealsCard(deal)).toList(),

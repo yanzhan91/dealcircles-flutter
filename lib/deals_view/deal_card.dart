@@ -1,3 +1,4 @@
+import 'package:dealcircles_flutter/models/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -41,24 +42,24 @@ class DealsCard extends StatelessWidget {
       deal.salePrice,
       style: TextStyle(
         color: deal.valid ? Theme.of(context).primaryColor : Colors.black54,
-        fontSize: 18,
+        fontSize: 14,
         fontWeight: FontWeight.bold,
       ),
     ));
     priceItems.add(Text(
       " | ${deal.discount}% Off" + (deal.valid ? "" : " | "),
-      style: TextStyle(color: Colors.black54, fontSize: 16),
+      style: TextStyle(color: Colors.black54, fontSize: 14),
     ));
     if (!deal.valid) {
       priceItems.add(Text(
         "Expired",
-        style: TextStyle(color: Colors.red, fontSize: 16),
+        style: TextStyle(color: Colors.red, fontSize: 14),
       ));
     }
     return Container(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
-        child: kIsWeb
+        child: kIsWeb && MediaQuery.of(context).size.width >= Constants.screenMedium
             ? _createBoxTile(context, priceItems)
             : _createRowTile(context, priceItems),
       ),
