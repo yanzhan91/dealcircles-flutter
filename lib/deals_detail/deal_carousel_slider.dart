@@ -63,27 +63,30 @@ class _DealCarouselSliderState extends State<DealCarouselSlider> {
     return Stack(
       alignment: Alignment.center,
       children: [
-        CarouselSlider.builder(
-          itemCount: max(widget.images.length, 1),
-          itemBuilder: (BuildContext context, int itemIndex) => Container(
-            child: Image.network(
-              widget.images.length > 0 ? widget.images[itemIndex] : widget.img,
-              fit: BoxFit.contain,
+        IgnorePointer(
+          ignoring: true,
+          child: CarouselSlider.builder(
+            itemCount: max(widget.images.length, 1),
+            itemBuilder: (BuildContext context, int itemIndex) => Container(
+              child: Image.network(
+                widget.images.length > 0 ? widget.images[itemIndex] : widget.img,
+                fit: BoxFit.contain,
+              ),
             ),
-          ),
-          carouselController: _buttonCarouselController,
-          options: CarouselOptions(
-            autoPlay: false,
-            viewportFraction: 1,
-            initialPage: 0,
-            enableInfiniteScroll: false,
-            reverse: false,
-            scrollDirection: Axis.horizontal,
-            onPageChanged: (index, reason) {
-              setState(() {
-                _current = index;
-              });
-            },
+            carouselController: _buttonCarouselController,
+            options: CarouselOptions(
+              autoPlay: false,
+              viewportFraction: 1,
+              initialPage: 0,
+              enableInfiniteScroll: true,
+              reverse: false,
+              scrollDirection: Axis.horizontal,
+              onPageChanged: (index, reason) {
+                setState(() {
+                  _current = index;
+                });
+              },
+            ),
           ),
         ),
         Align(
