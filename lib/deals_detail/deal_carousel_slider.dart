@@ -93,6 +93,7 @@ class _DealCarouselSliderState extends State<DealCarouselSlider> {
           alignment: Alignment.centerLeft,
           child: IconButton(
             icon: Icon(Icons.chevron_left),
+            color: Theme.of(context).primaryColor,
             onPressed: () => _buttonCarouselController.previousPage(),
           ),
         ),
@@ -100,6 +101,7 @@ class _DealCarouselSliderState extends State<DealCarouselSlider> {
           alignment: Alignment.centerRight,
           child: IconButton(
             icon: Icon(Icons.chevron_right),
+            color: Theme.of(context).primaryColor,
             onPressed: () => _buttonCarouselController.nextPage(),
           ),
         )

@@ -1,5 +1,7 @@
 import 'package:dealcircles_flutter/models/Deal.dart';
+import 'package:dealcircles_flutter/models/screen_size.dart';
 import 'package:dealcircles_flutter/services/api_service.dart';
+import 'package:dealcircles_flutter/services/screen_size_service.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -35,6 +37,16 @@ class _DealContentState extends State<DealContent> {
                 child: DealCarouselSlider(widget.deal.images, widget.deal.img),
               ),
               _createPercentOffWidget(context),
+              if (!ScreenSizeService.compareSize(context, ScreenSize.SMALL))
+                Align(
+                  alignment: Alignment.topRight,
+                  child: IconButton(
+                    icon: Icon(Icons.clear),
+                    color: Theme.of(context).primaryColor,
+                    iconSize: 30,
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                )
             ],
           ),
         ),
@@ -151,7 +163,8 @@ class _DealContentState extends State<DealContent> {
 
   Widget _createPercentOffWidget(BuildContext context) {
     return Align(
-      alignment: Alignment.topRight,
+      alignment: ScreenSizeService.compareSize(context, ScreenSize.SMALL)
+          ? Alignment.topRight : Alignment.topLeft,
       child: Padding(
         padding: EdgeInsets.only(top: 15, right: 15),
         child: CircleAvatar(
