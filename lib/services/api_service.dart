@@ -6,7 +6,8 @@ import 'package:http/http.dart' as http;
 import '../models/Deal.dart';
 
 class ApiService {
-  static const String BASE_URL = "https://api.dealcircles.com";
+//  static const String BASE_URL = "https://api.dealcircles.com";
+  static const String BASE_URL = "https://6pw42de2q1.execute-api.us-east-1.amazonaws.com/prod";
   static String deviceId;
   static String deviceName;
 
@@ -27,6 +28,7 @@ class ApiService {
 
   static Future<List<Deal>> loadDeals(String id, String sort, String category, String search,
       int length) async {
+
     Map<String, String> deviceInfo = await _getDeviceId();
     String url = "$BASE_URL/deals?"
         "deviceId=${deviceInfo['deviceId']}&deviceName=${deviceInfo['deviceName']}&offset=$length";
@@ -50,12 +52,15 @@ class ApiService {
     }
 
     print(url);
+
+//    return [
+//      Deal('', 'sort = $sort', [], 'category = $category', '', 'search = $search', 0, '', [], '', '', DateTime.now(), false, {}),
+//    ];
+
     final response = await http.get(url);
-    List<Deal> deals = [];
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      data.forEach((r) => deals.add(Deal.fromJson(r)));
-      return deals;
+      final List data = json.decode(response.body);
+      return data.map((e) => Deal.fromJson(e)).toList();
     } else {
       print('Failed to load deals ${response.statusCode}: ${response.body}');
       return [];

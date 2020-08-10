@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class ScreenSizeService {
   static int _screenFull = 1850;
   static int _screenHigh = 1400;
-  static int _screenMedium = 915;
+  static int _screenMedium = 950;
 
   static ScreenSize getSize(BuildContext context) {
     if (MediaQuery.of(context).size.width >= _screenFull) {

@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ZeroDealView extends StatelessWidget {
-  final VoidCallback loadDeals;
+  final Function({String sort, String category, String search}) setFilters;
 
-  const ZeroDealView(this.loadDeals);
+  const ZeroDealView(this.setFilters);
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +36,7 @@ class ZeroDealView extends StatelessWidget {
               ),
               textColor: Colors.white,
               onPressed: () {
-                loadDeals();
+                setFilters(sort: 'newest', category: null, search: null);
               },
             ),
           ],

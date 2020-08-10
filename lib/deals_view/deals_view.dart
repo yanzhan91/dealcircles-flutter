@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:dealcircles_flutter/deals_detail/deal_details.dart';
-import 'package:dealcircles_flutter/deals_view/deals_list_view.dart';
 import 'package:dealcircles_flutter/deals_view/zero_deal_view.dart';
 import 'package:dealcircles_flutter/models/screen_size.dart';
 import 'package:dealcircles_flutter/services/screen_size_service.dart';
@@ -12,6 +11,9 @@ import 'package:flutter/material.dart';
 
 import '../models/Deal.dart';
 import '../services/api_service.dart';
+import 'custom_sliver_appbar.dart';
+import 'deal_card.dart';
+import 'filter_drawer.dart';
 
 class DealsView extends StatefulWidget {
   @override
@@ -29,8 +31,6 @@ class _DealsViewState extends State<DealsView> {
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final ScrollController _scrollController = new ScrollController();
-  final TextEditingController _textEditingController =
-      new TextEditingController();
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   void _setupFirebaseMessage() {
@@ -168,7 +168,7 @@ class _DealsViewState extends State<DealsView> {
     deals = [];
     categories = [];
     loadDeals();
-    loadCategories();
+    _loadCategories();
     super.initState();
   }
 
@@ -178,6 +178,7 @@ class _DealsViewState extends State<DealsView> {
       key: _scaffoldKey,
       appBar: AppBar(
         elevation: 0.1,
+        centerTitle: false,
         title: GestureDetector(
           onTap: () => _scrollController.animateTo(0,
               duration: Duration(seconds: 1), curve: Curves.ease),
@@ -190,223 +191,164 @@ class _DealsViewState extends State<DealsView> {
         leading: Image.asset("assets/logo.png"),
         backgroundColor: Theme.of(context).primaryColor,
         actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.tune,
-              color: Colors.white,
-              size: 28,
-            ),
-            onPressed: () => _scaffoldKey.currentState.openEndDrawer(),
-          )
+          if (ScreenSizeService.compareSize(context, ScreenSize.SMALL))
+            IconButton(
+              icon: Icon(
+                Icons.tune,
+                color: Colors.white,
+                size: 28,
+              ),
+              onPressed: () => _scaffoldKey.currentState.openEndDrawer(),
+            )
         ],
       ),
-      endDrawer: SizedBox(
-        width: MediaQuery.of(context).size.width *
-            (ScreenSizeService.compareSize(context, ScreenSize.SMALL)
-                ? 0.6 : 0.25),
-        child: Drawer(
-          child: generateFilterListView(context),
-        ),
-      ),
-      body: generateListview(context),
+      endDrawer: ScreenSizeService.compareSize(context, ScreenSize.SMALL)
+          ? FilterDrawer(categories: categories, setFilters: setFilters,
+          sort: sort, category: category, search: search) : null,
+      body: _generateListview(context),
     );
   }
 
-  Widget generateFilterListView(BuildContext context) {
-    List<Widget> widgets = [];
-    widgets.add(
-      Padding(
-        padding: EdgeInsets.only(left: 10, right: 10, bottom: 15),
-        child: TextField(
-          controller: _textEditingController,
-          onChanged: (text) {
-            setState(() {});
-          },
-          decoration: InputDecoration(
-            hintText: "Search",
-            prefixIcon: Icon(
-              Icons.search,
-              size: 20,
-              color: Theme.of(context).primaryColor,
-            ),
-            suffixIcon: _textEditingController.text.length > 0
-                ? IconButton(
-                    icon: Icon(
-                      Icons.clear,
-                      size: 20,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _textEditingController.clear();
-                        search = null;
-                      });
-                    },
-                  )
-                : null,
-          ),
-          onEditingComplete: () {
-            search = _textEditingController.text;
-            if (search == null || search == '') {
-              search = null;
-              _textEditingController.clear();
-              FocusScopeNode currentFocus = FocusScope.of(context);
-
-              if (!currentFocus.hasPrimaryFocus) {
-                currentFocus.unfocus();
-              }
-            } else {
-              category = null;
-              deals.clear();
-              loadDeals();
-              Navigator.pop(context);
-            }
-          },
-        ),
-      ),
-    );
-
-    if ((sort != null && sort.isNotEmpty && sort != "newest") ||
-        (category != null && category.isNotEmpty && category != "All") ||
-        (search != null && search.isNotEmpty)) {
-      widgets.add(
-        ListTile(
-          title: Text(
-            "Clear",
-            style: TextStyle(fontSize: 16),
-          ),
-          onTap: () {
-            deals.clear();
-            setFilters(sort: "newest", category: null, search: null);
-            loadDeals();
-            Navigator.pop(context);
-          },
+  Widget _generateListview(BuildContext context) {
+    if (deals.length > 0) {
+      return ScreenSizeService.compareSize(context, ScreenSize.SMALL)
+          ? _appView(context) : _webView(context);
+    } else if (loading) {
+      return Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
         ),
       );
+    } else {
+      sort = 'newest';
+      return ZeroDealView(setFilters);
     }
-
-    widgets.add(addDrawerListTileHeader("Sort"));
-    widgets.add(addDrawerListTile("Newest", sort == "newest",
-        () => setFilters(sort: "newest", category: category, search: search)));
-    widgets.add(addDrawerListTile("Most Popular", sort == "popular",
-        () => setFilters(sort: "popular", category: category, search: search)));
-    widgets.add(addDrawerListTile(
-        "Discount",
-        sort == "discount",
-        () =>
-            setFilters(sort: "discount", category: category, search: search)));
-    widgets.add(addDrawerListTile(
-        "Price Low to High",
-        sort == "low_high",
-        () =>
-            setFilters(sort: "low_high", category: category, search: search)));
-    widgets.add(addDrawerListTile(
-        "Price High to Low",
-        sort == "high_low",
-        () =>
-            setFilters(sort: "high_low", category: category, search: search)));
-
-    widgets.add(addDrawerListTileHeader("Categories"));
-    widgets.add(addDrawerListTile("All", category == null,
-        () => setFilters(category: null, search: null, sort: sort)));
-
-    for (String c in categories) {
-      widgets.add(addDrawerListTile(c, category == c,
-          () => setFilters(category: c, search: null, sort: sort)));
-    }
-
-    return new ListView(children: widgets);
   }
 
-  ListTile addDrawerListTileHeader(String name) {
-    return ListTile(
-      title: Text(
-        name,
-        style: TextStyle(
-          color: Theme.of(context).primaryColor,
-          fontWeight: FontWeight.bold,
-          decoration: TextDecoration.underline,
-          fontSize: 18,
-        ),
+  Widget _appView(BuildContext context) {
+    return RefreshIndicator(
+      color: Colors.white,
+      backgroundColor: Theme.of(context).primaryColor,
+      child: ListView.builder(
+        controller: _scrollController,
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        itemCount: deals.length + (ableToLoadMore ? 1 : 0),
+        itemBuilder: (BuildContext context, int index) {
+          if (index < deals.length) {
+            return DealsCard(deals[index]);
+          } else {
+            return _loadMoreCard(context);
+          }
+        },
       ),
-      enabled: false,
+      onRefresh: loadDealsRefresh,
     );
   }
 
-  ListTile addDrawerListTile(String name, bool selected, Function setValue) {
-    return ListTile(
-      title: Text(
-        name,
-        style: TextStyle(fontSize: 16),
+  Widget _loadMoreCard(BuildContext context) {
+    return Card(
+      elevation: 4.0,
+      margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+      color: Theme.of(context).primaryColor,
+      child: FlatButton(
+        child: Text(
+          "Load More",
+          style: TextStyle(color: Colors.white, fontSize: 18),
+        ),
+        onPressed: () => loadDeals(),
       ),
-      selected: selected,
-      onTap: () {
-        deals.clear();
-        setValue();
-        loadDeals();
-        Navigator.pop(context);
-      },
+    );
+  }
+
+  Widget _webView(BuildContext context) {
+    int crossCount = 1;
+    if (ScreenSizeService.compareSize(context, ScreenSize.FULL)) {
+      crossCount = 7;
+    } else if (ScreenSizeService.compareSize(context, ScreenSize.HIGH)) {
+      crossCount = 4;
+    } else if (ScreenSizeService.compareSize(context, ScreenSize.MEDIUM)) {
+      crossCount = 4;
+    }
+
+    double ratio = MediaQuery.of(context).size.width / crossCount / 380;
+
+    List<Widget> widgets = List();
+    widgets.addAll(deals.map((deal) => DealsCard(deal)).toList());
+    if (ableToLoadMore) {
+      widgets.add(_loadMoreCard(context));
+    }
+    EdgeInsets edgeInsets;
+    if (ScreenSizeService.compareSize(context, ScreenSize.MEDIUM)) {
+      edgeInsets = EdgeInsets.only(left: 0, right: 0);
+    } else {
+      edgeInsets = EdgeInsets.only(left: 100, right: 100);
+    }
+    return Container(
+      child: Padding(
+        padding: edgeInsets,
+        child: CustomScrollView(
+          controller: _scrollController,
+          slivers: [
+            SliverPadding(
+              padding: EdgeInsets.fromLTRB(15, 15, 15, 0),
+              sliver: SliverPersistentHeader(
+                delegate: CustomSliverAppBar(
+                    expandedHeight: 200,
+                    setFilters: setFilters,
+                    sort: sort,
+                    category: category,
+                    search: search,
+                    categories: categories
+                ),
+                pinned: true,
+              ),
+            ),
+            SliverGrid.count(
+              crossAxisCount: crossCount,
+              mainAxisSpacing: 2.0,
+              childAspectRatio: ratio,
+              children: widgets,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
   void setFilters({String sort, String category, String search}) {
+    deals.clear();
     this.sort = sort;
     this.category = category;
     this.search = search;
-
-    if (search == null) {
-      _textEditingController.clear();
-    }
+    loadDeals();
   }
 
-  Widget generateListview(BuildContext context) {
-    if (deals.length > 0) {
-      return DealsListView(
-          _scrollController, deals, ableToLoadMore, loadDeals, loadDealsFuture);
-    } else if (loading) {
-      return Center(
-        child: CircularProgressIndicator(
-          valueColor:
-              AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
-        ),
-      );
-    } else {
-      setFilters(sort: 'newest');
-      return ZeroDealView(loadDeals);
-    }
+  void _loadCategories() async {
+    List temp = await ApiService.loadCategories();
+    setState(() {
+      categories = temp;
+    });
   }
 
   void loadDeals() async {
+
     setState(() {
       loading = true;
     });
 
     List newDeals =
-        await ApiService.loadDeals(null, sort, category, search, deals.length);
+    await ApiService.loadDeals(null, sort, category, search, deals.length);
 
-    if (newDeals.length == 0) {
-      setState(() {
-        ableToLoadMore = false;
-        loading = false;
-      });
-    } else {
-      setState(() {
-        ableToLoadMore = newDeals.length == 30;
-        deals.addAll(newDeals);
-        loading = false;
-      });
-    }
+    setState(() {
+      ableToLoadMore = newDeals.length == 30;
+      deals.addAll(newDeals);
+      loading = false;
+    });
   }
 
-  Future<void> loadDealsFuture() async {
+  Future<void> loadDealsRefresh() async {
     deals.clear();
     loadDeals();
-  }
-
-  void loadCategories() async {
-    List temp = await ApiService.loadCategories();
-    setState(() {
-      categories = temp;
-    });
   }
 }
