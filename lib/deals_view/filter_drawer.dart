@@ -19,7 +19,9 @@ class FilterDrawer extends StatelessWidget {
     @required this.sort,
     @required this.category,
     @required this.search
-  });
+  }) {
+    _textEditingController.text = this.search;
+  }
 
   @override
   Widget build(BuildContext context) {

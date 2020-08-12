@@ -19,7 +19,9 @@ class CustomSliverAppBar extends SliverPersistentHeaderDelegate {
     @required this.sort,
     @required this.category,
     @required this.search,
-  });
+  }) {
+    _textEditingController.text = this.search;
+  }
 
   @override
   Widget build(
