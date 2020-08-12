@@ -16,6 +16,10 @@ import 'deal_card.dart';
 import 'filter_drawer.dart';
 
 class DealsView extends StatefulWidget {
+  final String id;
+
+  const DealsView({this.id});
+
   @override
   _DealsViewState createState() => _DealsViewState();
 }
@@ -164,6 +168,31 @@ class _DealsViewState extends State<DealsView> {
   void initState() {
     if (!kIsWeb) {
       _setupFirebaseMessage();
+    } else {
+      if (widget.id != null && widget.id.isNotEmpty) {
+        ApiService.loadDeals(widget.id, null, null, null, 0).then((value) => {
+          if (value != null && value.length > 0) {
+            if (ScreenSizeService.compareSize(context, ScreenSize.SMALL)) {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) => DealDetails(value[0])))
+            } else {
+              showDialog(context: context, builder: (BuildContext context) {
+                return AlertDialog(
+                  content: Container(
+                    width: MediaQuery
+                        .of(context)
+                        .size
+                        .width / 1.75,
+                    child: DealDetails(value[0]),
+                  ),
+                );
+              })
+            }
+          }
+        });
+      }
     }
     deals = [];
     categories = [];

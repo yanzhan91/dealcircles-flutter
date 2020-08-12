@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -18,7 +17,11 @@ class DealsCircleApp extends StatelessWidget {
         primaryColor: Color(0xFF632ade),
         fontFamily: GoogleFonts.openSans().fontFamily
       ),
-      home: DealsView(),
+      onGenerateRoute: (settings) {
+        return MaterialPageRoute(
+          builder: (context) => DealsView(id: settings.name.split('/').last)
+        );
+      },
       debugShowCheckedModeBanner: false
     );
   }
