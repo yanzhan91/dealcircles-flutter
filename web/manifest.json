@@ -1,11 +1,11 @@
 {
-    "name": "dealcircles_flutter",
-    "short_name": "dealcircles_flutter",
+    "name": "DealCircles",
+    "short_name": "DealCircles",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#FFFFFF",
+    "theme_color": "#632ADE",
+    "description": "Dealcircles Flutter project.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
