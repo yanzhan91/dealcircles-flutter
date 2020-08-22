@@ -74,15 +74,15 @@ class FilterDrawer extends StatelessWidget {
           (category != null && category.isNotEmpty && category != "All") ||
           (search != null && search.isNotEmpty))
             ListTile(
-            title: Text(
-              "Clear",
-              style: TextStyle(fontSize: 16),
+              title: Text(
+                "Clear",
+                style: TextStyle(fontSize: 16),
+              ),
+              onTap: () {
+                setFilters(sort: 'newest', category: null, search: null);
+                Navigator.pop(context);
+              },
             ),
-            onTap: () {
-              setFilters(sort: 'newest', category: null, search: null);
-              Navigator.pop(context);
-            },
-          ),
           addDrawerListTileHeader(context, "Sort"),
           addSortListTile(context, 'Newest', 'newest'),
           addSortListTile(context, 'Most Popular', 'popular'),
@@ -92,7 +92,7 @@ class FilterDrawer extends StatelessWidget {
           addDrawerListTileHeader(context, "Category"),
           addCategoryListTile(context, 'All', null),
           for (String category in categories)
-            addSortListTile(context, category, category),
+            addCategoryListTile(context, category, category),
         ]),
       ),
     );
