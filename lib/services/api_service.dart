@@ -13,7 +13,7 @@ class ApiService {
   static void addClicks(Deal deal) async {
     Map<String, String> deviceInfo = await _getDeviceId();
     String url = "$BASE_URL/clicks";
-    print(url);
+    _printUrl(url);
     http.post(
       url,
       body: jsonEncode(
@@ -50,7 +50,7 @@ class ApiService {
       url = Uri.encodeFull(url);
     }
 
-    print(url);
+    _printUrl(url);
 
 //    return [
 //      Deal('', 'sort = $sort', [], 'category = $category', '', 'search = $search', 0, '', [], '', '', DateTime.now(), false, {}),
@@ -61,27 +61,27 @@ class ApiService {
       final List data = json.decode(response.body);
       return data.map((e) => Deal.fromJson(e)).toList();
     } else {
-      print('Failed to load deals ${response.statusCode}: ${response.body}');
+      _printUrl('Failed to load deals ${response.statusCode}: ${response.body}');
       return [];
     }
   }
 
   static Future<List> loadCategories() async {
     String url = "$BASE_URL/categories";
-    print(url);
+    _printUrl(url);
 
     final response = await http.get(url);
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
-      print('Failed to load deals ${response.statusCode}: ${response.body}');
+      _printUrl('Failed to load deals ${response.statusCode}: ${response.body}');
       return [];
     }
   }
 
   static Future<void> contactUs(String email, String message) async {
     String url = "$BASE_URL/contact";
-    print(url);
+    _printUrl(url);
     String body = '$email\n\n$message';
     http.post(url, body: body);
   }
@@ -114,5 +114,11 @@ class ApiService {
       'deviceId': deviceId,
       'deviceName': deviceName,
     };
+  }
+
+  static void _printUrl(String url) {
+    if (!kIsWeb) {
+      print(url);
+    }
   }
 }
