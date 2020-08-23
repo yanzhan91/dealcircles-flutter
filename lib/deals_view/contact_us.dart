@@ -1,6 +1,11 @@
+import 'package:dealcircles_flutter/services/api_service.dart';
 import 'package:flutter/material.dart';
 
 class ContactUs extends StatelessWidget {
+
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController messageController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -15,6 +20,7 @@ class ContactUs extends StatelessWidget {
               ),
               SizedBox(height: 15,),
               TextFormField(
+                controller: emailController,
                 decoration: InputDecoration(
                   labelText: 'Email (Optional)',
                   border: OutlineInputBorder(),
@@ -22,6 +28,7 @@ class ContactUs extends StatelessWidget {
               ),
               SizedBox(height: 15,),
               TextFormField(
+                controller: messageController,
                 decoration: InputDecoration(
                   labelText: 'Message',
                   border: OutlineInputBorder(),
@@ -34,6 +41,7 @@ class ContactUs extends StatelessWidget {
                 child: RaisedButton(
                   color: Theme.of(context).primaryColor,
                   onPressed: () {
+                    ApiService.contactUs(emailController.text, messageController.text);
                     Navigator.pop(context);
                   },
                   child: Text('Send', style: TextStyle(color: Colors.white),),

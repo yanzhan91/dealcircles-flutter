@@ -80,6 +80,13 @@ class ApiService {
     }
   }
 
+  static Future<void> contactUs(String email, String message) async {
+    String url = "$BASE_URL/contact";
+    print(url);
+    String body = '$email\n\n$message';
+    http.post(url, body: body);
+  }
+
   static Future<Map<String, String>> _getDeviceId() async {
     if (deviceId == null || deviceName == null) {
       try {
