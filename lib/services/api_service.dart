@@ -6,8 +6,7 @@ import 'package:http/http.dart' as http;
 import '../models/Deal.dart';
 
 class ApiService {
-//  static const String BASE_URL = "https://api.dealcircles.com";
-  static const String BASE_URL = "https://6pw42de2q1.execute-api.us-east-1.amazonaws.com/prod";
+  static const String BASE_URL = "https://api.dealcircles.com";
   static String deviceId;
   static String deviceName;
 
