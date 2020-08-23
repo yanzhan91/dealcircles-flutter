@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:dealcircles_flutter/deals_detail/deal_details.dart';
+import 'package:dealcircles_flutter/deals_view/web_footer.dart';
 import 'package:dealcircles_flutter/deals_view/zero_deal_view.dart';
 import 'package:dealcircles_flutter/models/screen_size.dart';
 import 'package:dealcircles_flutter/services/screen_size_service.dart';
@@ -8,6 +9,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../models/Deal.dart';
 import '../services/api_service.dart';
@@ -220,6 +222,74 @@ class _DealsViewState extends State<DealsView> {
         leading: Image.asset("assets/logo.png"),
         backgroundColor: Theme.of(context).primaryColor,
         actions: <Widget>[
+          if (kIsWeb && ScreenSizeService.compareSize(context, ScreenSize.SMALL))
+            PopupMenuButton(
+              itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+                PopupMenuItem(
+                  value: 1,
+                    child: ListTile(
+                      leading: ImageIcon(
+                        AssetImage('app_store.png'),
+                      ),
+                      title: Text('App Store'),
+                    )
+                ),
+                PopupMenuItem(
+                  value: 2,
+                  child: ListTile(
+                    leading: ImageIcon(
+                      AssetImage('google_play.png'),
+                    ),
+                    title: Text('Google Play'),
+                  )
+                ),
+              ],
+              icon: Icon(
+                Icons.file_download,
+                color: Colors.white,
+                size: 26,
+              ),
+              onSelected: (value) {
+                if (value == 1) {
+                  openLink('https://apps.apple.com/us/app/apple-store/id1511193296');
+                } else {
+                  openLink('https://play.google.com/store/apps/details?id=com.dealcircles.dealcircles_flutter');
+                }
+              },
+              offset: Offset.fromDirection(90, 50),
+            ),
+          if (kIsWeb && !ScreenSizeService.compareSize(context, ScreenSize.SMALL))
+            RaisedButton(
+              color: Theme.of(context).primaryColor,
+              elevation: 0,
+              child: Row(
+                children: [
+                  ImageIcon(
+                    AssetImage('app_store.png'),
+                    color: Colors.white,
+                  ),
+                  SizedBox(width: 10,),
+                  Text('App Store', style: TextStyle(color: Colors.white),),
+                ],
+              ),
+              onPressed: () => openLink('https://apps.apple.com/us/app/apple-store/id1511193296'),
+            ),
+          if (kIsWeb && !ScreenSizeService.compareSize(context, ScreenSize.SMALL))
+            RaisedButton(
+              color: Theme.of(context).primaryColor,
+              elevation: 0,
+              child: Row(
+                children: [
+                  ImageIcon(
+                    AssetImage('google_play.png'),
+                    color: Colors.white,
+                  ),
+                  SizedBox(width: 10,),
+                  Text('Google Play', style: TextStyle(color: Colors.white),),
+                ],
+              ),
+              onPressed: () => openLink('https://play.google.com/store/apps/details?id=com.dealcircles.dealcircles_flutter'),
+            ),
           if (ScreenSizeService.compareSize(context, ScreenSize.SMALL))
             IconButton(
               icon: Icon(
@@ -228,7 +298,7 @@ class _DealsViewState extends State<DealsView> {
                 size: 28,
               ),
               onPressed: () => _scaffoldKey.currentState.openEndDrawer(),
-            )
+            ),
         ],
       ),
       endDrawer: ScreenSizeService.compareSize(context, ScreenSize.SMALL)
@@ -307,41 +377,46 @@ class _DealsViewState extends State<DealsView> {
     if (ableToLoadMore) {
       widgets.add(_loadMoreCard(context));
     }
-    EdgeInsets edgeInsets;
-    if (ScreenSizeService.compareSize(context, ScreenSize.MEDIUM)) {
-      edgeInsets = EdgeInsets.only(left: 0, right: 0);
-    } else {
-      edgeInsets = EdgeInsets.only(left: 100, right: 100);
-    }
-    return Container(
-      child: Padding(
-        padding: edgeInsets,
-        child: CustomScrollView(
-          controller: _scrollController,
-          slivers: [
-            SliverPadding(
-              padding: EdgeInsets.fromLTRB(15, 15, 15, 0),
-              sliver: SliverPersistentHeader(
-                delegate: CustomSliverAppBar(
-                    expandedHeight: 200,
-                    setFilters: setFilters,
-                    sort: sort,
-                    category: category,
-                    search: search,
-                    categories: categories
-                ),
-                pinned: true,
-              ),
+    return CustomScrollView(
+      controller: _scrollController,
+      slivers: [
+        SliverPadding(
+          padding: EdgeInsets.only(
+              left: ScreenSizeService.compareSize(context, ScreenSize.MEDIUM) ? 15 : 115,
+              right: ScreenSizeService.compareSize(context, ScreenSize.MEDIUM) ? 15 : 115,
+              top: 15,
+              bottom: 0,
+          ),
+          sliver: SliverPersistentHeader(
+            delegate: CustomSliverAppBar(
+                expandedHeight: 200,
+                setFilters: setFilters,
+                sort: sort,
+                category: category,
+                search: search,
+                categories: categories
             ),
-            SliverGrid.count(
-              crossAxisCount: crossCount,
-              mainAxisSpacing: 2.0,
-              childAspectRatio: ratio,
-              children: widgets,
-            ),
-          ],
+            pinned: true,
+          ),
         ),
-      ),
+        SliverPadding(
+          padding: EdgeInsets.only(
+            left: ScreenSizeService.compareSize(context, ScreenSize.MEDIUM) ? 0 : 100,
+            right: ScreenSizeService.compareSize(context, ScreenSize.MEDIUM) ? 0 : 100,
+            top: 0,
+            bottom: 50,
+          ),
+          sliver: SliverGrid.count(
+            crossAxisCount: crossCount,
+            mainAxisSpacing: 2.0,
+            childAspectRatio: ratio,
+            children: widgets,
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: WebFooter(),
+        )
+      ],
     );
   }
 
@@ -379,5 +454,11 @@ class _DealsViewState extends State<DealsView> {
   Future<void> loadDealsRefresh() async {
     deals.clear();
     loadDeals();
+  }
+
+  void openLink(String link) async {
+    if (await canLaunch(link)) {
+      await launch(link, forceSafariVC: false);
+    }
   }
 }
