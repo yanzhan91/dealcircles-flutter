@@ -229,7 +229,7 @@ class _DealsViewState extends State<DealsView> {
                   value: 1,
                     child: ListTile(
                       leading: ImageIcon(
-                        AssetImage('app_store.png'),
+                        AssetImage('assets/app_store.png'),
                       ),
                       title: Text('App Store'),
                     )
@@ -238,7 +238,7 @@ class _DealsViewState extends State<DealsView> {
                   value: 2,
                   child: ListTile(
                     leading: ImageIcon(
-                      AssetImage('google_play.png'),
+                      AssetImage('assets/google_play.png'),
                     ),
                     title: Text('Google Play'),
                   )
@@ -265,7 +265,7 @@ class _DealsViewState extends State<DealsView> {
               child: Row(
                 children: [
                   ImageIcon(
-                    AssetImage('app_store.png'),
+                    AssetImage('assets/app_store.png'),
                     color: Colors.white,
                   ),
                   SizedBox(width: 10,),
@@ -281,7 +281,7 @@ class _DealsViewState extends State<DealsView> {
               child: Row(
                 children: [
                   ImageIcon(
-                    AssetImage('google_play.png'),
+                    AssetImage('assets/google_play.png'),
                     color: Colors.white,
                   ),
                   SizedBox(width: 10,),

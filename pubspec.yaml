@@ -52,9 +52,7 @@ flutter:
     - assets/logo.png
     - assets/icon_120.jpg
     - assets/app_store.png
-    - assets/google_play.jpg
-  #  - images/a_dot_burr.jpeg
-  #  - images/a_dot_ham.jpeg
+    - assets/google_play.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
