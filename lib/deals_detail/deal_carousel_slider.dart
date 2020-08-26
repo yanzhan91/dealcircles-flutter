@@ -27,7 +27,8 @@ class _DealCarouselSliderState extends State<DealCarouselSlider> {
       children: [
         ScreenSizeService.compareSize(context, ScreenSize.SMALL)
             ? _createAppCarouselSlider(context) : _createWebCarouselSlider(context),
-        _createPaginationIcons()
+        if (widget.images.length > 1)
+          _createPaginationIcons()
       ],
     );
   }
@@ -89,22 +90,24 @@ class _DealCarouselSliderState extends State<DealCarouselSlider> {
             ),
           ),
         ),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: IconButton(
-            icon: Icon(Icons.chevron_left),
-            color: Theme.of(context).primaryColor,
-            onPressed: () => _buttonCarouselController.previousPage(),
+        if (widget.images.length > 1)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: IconButton(
+              icon: Icon(Icons.chevron_left),
+              color: Theme.of(context).primaryColor,
+              onPressed: () => _buttonCarouselController.previousPage(),
+            ),
           ),
-        ),
-        Align(
-          alignment: Alignment.centerRight,
-          child: IconButton(
-            icon: Icon(Icons.chevron_right),
-            color: Theme.of(context).primaryColor,
-            onPressed: () => _buttonCarouselController.nextPage(),
-          ),
-        )
+        if (widget.images.length > 1)
+          Align(
+            alignment: Alignment.centerRight,
+            child: IconButton(
+              icon: Icon(Icons.chevron_right),
+              color: Theme.of(context).primaryColor,
+              onPressed: () => _buttonCarouselController.nextPage(),
+            ),
+          )
       ],
     );
   }
