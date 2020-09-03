@@ -215,6 +215,7 @@ class _DealsViewState extends State<DealsView> {
               duration: Duration(seconds: 1), curve: Curves.ease),
           child: Text(
             'DealCircles',
+            overflow: TextOverflow.visible,
             style: TextStyle(
                 color: Colors.white, fontWeight: FontWeight.bold, fontSize: 28),
           ),
