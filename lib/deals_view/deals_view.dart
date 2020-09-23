@@ -388,16 +388,14 @@ class _DealsViewState extends State<DealsView> {
               top: 15,
               bottom: 0,
           ),
-          sliver: SliverPersistentHeader(
-            delegate: CustomSliverAppBar(
-                expandedHeight: 200,
+          sliver: SliverToBoxAdapter(
+            child: CustomSliverAppBar(
                 setFilters: setFilters,
                 sort: sort,
                 category: category,
                 search: search,
                 categories: categories
             ),
-            pinned: true,
           ),
         ),
         SliverPadding(
