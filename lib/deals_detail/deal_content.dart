@@ -77,21 +77,20 @@ class _DealContentState extends State<DealContent> {
                       decoration: TextDecoration.lineThrough,
                     ),
                   ),
-                  if (widget.deal.ratings != null && widget.deal.numReviews != null)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: <Widget>[
-                        Text(
-                          widget.deal.salePrice,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 28,
-                              color: Theme.of(context).primaryColor),
-                        ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        widget.deal.salePrice,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 28,
+                            color: Theme.of(context).primaryColor),
+                      ),
+                      if (widget.deal.ratings != null && widget.deal.numReviews != null)
                         _createRatingStars(widget.deal.ratings, widget.deal.numReviews),
-                      ],
-                    ),
+                    ],
+                  ),
                   SizedBox(height: 10),
                   if (widget.deal.store == 'Amazon')
                     UnorderedTextList(
@@ -204,11 +203,13 @@ class _DealContentState extends State<DealContent> {
 
   Widget _createRatingStars(double ratings, int numReviews) {
     double ratingsInt = ratings.toInt().toDouble();
-    print(ratings - ratingsInt);
-    if (ratings - ratingsInt >= .5) {
+    double decimal = ratings - ratingsInt;
+    if (decimal >= 0.8) {
+      ratings = ratings.roundToDouble();
+    } else if (decimal >= 0.3) {
       ratings = ratingsInt + 0.5;
-    } else if (ratings - ratingsInt >= 0.8) {
-      ratings = ratingsInt + 1.0;
+    } else {
+      ratings = ratings.roundToDouble();
     }
 
     List<Widget> ratingWidgets = [];
@@ -219,7 +220,7 @@ class _DealContentState extends State<DealContent> {
           color: Theme.of(context).primaryColor,
         ));
         ratings -= 1.0;
-      } else if (ratings > 0.5) {
+      } else if (ratings >= 0.5) {
         ratingWidgets.add(Icon(
           Icons.star_half,
           color: Theme.of(context).primaryColor,
