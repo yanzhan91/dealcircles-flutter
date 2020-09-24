@@ -77,20 +77,21 @@ class _DealContentState extends State<DealContent> {
                       decoration: TextDecoration.lineThrough,
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: <Widget>[
-                      Text(
-                        widget.deal.salePrice,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 28,
-                            color: Theme.of(context).primaryColor),
-                      ),
-                      _createRatingStars(widget.deal.ratings, widget.deal.numReviews),
-                    ],
-                  ),
+                  if (widget.deal.ratings != null && widget.deal.numReviews != null)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        Text(
+                          widget.deal.salePrice,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 28,
+                              color: Theme.of(context).primaryColor),
+                        ),
+                        _createRatingStars(widget.deal.ratings, widget.deal.numReviews),
+                      ],
+                    ),
                   SizedBox(height: 10),
                   if (widget.deal.store == 'Amazon')
                     UnorderedTextList(
@@ -202,7 +203,6 @@ class _DealContentState extends State<DealContent> {
   }
 
   Widget _createRatingStars(double ratings, int numReviews) {
-    print(ratings);
     double ratingsInt = ratings.toInt().toDouble();
     print(ratings - ratingsInt);
     if (ratings - ratingsInt >= .5) {
