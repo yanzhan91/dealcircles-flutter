@@ -88,10 +88,21 @@ class _DealContentState extends State<DealContent> {
                             fontSize: 28,
                             color: Theme.of(context).primaryColor),
                       ),
-                      _createRatingStars(),
+                      _createRatingStars(widget.deal.ratings, widget.deal.numReviews),
                     ],
                   ),
                   SizedBox(height: 10),
+                  if (widget.deal.store == 'Amazon')
+                    UnorderedTextList(
+                     [
+                       if (widget.deal.promoCode != null)
+                         'Apply promo code ${widget.deal.promoCode} to get full discount',
+                       'Free shipping with Prime or orders of \$25 or more',
+                       'Don\'t have prime membership? Try free for 30 days'
+                     ],
+                      TextStyle(fontSize: 16),
+                    ),
+                    SizedBox(height: 10),
                   SizedBox(
                     width: MediaQuery.of(context).size.width,
                     child: RaisedButton(
@@ -190,30 +201,49 @@ class _DealContentState extends State<DealContent> {
     );
   }
 
-  Widget _createRatingStars() {
+  Widget _createRatingStars(double ratings, int numReviews) {
+    print(ratings);
+    double ratingsInt = ratings.toInt().toDouble();
+    print(ratings - ratingsInt);
+    if (ratings - ratingsInt >= .5) {
+      ratings = ratingsInt + 0.5;
+    } else if (ratings - ratingsInt >= 0.8) {
+      ratings = ratingsInt + 1.0;
+    }
+
+    List<Widget> ratingWidgets = [];
+    while (ratings > 0) {
+      if (ratings >= 1) {
+        ratingWidgets.add(Icon(
+          Icons.star,
+          color: Theme.of(context).primaryColor,
+        ));
+        ratings -= 1.0;
+      } else if (ratings > 0.5) {
+        ratingWidgets.add(Icon(
+          Icons.star_half,
+          color: Theme.of(context).primaryColor,
+        ));
+        ratings -= 0.5;
+      } else {
+        break;
+      }
+    }
+    while (ratingWidgets.length < 5) {
+      ratingWidgets.add(Icon(
+        Icons.star_border,
+        color: Theme.of(context).primaryColor,
+      ));
+    }
+
+    ratingWidgets.add(SizedBox(width: 10,));
+    ratingWidgets.add(Text(
+      "$numReviews",
+      style: TextStyle(color: Theme.of(context).primaryColor),
+    ));
+
     return Row(
-      children: <Widget>[
-        Icon(
-          Icons.star,
-          color: Theme.of(context).primaryColor,
-        ),
-        Icon(
-          Icons.star,
-          color: Theme.of(context).primaryColor,
-        ),
-        Icon(
-          Icons.star,
-          color: Theme.of(context).primaryColor,
-        ),
-        Icon(
-          Icons.star,
-          color: Theme.of(context).primaryColor,
-        ),
-        Icon(
-          Icons.star_border,
-          color: Theme.of(context).primaryColor,
-        ),
-      ],
+      children: ratingWidgets
     );
   }
 

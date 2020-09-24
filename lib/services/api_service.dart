@@ -121,7 +121,7 @@ class ApiService {
   }
 
   static void _printUrl(String url) {
-    if (!kIsWeb) {
+    if (kDebugMode) {
       print(url);
     }
   }
