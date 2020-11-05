@@ -164,11 +164,9 @@ class DealsCard extends StatelessWidget {
   }
 
   Widget _addNewFlag(BuildContext context, Deal deal) {
-    DateTime now = DateTime.now();
-    DateTime posted = deal.createDate.toLocal();
-    if (now.year == posted.year &&
-        now.month == posted.month &&
-        now.day == posted.day) {
+    DateTime yesterday = DateTime.now().toUtc().subtract(Duration(hours: 24));
+    DateTime posted = deal.createDate;
+    if (posted.isAfter(yesterday)) {
       return Align(
         alignment: Alignment.topLeft,
         child: Padding(
