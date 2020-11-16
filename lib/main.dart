@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:dealcircles_flutter/price_alerts_view/price_alert_view.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -15,6 +18,8 @@ class DealCirclesApp extends StatefulWidget {
 
 class _DealCirclesAppState extends State<DealCirclesApp> {
   int _currentIndex = 0;
+  DealsView _dealsView = null;
+  PriceAlertView _priceAlertView = null;
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +37,20 @@ class _DealCirclesAppState extends State<DealCirclesApp> {
   }
 
   Widget buildScreen(settings) {
-    return new Scaffold(
-      body: DealsView(id: settings.name.split('/').last),
-      bottomNavigationBar: buildBottomNavigationBar(),
-    );
+    if ((Platform.isAndroid || Platform.isIOS)) {
+      if (_currentIndex == 0 && _dealsView == null) {
+        _dealsView = DealsView(id: settings.name.split('/').last);
+      } else if (_currentIndex == 1 && _priceAlertView == null) {
+        _priceAlertView = PriceAlertView();
+      }
+
+      return Scaffold(
+        body: _currentIndex == 0 ? _dealsView : _priceAlertView,
+        bottomNavigationBar: buildBottomNavigationBar(),
+      );
+    } else {
+      return DealsView(id: settings.name.split('/').last);
+    }
   }
 
   BottomNavigationBar buildBottomNavigationBar() {
