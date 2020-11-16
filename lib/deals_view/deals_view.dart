@@ -5,13 +5,11 @@ import 'package:dealcircles_flutter/deals_view/web_footer.dart';
 import 'package:dealcircles_flutter/deals_view/zero_deal_view.dart';
 import 'package:dealcircles_flutter/models/screen_size.dart';
 import 'package:dealcircles_flutter/services/screen_size_service.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../models/Deal.dart';
 import '../services/api_service.dart';
 import 'custom_sliver_appbar.dart';
 import 'deal_card.dart';
@@ -37,164 +35,32 @@ class _DealsViewState extends State<DealsView> {
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final ScrollController _scrollController = new ScrollController();
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-
-  void _setupFirebaseMessage() {
-    _firebaseMessaging.requestNotificationPermissions();
-    _firebaseMessaging.getToken().then((value) => print(value));
-    _firebaseMessaging.configure(
-      onMessage: (Map<String, dynamic> message) async {
-        print('AppPushs onMessage : $message');
-        if (message.containsKey('id')) {
-          _showItemDialog(message['id'], message['image'], message['name'],
-              message['price'], message['discount']);
-        } else if (message.containsKey('data')) {
-          Map<dynamic, dynamic> data = message['data'];
-          if (data.containsKey('id')) {
-            _showItemDialog(data['id'], data['image'], data['name'],
-                data['price'], data['discount']);
-          }
-        }
-      },
-      onResume: (Map<String, dynamic> message) async {
-        print('AppPushs onResume : $message');
-        if (message.containsKey('id')) {
-          _navigateWithId(message['id']);
-        } else if (message.containsKey('data')) {
-          Map<dynamic, dynamic> data = message['data'];
-          if (data.containsKey('id')) {
-            _navigateWithId(data['id']);
-          }
-        }
-      },
-      onLaunch: (Map<String, dynamic> message) async {
-        print('AppPushs onLaunch : $message');
-        if (message.containsKey('id')) {
-          _navigateWithId(message['id']);
-        } else if (message.containsKey('data')) {
-          Map<dynamic, dynamic> data = message['data'];
-          if (data.containsKey('id')) {
-            _navigateWithId(data['id']);
-          }
-        }
-      },
-    );
-  }
-
-  void _navigateWithId(String id) async {
-    if (id != null && id.length > 0) {
-      List<Deal> deals = await ApiService.loadDeals(id, null, null, null, null);
-      if (deals.length > 0) {
-        Navigator.popUntil(context, (route) => route is PageRoute);
-        Navigator.push(
-            context,
-            MaterialPageRoute<void>(
-                builder: (BuildContext context) => DealDetails(deals[0])));
-      }
-    }
-  }
-
-  void _showItemDialog(
-      String id, String image, String name, String price, String discount) {
-    showDialog<bool>(
-        context: context,
-        builder: (_) {
-          return AlertDialog(
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(
-                  'Deal of the Day',
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                if (image != null)
-                  Image.network(
-                    image,
-                    fit: BoxFit.fill,
-                  ),
-                Text(name,
-                    style: TextStyle(color: Colors.black87, fontSize: 18),
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      "$price",
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      " | $discount% Off",
-                      style: TextStyle(color: Colors.black54, fontSize: 16),
-                    ),
-                  ],
-                )
-              ],
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: const Text('Close'),
-                textColor: Theme.of(context).primaryColor,
-                onPressed: () {
-                  Navigator.pop(context, false);
-                },
-              ),
-              FlatButton(
-                child: const Text('Show'),
-                textColor: Theme.of(context).primaryColor,
-                onPressed: () {
-                  Navigator.pop(context, true);
-                },
-              ),
-            ],
-          );
-        }).then((bool shouldNavigate) {
-      if (shouldNavigate != null && shouldNavigate) {
-        _navigateWithId(id);
-      }
-    });
-  }
 
   @override
   void initState() {
-    if (!kIsWeb) {
-      _setupFirebaseMessage();
-    } else {
-      if (widget.id != null && widget.id.isNotEmpty) {
-        ApiService.loadDeals(widget.id, null, null, null, 0).then((value) => {
-          if (value != null && value.length > 0) {
-            if (ScreenSizeService.compareSize(context, ScreenSize.SMALL)) {
-              Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (BuildContext context) => DealDetails(value[0])))
-            } else {
-              showDialog(context: context, builder: (BuildContext context) {
-                return AlertDialog(
-                  content: Container(
-                    width: MediaQuery
-                        .of(context)
-                        .size
-                        .width / 1.75,
-                    child: DealDetails(value[0]),
-                  ),
-                );
-              })
-            }
+    if (widget.id != null && widget.id.isNotEmpty) {
+      ApiService.loadDeals(widget.id, null, null, null, 0).then((value) => {
+        if (value != null && value.length > 0) {
+          if (ScreenSizeService.compareSize(context, ScreenSize.SMALL)) {
+            Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) => DealDetails(value[0])))
+          } else {
+            showDialog(context: context, builder: (BuildContext context) {
+              return AlertDialog(
+                content: Container(
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width / 1.75,
+                  child: DealDetails(value[0]),
+                ),
+              );
+            })
           }
-        });
-      }
+        }
+      });
     }
     deals = [];
     categories = [];
