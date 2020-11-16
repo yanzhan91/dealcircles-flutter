@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 import '../models/Deal.dart';
 
 class ApiService {
@@ -123,6 +124,14 @@ class ApiService {
   static void _printUrl(String url) {
     if (kDebugMode) {
       print(url);
+    }
+  }
+
+  static void openLink(String link) async {
+    if (await canLaunch(link)) {
+      await launch(link, forceSafariVC: false);
+    } else {
+      print('Could not launch ' + link);
     }
   }
 }
