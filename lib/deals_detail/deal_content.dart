@@ -92,17 +92,12 @@ class _DealContentState extends State<DealContent> {
                     ],
                   ),
                   SizedBox(height: 10),
-                  if (widget.deal.store == 'Amazon')
+                  if (widget.deal.extra != null && widget.deal.extra.length > 0)
                     UnorderedTextList(
-                     [
-                       if (widget.deal.promoCode != null)
-                         'Apply promo code ${widget.deal.promoCode} to get full discount',
-                       'Free shipping with Prime or orders of \$25 or more',
-                       'Don\'t have prime membership? Try free for 30 days'
-                     ],
+                      widget.deal.extra.split("\n"),
                       TextStyle(fontSize: 16),
                     ),
-                    SizedBox(height: 10),
+                  SizedBox(height: 10),
                   SizedBox(
                     width: MediaQuery.of(context).size.width,
                     child: RaisedButton(
