@@ -118,7 +118,7 @@ class DealsCard extends StatelessWidget {
             ),
           ],
         ),
-        _setThemeIcons(context),
+        // _setThemeIcons(context),
       ],
     );
   }
@@ -158,7 +158,7 @@ class DealsCard extends StatelessWidget {
             ),
           ],
         ),
-        _setThemeIcons(context),
+        // _setThemeIcons(context),
       ],
     );
   }
