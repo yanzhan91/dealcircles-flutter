@@ -1,5 +1,7 @@
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:dealcircles_flutter/price_alerts_view/price_alert.dart';
+import 'package:dealcircles_flutter/price_alerts_view/price_alert_add_view.dart';
+import 'package:dealcircles_flutter/price_alerts_view/price_alert_type.dart';
 import 'package:dealcircles_flutter/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,11 +20,11 @@ class _PriceAlertView extends State<PriceAlertView> {
   @override
   void initState() {
     priceAlerts = [
-      PriceAlert('gb Lufta Sleeper Playard, Mink, gb Lufta Sleeper Playard, Mink', '\$15.67', '\$13.00',
+      PriceAlert(PriceAlertType.URL, 'gb Lufta Sleeper Playard, Mink, gb Lufta Sleeper Playard, Mink', '\$15.67', '\$13.00',
           'https://images-na.ssl-images-amazon.com/images/I/91w5gn1TEHL._SL1500_.jpg', 'link'),
-      PriceAlert('gb Lufta Sleeper Playard, Mink, gb Lufta Sleeper Playard, Mink', '\$15.67', '\$13.00',
+      PriceAlert(PriceAlertType.URL, 'gb Lufta Sleeper Playard, Mink, gb Lufta Sleeper Playard, Mink', '\$15.67', '\$13.00',
           'https://images-na.ssl-images-amazon.com/images/I/91w5gn1TEHL._SL1500_.jpg', 'link'),
-      PriceAlert('gb Lufta Sleeper Playard, Mink, gb Lufta Sleeper Playard, Mink', '\$15.67', '\$13.00',
+      PriceAlert(PriceAlertType.URL, 'gb Lufta Sleeper Playard, Mink, gb Lufta Sleeper Playard, Mink', '\$15.67', '\$13.00',
           'https://images-na.ssl-images-amazon.com/images/I/91w5gn1TEHL._SL1500_.jpg', 'link')
     ];
     super.initState();
@@ -49,35 +51,25 @@ class _PriceAlertView extends State<PriceAlertView> {
               color: Colors.white,
               size: 28,
             ),
-            onPressed: () {
-              showDialog(context: context,builder: (BuildContext context) {
-                return AlertDialog(
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.add_circle_outline,
-                        color: Theme.of(context).primaryColor,
-                        size: 56,
-                      ),
-                      SizedBox(height: 20),
-                      Text(
-                        "To add an alert:\n\n"
-                            "1. Find item on the Amazon app or website\n"
-                            "2. Press share button and share with DealCircles App",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 16),
-                      )
-                    ],
-                  ),
-                );
-              });
-            }
+            onPressed: () => _navigateAndGetNewPriceAlert(context),
           )
         ],
       ),
       body: _generateListview(context),
     );
+  }
+
+  _navigateAndGetNewPriceAlert(BuildContext context) async {
+    final result = await Navigator.push(context,
+        MaterialPageRoute(builder: (context) => PriceAlertAddView()));
+
+    if (result != null) {
+      showDialog(context: context, builder: (BuildContext context) {
+        return AlertDialog(
+            content: Text("$result")
+        );
+      });
+    }
   }
 
   Widget _generateListview(BuildContext context) {
@@ -131,7 +123,7 @@ class _PriceAlertView extends State<PriceAlertView> {
             ),
             SizedBox(height: 10),
             Text(
-              priceAlerts[index].name,
+              priceAlerts[index].text,
               style: TextStyle(fontSize: 24),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -209,7 +201,7 @@ class _PriceAlertView extends State<PriceAlertView> {
             ),
             SizedBox(height: 10),
             Text(
-              priceAlerts[index].name,
+              priceAlerts[index].text,
               style: TextStyle(fontSize: 24),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -287,7 +279,7 @@ class _PriceAlertView extends State<PriceAlertView> {
             ),
             SizedBox(height: 10),
             Text(
-              priceAlerts[index].name,
+              priceAlerts[index].text,
               style: TextStyle(fontSize: 24),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -377,7 +369,7 @@ class _PriceAlertView extends State<PriceAlertView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(priceAlert.name,
+                  Text(priceAlert.text,
                       style: TextStyle(color: Colors.black87, fontSize: 18),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis
