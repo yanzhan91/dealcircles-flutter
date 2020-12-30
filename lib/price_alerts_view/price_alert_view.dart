@@ -1,11 +1,12 @@
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:dealcircles_flutter/price_alerts_view/price_alert.dart';
 import 'package:dealcircles_flutter/price_alerts_view/price_alert_add_view.dart';
+import 'package:dealcircles_flutter/price_alerts_view/price_alert_alert_dialog.dart';
+import 'package:dealcircles_flutter/price_alerts_view/price_alert_product_dialog.dart';
 import 'package:dealcircles_flutter/price_alerts_view/price_alert_type.dart';
 import 'package:dealcircles_flutter/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 class PriceAlertView extends StatefulWidget {
@@ -20,12 +21,11 @@ class _PriceAlertView extends State<PriceAlertView> {
   @override
   void initState() {
     priceAlerts = [
-      PriceAlert(PriceAlertType.URL, 'gb Lufta Sleeper Playard, Mink, gb Lufta Sleeper Playard, Mink', '\$15.67', '\$13.00',
+      PriceAlert(PriceAlertType.URL, 'gb Lufta Sleeper Playard, Mink, gb Lufta Sleeper Playard, Mink', '\$15.67', '\$13',
           'https://images-na.ssl-images-amazon.com/images/I/91w5gn1TEHL._SL1500_.jpg', 'link'),
-      PriceAlert(PriceAlertType.URL, 'gb Lufta Sleeper Playard, Mink, gb Lufta Sleeper Playard, Mink', '\$15.67', '\$13.00',
-          'https://images-na.ssl-images-amazon.com/images/I/91w5gn1TEHL._SL1500_.jpg', 'link'),
-      PriceAlert(PriceAlertType.URL, 'gb Lufta Sleeper Playard, Mink, gb Lufta Sleeper Playard, Mink', '\$15.67', '\$13.00',
-          'https://images-na.ssl-images-amazon.com/images/I/91w5gn1TEHL._SL1500_.jpg', 'link')
+      PriceAlert(PriceAlertType.BRAND_OR_STORE, 'Nike', null, null,
+          'https://i.pinimg.com/originals/33/e6/3d/33e63d5adb0da6b303a83901c8e8463a.png', 'null'),
+      PriceAlert(PriceAlertType.KEYWORD, 'Ipad', null, null, null, 'null')
     ];
     super.initState();
   }
@@ -51,23 +51,21 @@ class _PriceAlertView extends State<PriceAlertView> {
               color: Colors.white,
               size: 28,
             ),
-            onPressed: () => _navigateAndGetNewPriceAlert(context),
-          )
+            onPressed: () => _getNewPriceAlert(context),
+          ),
         ],
       ),
       body: _generateListview(context),
     );
   }
 
-  _navigateAndGetNewPriceAlert(BuildContext context) async {
+  Future _getNewPriceAlert(BuildContext context) async {
     final result = await Navigator.push(context,
         MaterialPageRoute(builder: (context) => PriceAlertAddView()));
 
     if (result != null) {
-      showDialog(context: context, builder: (BuildContext context) {
-        return AlertDialog(
-            content: Text("$result")
-        );
+      setState(() {
+        priceAlerts.add(result);
       });
     }
   }
@@ -111,243 +109,44 @@ class _PriceAlertView extends State<PriceAlertView> {
 
   void showCardDetailDialog(index) {
     showDialog(context: context,builder: (BuildContext context) {
-      return AlertDialog(
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.network(
-              priceAlerts[index].img,
-              fit: BoxFit.contain,
-              height: 200,
-              width: 200,
-            ),
-            SizedBox(height: 10),
-            Text(
-              priceAlerts[index].text,
-              style: TextStyle(fontSize: 24),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            SizedBox(height: 20),
-            IntrinsicHeight(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Column(
-                    children: [
-                      Text("Current Price",
-                        style: TextStyle(color: Theme.of(context).primaryColor),
-                      ),
-                      Text("\$15.87",
-                        style: TextStyle(color: Theme.of(context).primaryColor),
-                      )
-                    ],
-                  ),
-                  VerticalDivider(thickness: 2, color: Colors.black54,),
-                  Column(
-                    children: [
-                      Text("Notify Price"),
-                      Text("\$13.87")
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                RaisedButton(
-                  color: Theme.of(context).primaryColor,
-                  child: Text('See Deal',
-                      style: TextStyle(color: Colors.white, fontSize: 16)),
-                  onPressed: () => ApiService.openLink(priceAlerts[index].link),
-                ),
-                RaisedButton(
-                  color: Theme.of(context).primaryColor,
-                  child: Text('Delete',
-                      style: TextStyle(color: Colors.white, fontSize: 16)),
-                  onPressed: () {
-                    showDeleteConfirmationDialog(context, index);
-                  },
-                ),
-                RaisedButton(
-                  color: Theme.of(context).primaryColor,
-                  child: Text('Edit',
-                      style: TextStyle(color: Colors.white, fontSize: 16)),
-                  onPressed: () => showNewPriceAlertDialog(index),
-                ),
-              ],
-            )
-          ],
-        ),
-      );
-    });
-  }
-
-  void showNewPriceAlertDialog(index) {
-    showDialog(context: context,builder: (BuildContext context) {
-      return AlertDialog(
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.network(
-              priceAlerts[index].img,
-              fit: BoxFit.contain,
-              height: 200,
-              width: 200,
-            ),
-            SizedBox(height: 10),
-            Text(
-              priceAlerts[index].text,
-              style: TextStyle(fontSize: 24),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            SizedBox(height: 20),
-            Text("Current Price",
-              style: TextStyle(color: Theme.of(context).primaryColor),
-            ),
-            Text(priceAlerts[index].price,
-              style: TextStyle(color: Theme.of(context).primaryColor),
-            ),
-            SizedBox(height: 20),
-            Text("Notify when price at or below:"),
-            SizedBox(height: 10),
-            Container(
-              width: 100,
-              child: TextField(
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                keyboardType: TextInputType.number,
-                inputFormatters: [
-                  CurrencyTextInputFormatter(
-                      decimalDigits: 2,
-                      locale: 'en',
-                      symbol: '\$'
-                  )
-                ],
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.zero,
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Theme.of(context).primaryColor),
-                  ),
-                  hintText: priceAlerts[index].price
-                )
-              ),
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                RaisedButton(
-                  color: Theme.of(context).primaryColor,
-                  child: Text('Cancel',
-                      style: TextStyle(color: Colors.white, fontSize: 16)),
-                  onPressed: () => Navigator.pop(context),
-                ),
-                RaisedButton(
-                  color: Theme.of(context).primaryColor,
-                  child: Text('Save',
-                      style: TextStyle(color: Colors.white, fontSize: 16)),
-                  onPressed: () {},
-                ),
-              ],
-            )
-          ],
-        ),
-      );
-    });
-  }
-
-  void showDeleteConfirmationDialog(BuildContext context, index) {
-    showDialog(context: context,builder: (BuildContext context) {
-      return AlertDialog(
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Delete?', style: TextStyle(fontSize: 24),),
-            Image.network(
-              priceAlerts[index].img,
-              fit: BoxFit.contain,
-              height: 200,
-              width: 200,
-            ),
-            SizedBox(height: 10),
-            Text(
-              priceAlerts[index].text,
-              style: TextStyle(fontSize: 24),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            SizedBox(height: 20),
-            IntrinsicHeight(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Column(
-                    children: [
-                      Text("Current Price",
-                        style: TextStyle(color: Theme.of(context).primaryColor),
-                      ),
-                      Text("\$15.87",
-                        style: TextStyle(color: Theme.of(context).primaryColor),
-                      )
-                    ],
-                  ),
-                  VerticalDivider(thickness: 2, color: Colors.black54,),
-                  Column(
-                    children: [
-                      Text("Notify Price"),
-                      Text("\$13.87")
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                RaisedButton(
-                  color: Theme.of(context).primaryColor,
-                  child: Text('Go Back',
-                      style: TextStyle(color: Colors.white, fontSize: 16)),
-                  onPressed: () => Navigator.pop(context),
-                ),
-                RaisedButton(
-                  color: Theme.of(context).primaryColor,
-                  child: Text('Delete',
-                      style: TextStyle(color: Colors.white, fontSize: 16)),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            )
-          ],
-        ),
-      );
+      if (priceAlerts[index].type == PriceAlertType.URL) {
+        return PriceAlertProductDialog(priceAlerts[index], false,
+            priceAlerts[index].threshold);
+      } else {
+        return PriceAlertAlertDialog(priceAlerts[index]);
+      }
+    }).then((value) {
+      if (value is bool) {
+        if (value == true) {
+          setState(() {
+            priceAlerts.removeAt(index);
+          });
+        }
+      } else if (value is String) {
+        setState(() {
+          priceAlerts[index].threshold = value;
+        });
+      } else {
+        ApiService.openLink(priceAlerts[index].link);
+      }
     });
   }
 
   Widget _createRowTile(BuildContext context, int index) {
     PriceAlert priceAlert = priceAlerts[index];
     List<Widget> priceItems = [];
-    priceItems.add(Text(
-      priceAlert.price,
-      style: TextStyle(
-        color: Theme.of(context).primaryColor,
-        fontSize: 14,
-        fontWeight: FontWeight.bold,
-      ),
-    ));
+    if (priceAlert.type == PriceAlertType.URL) {
+      priceItems.add(Text(
+        priceAlert.price,
+        style: TextStyle(
+          color: Theme
+              .of(context)
+              .primaryColor,
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+        ),
+      ));
+    }
     priceItems.add(Text(
       " | ${priceAlert.threshold}",
       overflow: TextOverflow.clip,
@@ -358,12 +157,23 @@ class _PriceAlertView extends State<PriceAlertView> {
         padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
         child: Row(
           children: <Widget>[
-            Image.network(
-              priceAlert.img,
-              fit: BoxFit.contain,
-              height: 60,
-              width: 60,
-            ),
+            if (priceAlert.type == PriceAlertType.KEYWORD)
+              Container(
+                width: 60,
+                height: 60,
+                child: Icon(
+                  Icons.notifications_active_outlined,
+                  color: Theme.of(context).primaryColor,
+                  size: 40,
+                ),
+              ),
+            if (priceAlert.type != PriceAlertType.KEYWORD)
+              Image.network(
+                priceAlert.img,
+                fit: BoxFit.contain,
+                height: 60,
+                width: 60,
+              ),
             SizedBox(width: 15),
             Flexible(
               child: Column(
@@ -374,9 +184,10 @@ class _PriceAlertView extends State<PriceAlertView> {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis
                   ),
-                  Row(
-                    children: priceItems,
-                  )
+                  if (priceAlerts[index].type == PriceAlertType.URL)
+                    Row(
+                      children: priceItems,
+                    )
                 ],
               ),
             ),
@@ -391,9 +202,7 @@ class _PriceAlertView extends State<PriceAlertView> {
       heightFactor: 3,
       child: Text(
         "No alerts yet!\n\n"
-            "To add an alert:\n"
-            "1. Find item on the Amazon app or website\n"
-            "2. Press share button and share with DealCircles",
+            "Click the '+' icon above to add a price alert",
         textAlign: TextAlign.center,
         style: TextStyle(fontSize: 20),
       ),
