@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UnorderedTextList extends StatelessWidget {
@@ -27,14 +28,39 @@ class UnorderedTextListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget textWidget;
-    if (text.contains(RegExp(r'\(http.*\)'))) {
+    if (text.contains(RegExp(r'@\(http.*\)'))) {
       String link = text.substring(
-          text.indexOf('\(') + 1, text.lastIndexOf('\)'));
+          text.indexOf('@\(') + 2, text.lastIndexOf('\)'));
       textWidget = GestureDetector(
         onTap: () {
           openLink(link);
         },
-        child: Text(text.substring(0, text.indexOf('\(') - 1).trim(),
+        child: Text(text.substring(0, text.indexOf('@\(') - 1).trim(),
+          style: textStyle.copyWith(
+              decoration: TextDecoration.underline,
+              decorationStyle: TextDecorationStyle.solid),
+        ),
+      );
+    } else if (text.contains(RegExp(r'@\[.*\]'))) {
+      String codeText = new RegExp(r'@\[.*\]').stringMatch(text);
+      textWidget = GestureDetector(
+        onTap: () {
+          String code = codeText.substring(2, codeText.length - 1);
+          Clipboard.setData(ClipboardData(text: code));
+          final snackBar = SnackBar(
+            content: Text('Copied!'),
+            backgroundColor: Theme
+                .of(context)
+                .primaryColor,
+            action: SnackBarAction(
+              label: 'Ok',
+              textColor: Colors.white,
+              onPressed: () {},
+            ),
+          );
+          Scaffold.of(context).showSnackBar(snackBar);
+        },
+        child: Text(text.substring(0, text.indexOf('@\[')).trim(),
           style: textStyle.copyWith(
               decoration: TextDecoration.underline,
               decorationStyle: TextDecorationStyle.solid),
