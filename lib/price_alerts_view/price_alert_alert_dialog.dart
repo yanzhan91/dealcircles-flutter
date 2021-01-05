@@ -34,8 +34,8 @@ class PriceAlertAlertDialog extends StatelessWidget {
           SizedBox(height: 10),
           Text(
             priceAlert.type == PriceAlertType.BRAND_OR_STORE ?
-            "Notify when deals of\nthis brand is posted" :
-            "Notify when deals with\nthis keyword is posted",
+            "Notify when deals of\nthis brand are posted" :
+            "Notify when deals with\nthis keyword are posted",
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 10),

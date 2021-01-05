@@ -79,20 +79,28 @@ class _PriceAlertAddViewState extends State<PriceAlertAddView> {
                     if (urlReg
                         .allMatches(textEditingController.text)
                         .isNotEmpty) {
-                      _getItem(textEditingController.text).then((PriceAlert priceAlert) =>
-                          {
-                            showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return PriceAlertProductDialog(
-                                          priceAlert, true
-                                      );
+                      _getItem(textEditingController.text)
+                          .then((PriceAlert priceAlert) => {
+                                if (priceAlert == null) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text("Store not supported at the moment"),
+                                        );
                                     })
-                                .then((value) {
-                                  priceAlert.threshold = value;
-                                  addPriceAlert(context, priceAlert);
-                                })
-                          });
+                                } else {
+                                    showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return PriceAlertProductDialog(
+                                              priceAlert, true);
+                                        }).then((value) {
+                                      priceAlert.threshold = value;
+                                      addPriceAlert(context, priceAlert);
+                                    })
+                                  }
+                              });
                     } else {
                       addPriceAlert(
                           context,
@@ -110,7 +118,7 @@ class _PriceAlertAddViewState extends State<PriceAlertAddView> {
             ),
             SizedBox(height: 20),
             Text(
-              "Popular Brands and Stores",
+              "Popular Brands",
               style: TextStyle(fontSize: 20),
             ),
             SizedBox(height: 10),

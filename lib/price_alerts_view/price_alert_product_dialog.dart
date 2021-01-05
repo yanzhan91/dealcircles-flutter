@@ -36,7 +36,7 @@ class PriceAlertProductDialog extends StatelessWidget {
           Text("Current Price"),
           Text(priceAlert.price),
           SizedBox(height: 20),
-          Text("Notify when price at or below:"),
+          Text("Notify when price is at or below:"),
           SizedBox(height: 10),
           Container(
             width: 100,
@@ -59,7 +59,7 @@ class PriceAlertProductDialog extends StatelessWidget {
                           .of(context)
                           .primaryColor),
                     ),
-                    hintText: priceAlert.price
+                    hintText: priceAlert.price // TODO
                 )
             ),
           ),

@@ -55,7 +55,20 @@ class _PriceAlertView extends State<PriceAlertView> {
           ),
         ],
       ),
-      body: _generateListview(context),
+      body: Column(
+        children: [
+          SizedBox(height: 20,),
+          Text(
+            "Create a price alert to be notified\nabout deals for you.",
+            // "Create a price alert\n\nWe will notify you when we find deals of products on your list",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16),
+          ),
+          SizedBox(height: 20,),
+          _generateListview(context),
+        ],
+      )
+
     );
   }
 
@@ -85,6 +98,7 @@ class _PriceAlertView extends State<PriceAlertView> {
   }
 
   Widget _appView(BuildContext context) {
+    priceAlerts.sort((a,b) => b.type.toString().compareTo(a.type.toString()));
     return ListView.builder(
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
@@ -162,7 +176,7 @@ class _PriceAlertView extends State<PriceAlertView> {
                 width: 60,
                 height: 60,
                 child: Icon(
-                  Icons.notifications_active_outlined,
+                  Icons.bookmark_outline,
                   color: Theme.of(context).primaryColor,
                   size: 40,
                 ),
@@ -201,8 +215,8 @@ class _PriceAlertView extends State<PriceAlertView> {
     return Center(
       heightFactor: 3,
       child: Text(
-        "No alerts yet!\n\n"
-            "Click the '+' icon above to add a price alert",
+        "Create a price alert to be notified about deals you care about.",
+        // "Create a price alert\n\nWe will notify you when we find deals of products on your list",
         textAlign: TextAlign.center,
         style: TextStyle(fontSize: 20),
       ),

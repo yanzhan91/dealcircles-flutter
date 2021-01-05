@@ -67,22 +67,32 @@ class _DealCirclesAppState extends State<DealCirclesApp> {
     }
   }
 
-  BottomNavigationBar buildBottomNavigationBar() {
-    return BottomNavigationBar(
-      onTap: (int index) => setState(() {
-        _currentIndex = index;
-      }), // new
-      currentIndex: _currentIndex, // new
-      items: [
-        new BottomNavigationBarItem(
-          icon: Icon(Icons.attach_money),
-          label: 'Daily Deals',
-        ),
-        new BottomNavigationBarItem(
-          icon: Icon(Icons.notifications),
-          label: 'Price Alerts',
-        ),
-      ],
+  Container buildBottomNavigationBar() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor,
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).primaryColor,
+          ),
+        ],
+      ),
+      child: BottomNavigationBar(
+        onTap: (int index) => setState(() {
+          _currentIndex = index;
+        }), // new
+        currentIndex: _currentIndex, // new
+        items: [
+          new BottomNavigationBarItem(
+            icon: Icon(Icons.attach_money),
+            label: 'Daily Deals',
+          ),
+          new BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
+            label: 'Price Alerts',
+          ),
+        ],
+      ),
     );
   }
 
