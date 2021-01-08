@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:app_settings/app_settings.dart';
 import 'package:dealcircles_flutter/price_alerts_view/price_alert.dart';
 import 'package:dealcircles_flutter/price_alerts_view/price_alert_add_view.dart';
 import 'package:dealcircles_flutter/price_alerts_view/price_alert_alert_dialog.dart';
@@ -9,16 +10,20 @@ import 'package:dealcircles_flutter/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:need_resume/need_resume.dart';
+import 'package:notification_permissions/notification_permissions.dart';
 
 class PriceAlertView extends StatefulWidget {
   @override
   _PriceAlertView createState() => _PriceAlertView();
 }
 
-class _PriceAlertView extends State<PriceAlertView> {
+class _PriceAlertView extends ResumableState<PriceAlertView> {
   bool loading = false;
   List<PriceAlert> priceAlerts;
   ScrollController _scrollController = new ScrollController();
+  bool notificationToggleOn = false;
+  bool showingDeviceNotificationSettings = false;
 
   @override
   void initState() {
@@ -39,7 +44,18 @@ class _PriceAlertView extends State<PriceAlertView> {
           'null'),
       PriceAlert(PriceAlertType.KEYWORD, 'Ipad', null, null, null, 'null')
     ];
+
     super.initState();
+
+    updateNotificationToggle(false);
+  }
+
+  @override
+  void onResume() {
+    if (showingDeviceNotificationSettings) {
+      showingDeviceNotificationSettings = false;
+      updateNotificationToggle(true);
+    }
   }
 
   @override
@@ -57,6 +73,32 @@ class _PriceAlertView extends State<PriceAlertView> {
           leading: Image.asset("assets/logo.png"),
           backgroundColor: Theme.of(context).primaryColor,
           actions: [
+            IconButton(
+              icon: Icon(
+                notificationToggleOn
+                    ? Icons.notifications_active_outlined
+                    : Icons.notifications_none,
+                color: Colors.white,
+                size: 28,
+              ),
+              onPressed: () {
+                NotificationPermissions.getNotificationPermissionStatus()
+                    .then((permissionStatus) {
+                  print("Before: $permissionStatus");
+                  if (permissionStatus == PermissionStatus.granted) {
+                    AppSettings.openNotificationSettings().then(
+                        (value) => showingDeviceNotificationSettings = true);
+                  } else if (permissionStatus == PermissionStatus.denied) {
+                    NotificationPermissions.requestNotificationPermissions()
+                        .then((value) =>
+                            showingDeviceNotificationSettings = true);
+                  } else {
+                    NotificationPermissions.requestNotificationPermissions()
+                        .then((value) => updateNotificationToggle(true));
+                  }
+                });
+              },
+            ),
             IconButton(
               icon: Icon(
                 Icons.add_circle_outline,
@@ -92,8 +134,10 @@ class _PriceAlertView extends State<PriceAlertView> {
     if (result != null) {
       setState(() {
         priceAlerts.add(result);
-        _scrollController.animateTo(_scrollController.position.maxScrollExtent + 80,
-            duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
+        _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent + 80,
+            duration: Duration(milliseconds: 200),
+            curve: Curves.easeInOut);
       });
     }
   }
@@ -222,5 +266,35 @@ class _PriceAlertView extends State<PriceAlertView> {
         ),
       ),
     );
+  }
+
+  void updateNotificationToggle(bool possiblyUpdated) {
+    NotificationPermissions.getNotificationPermissionStatus().then((status) {
+      print("After: $status");
+      if (possiblyUpdated) {
+        String snackbarText;
+        if (status == PermissionStatus.granted && !notificationToggleOn) {
+          snackbarText = 'Notification On';
+        } else if (status != PermissionStatus.granted && notificationToggleOn) {
+          snackbarText = 'Notification Off';
+        }
+        if (snackbarText != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(snackbarText),
+              backgroundColor: Theme.of(context).primaryColor,
+              action: SnackBarAction(
+                label: 'Ok',
+                textColor: Colors.white,
+                onPressed: () {},
+              ),
+            ),
+          );
+        }
+      }
+      setState(() {
+        notificationToggleOn = status == PermissionStatus.granted;
+      });
+    });
   }
 }
