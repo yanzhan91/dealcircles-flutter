@@ -14,7 +14,7 @@ class PriceAlertAlertDialog extends StatelessWidget {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (priceAlert.type == PriceAlertType.KEYWORD)
+          if (priceAlert.alertType == PriceAlertType.KEYWORD)
             Container(
               width: 60,
               height: 60,
@@ -24,7 +24,7 @@ class PriceAlertAlertDialog extends StatelessWidget {
                 size: 40,
               ),
             ),
-          if (priceAlert.type != PriceAlertType.KEYWORD)
+          if (priceAlert.alertType != PriceAlertType.KEYWORD)
             Image.network(
               priceAlert.img,
               fit: BoxFit.contain,
@@ -33,14 +33,14 @@ class PriceAlertAlertDialog extends StatelessWidget {
             ),
           SizedBox(height: 10),
           Text(
-            priceAlert.type == PriceAlertType.BRAND_OR_STORE ?
+            priceAlert.alertType == PriceAlertType.BRAND_OR_STORE ?
             "Notify when deals of\nthis brand are posted" :
             "Notify when deals with\nthis keyword are posted",
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 10),
           Text(
-            priceAlert.text,
+            priceAlert.name,
             style: TextStyle(fontSize: 24),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,

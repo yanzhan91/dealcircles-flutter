@@ -1,16 +1,17 @@
 import 'package:dealcircles_flutter/price_alerts_view/price_alert_type.dart';
 
 class PriceAlert {
-  PriceAlertType type;
-  String text;
+  int id;
+  PriceAlertType alertType;
+  String name;
   String price;
   String threshold;
   String img;
   String link;
 
-  PriceAlert(this.type, this.text, this.price, this.threshold, this.img, this.link);
+  PriceAlert(this.alertType, this.name, this.price, this.threshold, this.img, this.link);
 
   factory PriceAlert.fromJson(Map<String, dynamic> json) {
-    return PriceAlert(json['type'], json['text'], json['price'], json['threshold'], json['img'], json['link']);
+    return PriceAlert(json['type'], json['name'], json['price'], json['threshold'], json['img'], json['link']);
   }
 }

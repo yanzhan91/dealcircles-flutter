@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:dealcircles_flutter/price_alerts_view/price_alert.dart';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -77,6 +78,44 @@ class ApiService {
     } else {
       _printUrl('Failed to load deals ${response.statusCode}: ${response.body}');
       return [];
+    }
+  }
+
+  static Future<List<PriceAlert>> loadPriceAlerts() async {
+    // Map<String, String> deviceInfo = await _getDeviceId();
+    // String url = "$BASE_URL/pricealerts?id=${deviceInfo['deviceId']}";
+    // _printUrl(url);
+    //
+    // final response = await http.get(url);
+    // if (response.statusCode == 200) {
+    //   final List data = json.decode(response.body);
+    //   return data.map((e) => PriceAlert.fromJson(e)).toList();
+    // } else {
+    //   _printUrl('Failed to load price alerts ${response.statusCode}: ${response.body}');
+      return [];
+    // }
+  }
+
+  static void addPriceAlerts(PriceAlert priceAlert) async {
+    Map<String, String> deviceInfo = await _getDeviceId();
+    String url = "$BASE_URL/pricealerts?id=${deviceInfo['deviceId']}";
+    _printUrl(url);
+
+    http.post(
+      url,
+      body: jsonEncode(priceAlert),
+    );
+  }
+
+  static Future<PriceAlert> getPricerAlertUrlItem(String link) async {
+    String url = "$BASE_URL/fetchproduct?url=${Uri.encodeComponent(link)}";
+    print(url);
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      return PriceAlert.fromJson(json.decode(response.body));
+    } else {
+      _printUrl('Failed to get price alert url item $url ${response.statusCode}: ${response.body}');
+      return null;
     }
   }
 

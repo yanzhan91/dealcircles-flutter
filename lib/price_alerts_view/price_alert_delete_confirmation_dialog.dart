@@ -28,7 +28,7 @@ class PriceAlertDeleteConfirmationDialog extends StatelessWidget {
           ),
           SizedBox(height: 10),
           Text(
-            priceAlert.text,
+            priceAlert.name,
             style: TextStyle(fontSize: 24),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,

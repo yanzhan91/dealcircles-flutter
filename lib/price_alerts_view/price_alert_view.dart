@@ -27,27 +27,10 @@ class _PriceAlertView extends ResumableState<PriceAlertView> {
 
   @override
   void initState() {
-    priceAlerts = [
-      PriceAlert(
-          PriceAlertType.URL,
-          'gb Lufta Sleeper Playard, Mink, gb Lufta Sleeper Playard, Mink',
-          '\$15.67',
-          '\$13',
-          'https://images-na.ssl-images-amazon.com/images/I/91w5gn1TEHL._SL1500_.jpg',
-          'link'),
-      PriceAlert(
-          PriceAlertType.BRAND_OR_STORE,
-          'Nike',
-          null,
-          null,
-          'https://i.pinimg.com/originals/33/e6/3d/33e63d5adb0da6b303a83901c8e8463a.png',
-          'null'),
-      PriceAlert(PriceAlertType.KEYWORD, 'Ipad', null, null, null, 'null')
-    ];
-
     super.initState();
 
     updateNotificationToggle(false);
+    loadAlerts();
   }
 
   @override
@@ -84,7 +67,6 @@ class _PriceAlertView extends ResumableState<PriceAlertView> {
               onPressed: () {
                 NotificationPermissions.getNotificationPermissionStatus()
                     .then((permissionStatus) {
-                  print("Before: $permissionStatus");
                   if (permissionStatus == PermissionStatus.granted) {
                     AppSettings.openNotificationSettings().then(
                         (value) => showingDeviceNotificationSettings = true);
@@ -105,7 +87,7 @@ class _PriceAlertView extends ResumableState<PriceAlertView> {
                 color: Colors.white,
                 size: 28,
               ),
-              onPressed: () => _getNewPriceAlert(context),
+              onPressed: () => _addNewPriceAlert(context),
             ),
           ],
         ),
@@ -115,7 +97,7 @@ class _PriceAlertView extends ResumableState<PriceAlertView> {
               height: 20,
             ),
             Text(
-              "Create a price alert to be notified\nabout deals for you.",
+              "Create a price alert to be notified\non deals for you.",
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 16),
             ),
@@ -127,7 +109,7 @@ class _PriceAlertView extends ResumableState<PriceAlertView> {
         ));
   }
 
-  Future _getNewPriceAlert(BuildContext context) async {
+  Future _addNewPriceAlert(BuildContext context) async {
     final result = await Navigator.push(
         context, MaterialPageRoute(builder: (context) => PriceAlertAddView()));
 
@@ -139,6 +121,7 @@ class _PriceAlertView extends ResumableState<PriceAlertView> {
             duration: Duration(milliseconds: 200),
             curve: Curves.easeInOut);
       });
+      ApiService.addPriceAlerts(result);
     }
   }
 
@@ -152,7 +135,7 @@ class _PriceAlertView extends ResumableState<PriceAlertView> {
       );
     } else {
       priceAlerts
-          .sort((a, b) => b.type.toString().compareTo(a.type.toString()));
+          .sort((a, b) => b.alertType.toString().compareTo(a.alertType.toString()));
       return Expanded(
         child: ListView.builder(
           controller: _scrollController,
@@ -183,7 +166,7 @@ class _PriceAlertView extends ResumableState<PriceAlertView> {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          if (priceAlerts[index].type == PriceAlertType.URL) {
+          if (priceAlerts[index].alertType == PriceAlertType.URL) {
             return PriceAlertProductDialog(
                 priceAlerts[index], false, priceAlerts[index].threshold);
           } else {
@@ -209,7 +192,7 @@ class _PriceAlertView extends ResumableState<PriceAlertView> {
   Widget _createRowTile(BuildContext context, int index) {
     PriceAlert priceAlert = priceAlerts[index];
     List<Widget> priceItems = [];
-    if (priceAlert.type == PriceAlertType.URL) {
+    if (priceAlert.alertType == PriceAlertType.URL) {
       priceItems.add(Text(
         priceAlert.price,
         style: TextStyle(
@@ -229,7 +212,7 @@ class _PriceAlertView extends ResumableState<PriceAlertView> {
         padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
         child: Row(
           children: <Widget>[
-            if (priceAlert.type == PriceAlertType.KEYWORD)
+            if (priceAlert.alertType == PriceAlertType.KEYWORD)
               Container(
                 width: 60,
                 height: 60,
@@ -239,7 +222,7 @@ class _PriceAlertView extends ResumableState<PriceAlertView> {
                   size: 40,
                 ),
               ),
-            if (priceAlert.type != PriceAlertType.KEYWORD)
+            if (priceAlert.alertType != PriceAlertType.KEYWORD)
               Image.network(
                 priceAlert.img,
                 fit: BoxFit.contain,
@@ -251,11 +234,11 @@ class _PriceAlertView extends ResumableState<PriceAlertView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(priceAlert.text,
+                  Text(priceAlert.name,
                       style: TextStyle(color: Colors.black87, fontSize: 18),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis),
-                  if (priceAlerts[index].type == PriceAlertType.URL)
+                  if (priceAlerts[index].alertType == PriceAlertType.URL)
                     Row(
                       children: priceItems,
                     )
@@ -270,7 +253,6 @@ class _PriceAlertView extends ResumableState<PriceAlertView> {
 
   void updateNotificationToggle(bool possiblyUpdated) {
     NotificationPermissions.getNotificationPermissionStatus().then((status) {
-      print("After: $status");
       if (possiblyUpdated) {
         String snackbarText;
         if (status == PermissionStatus.granted && !notificationToggleOn) {
@@ -295,6 +277,19 @@ class _PriceAlertView extends ResumableState<PriceAlertView> {
       setState(() {
         notificationToggleOn = status == PermissionStatus.granted;
       });
+    });
+  }
+
+  void loadAlerts() async {
+    setState(() {
+      loading = true;
+    });
+
+    List<PriceAlert> alerts = await ApiService.loadPriceAlerts();
+
+    setState(() {
+      priceAlerts = alerts;
+      loading = false;
     });
   }
 }
