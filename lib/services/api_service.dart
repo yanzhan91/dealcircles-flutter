@@ -82,29 +82,55 @@ class ApiService {
   }
 
   static Future<List<PriceAlert>> loadPriceAlerts() async {
-    // Map<String, String> deviceInfo = await _getDeviceId();
-    // String url = "$BASE_URL/pricealerts?id=${deviceInfo['deviceId']}";
-    // _printUrl(url);
-    //
-    // final response = await http.get(url);
-    // if (response.statusCode == 200) {
-    //   final List data = json.decode(response.body);
-    //   return data.map((e) => PriceAlert.fromJson(e)).toList();
-    // } else {
-    //   _printUrl('Failed to load price alerts ${response.statusCode}: ${response.body}');
-      return [];
-    // }
-  }
-
-  static void addPriceAlerts(PriceAlert priceAlert) async {
     Map<String, String> deviceInfo = await _getDeviceId();
     String url = "$BASE_URL/pricealerts?id=${deviceInfo['deviceId']}";
-    _printUrl(url);
+    _printUrl("GET: $url");
 
-    http.post(
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final List data = json.decode(response.body);
+      return data.map((e) => PriceAlert.fromJson(e)).toList();
+    } else {
+      _printUrl('Failed to load price alerts ${response.statusCode}: ${response.body}');
+      return [];
+    }
+  }
+
+  static Future<int> addPriceAlerts(PriceAlert priceAlert) async {
+    Map<String, String> deviceInfo = await _getDeviceId();
+    String url = "$BASE_URL/pricealerts?id=${deviceInfo['deviceId']}";
+
+    _printUrl("POST: $url");
+    String body = jsonEncode(priceAlert.toJson());
+    _printUrl(body);
+
+    var response = await http.post(
       url,
-      body: jsonEncode(priceAlert),
+      body: body,
+      headers: {
+        "Content-Type": "application/json"
+      },
     );
+
+    _printUrl("${response.statusCode}");
+
+    Map<String, dynamic> bodyMap = json.decode(response.body);
+
+    return bodyMap["body"] as int;
+  }
+
+  static void deletePriceAlerts(int id) async {
+    String url = "$BASE_URL/pricealerts?alertId=$id";
+    _printUrl("DELETE: $url");
+    var response = await http.delete(url);
+    _printUrl("${response.statusCode}");
+  }
+
+  static void modifyPriceAlerts(int id, String threshold) async {
+    String url = "$BASE_URL/pricealerts?alertId=$id&threshold=$threshold";
+    _printUrl("PUT: $url");
+    var response = await http.put(url);
+    _printUrl("${response.statusCode}");
   }
 
   static Future<PriceAlert> getPricerAlertUrlItem(String link) async {

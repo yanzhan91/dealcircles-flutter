@@ -84,13 +84,13 @@ class PriceAlertProductDialog extends StatelessWidget {
         FlatButton(
           child: Text('Save',
               style: TextStyle(fontWeight: FontWeight.bold)),
-          onPressed: () => Navigator.pop(context, textEditingController.text),
+          onPressed: () => Navigator.pop(context, int.parse(textEditingController.text.substring(1))),
         ),
         if (!newAlert)
           FlatButton(
             child: Text('See Item',
                 style: TextStyle(fontWeight: FontWeight.bold)),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(context, "link"),
           ),
       ],
     );

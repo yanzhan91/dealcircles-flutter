@@ -110,18 +110,21 @@ class _PriceAlertView extends ResumableState<PriceAlertView> {
   }
 
   Future _addNewPriceAlert(BuildContext context) async {
-    final result = await Navigator.push(
+    final PriceAlert result = await Navigator.push(
         context, MaterialPageRoute(builder: (context) => PriceAlertAddView()));
 
     if (result != null) {
-      setState(() {
-        priceAlerts.add(result);
-        _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent + 80,
-            duration: Duration(milliseconds: 200),
-            curve: Curves.easeInOut);
+      ApiService.addPriceAlerts(result).then((value) {
+        setState(() {
+          result.id = value;
+          print(value);
+          priceAlerts.add(result);
+          _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent + 80,
+              duration: Duration(milliseconds: 200),
+              curve: Curves.easeInOut);
+        });
       });
-      ApiService.addPriceAlerts(result);
     }
   }
 
@@ -176,14 +179,16 @@ class _PriceAlertView extends ResumableState<PriceAlertView> {
       if (value is bool) {
         if (value == true) {
           setState(() {
+            ApiService.deletePriceAlerts(priceAlerts[index].id);
             priceAlerts.removeAt(index);
           });
         }
-      } else if (value is String) {
+      } else if (value is int) {
         setState(() {
-          priceAlerts[index].threshold = value;
+          ApiService.modifyPriceAlerts(priceAlerts[index].id, value.toString());
+          priceAlerts[index].threshold = value.toString();
         });
-      } else {
+      } else if (value != null) {
         ApiService.openLink(priceAlerts[index].link);
       }
     });
@@ -193,20 +198,20 @@ class _PriceAlertView extends ResumableState<PriceAlertView> {
     PriceAlert priceAlert = priceAlerts[index];
     List<Widget> priceItems = [];
     if (priceAlert.alertType == PriceAlertType.URL) {
+      // priceItems.add(Text(
+      //   priceAlert.price,
+      //   style: TextStyle(
+      //     color: Theme.of(context).primaryColor,
+      //     fontSize: 14,
+      //     fontWeight: FontWeight.bold,
+      //   ),
+      // ));
       priceItems.add(Text(
-        priceAlert.price,
-        style: TextStyle(
-          color: Theme.of(context).primaryColor,
-          fontSize: 14,
-          fontWeight: FontWeight.bold,
-        ),
+        "Notify at \$${priceAlert.threshold}",
+        overflow: TextOverflow.clip,
+        style: TextStyle(color: Colors.black54, fontSize: 14),
       ));
     }
-    priceItems.add(Text(
-      " | ${priceAlert.threshold}",
-      overflow: TextOverflow.clip,
-      style: TextStyle(color: Colors.black54, fontSize: 14),
-    ));
     return Container(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),

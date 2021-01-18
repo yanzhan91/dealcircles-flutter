@@ -22,13 +22,13 @@ class _PriceAlertAddViewState extends State<PriceAlertAddView> {
     super.initState();
     brands = [
       PriceAlertBrand("Lego",
-          "https://logos-world.net/wp-content/uploads/2020/09/LEGO-Logo.png"),
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/LEGO_logo.svg/1200px-LEGO_logo.svg.png"),
       PriceAlertBrand("Amazon",
           "https://assets.stickpng.com/thumbs/580b57fcd9996e24bc43c518.png"),
       PriceAlertBrand("Nike",
           "https://i.pinimg.com/originals/33/e6/3d/33e63d5adb0da6b303a83901c8e8463a.png"),
       PriceAlertBrand("Apple",
-          "https://logos-world.net/wp-content/uploads/2020/04/Apple-Logo.png"),
+          "https://cdn.iconscout.com/icon/free/png-512/apple-316-226435.png"),
       PriceAlertBrand("Microsoft",
           "https://www.freepnglogos.com/uploads/microsoft-logo-png-transparent-background-1.png"),
       PriceAlertBrand("Google",
@@ -75,6 +75,7 @@ class _PriceAlertAddViewState extends State<PriceAlertAddView> {
                       .of(context)
                       .primaryColor),
                 ),
+                hintText: "Ex. ipad, https://example.com/...",
                 suffixIcon: IconButton(
                   icon: Icon(Icons.arrow_forward_rounded),
                   color: Theme
@@ -104,7 +105,9 @@ class _PriceAlertAddViewState extends State<PriceAlertAddView> {
                                   return PriceAlertProductDialog(
                                       priceAlert, true);
                                 }).then((value) {
-                              priceAlert.threshold = value;
+                              priceAlert.threshold = value.toString();
+                              priceAlert.link = textEditingController.text;
+                              priceAlert.alertType = PriceAlertType.URL;
                               addPriceAlert(context, priceAlert);
                             })
                           }

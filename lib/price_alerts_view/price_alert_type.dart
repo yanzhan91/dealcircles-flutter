@@ -1,5 +1,6 @@
 enum PriceAlertType {
   KEYWORD,
   URL,
-  BRAND_OR_STORE
+  BRAND_OR_STORE,
+  UNKNOWN
 }
