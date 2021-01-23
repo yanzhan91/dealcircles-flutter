@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:dealcircles_flutter/price_alerts_view/price_alert.dart';
+import 'package:dealcircles_flutter/price_alerts_view/price_alert_dialog_response.dart';
+import 'package:dealcircles_flutter/price_alerts_view/price_alert_dialog_response_type.dart';
 import 'package:flutter/material.dart';
 
 class PriceAlertDeleteConfirmationDialog extends StatelessWidget {
@@ -39,12 +41,14 @@ class PriceAlertDeleteConfirmationDialog extends StatelessWidget {
         FlatButton(
           child: Text('Cancel',
               style: TextStyle(fontWeight: FontWeight.bold)),
-          onPressed: () => Navigator.pop(context, false),
+          onPressed: () => Navigator.pop(context,
+              PriceAlertDialogResponse(PriceAlertDialogResponseType.NULL, null)),
         ),
         FlatButton(
           child: Text('Delete',
               style: TextStyle(fontWeight: FontWeight.bold)),
-          onPressed: () => Navigator.pop(context, true),
+          onPressed: () => Navigator.pop(context,
+              PriceAlertDialogResponse(PriceAlertDialogResponseType.DELETE, null)),
         ),
       ],
     );

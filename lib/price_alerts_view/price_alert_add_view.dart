@@ -1,5 +1,7 @@
 import 'package:dealcircles_flutter/price_alerts_view/price_alert.dart';
 import 'package:dealcircles_flutter/price_alerts_view/price_alert_brand.dart';
+import 'package:dealcircles_flutter/price_alerts_view/price_alert_dialog_response.dart';
+import 'package:dealcircles_flutter/price_alerts_view/price_alert_dialog_response_type.dart';
 import 'package:dealcircles_flutter/price_alerts_view/price_alert_product_dialog.dart';
 import 'package:dealcircles_flutter/price_alerts_view/price_alert_type.dart';
 import 'package:dealcircles_flutter/services/api_service.dart';
@@ -11,9 +13,9 @@ class PriceAlertAddView extends StatefulWidget {
 
 class _PriceAlertAddViewState extends State<PriceAlertAddView> {
   final TextEditingController textEditingController =
-  new TextEditingController();
-  final RegExp urlReg = new RegExp(
-      r"^(http://www\.|https://www\.|http://|https://)[a-z0-9]+([\-.][a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(/.*)?$");
+      new TextEditingController();
+
+  final RegExp urlReg = new RegExp(r"(http://|https://)[^\s]+");
 
   List<PriceAlertBrand> brands;
 
@@ -71,46 +73,58 @@ class _PriceAlertAddViewState extends State<PriceAlertAddView> {
               controller: textEditingController,
               decoration: InputDecoration(
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Theme
-                      .of(context)
-                      .primaryColor),
+                  borderSide: BorderSide(color: Theme.of(context).primaryColor),
                 ),
                 hintText: "Ex. ipad, https://example.com/...",
                 suffixIcon: IconButton(
                   icon: Icon(Icons.arrow_forward_rounded),
-                  color: Theme
-                      .of(context)
-                      .primaryColor,
+                  color: Theme.of(context).primaryColor,
                   onPressed: () {
-                    if (urlReg
-                        .allMatches(textEditingController.text)
-                        .isNotEmpty) {
-                      _getItem(textEditingController.text)
-                          .then((PriceAlert priceAlert) =>
-                      {
-                        if (priceAlert == null) {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text(
-                                      "Store not supported at the moment"),
-                                );
-                              })
-                        } else
-                          {
-                            showDialog(
+                    RegExpMatch matches =
+                        urlReg.firstMatch(textEditingController.text);
+                    if (matches != null && matches.groupCount > 0) {
+                      _getItem(matches[0])
+                          .then((PriceAlertDialogResponse response) {
+                        switch (response.type) {
+                          case PriceAlertDialogResponseType.ALERT:
+                            PriceAlert priceAlert = response.obj;
+                            showDialog<PriceAlertDialogResponse>(
                                 context: context,
                                 builder: (BuildContext context) {
                                   return PriceAlertProductDialog(
                                       priceAlert, true);
-                                }).then((value) {
-                              priceAlert.threshold = value.toString();
-                              priceAlert.link = textEditingController.text;
-                              priceAlert.alertType = PriceAlertType.URL;
-                              addPriceAlert(context, priceAlert);
-                            })
-                          }
+                                }).then((PriceAlertDialogResponse value) {
+                              if (value != null &&
+                                  value.type ==
+                                      PriceAlertDialogResponseType.SAVE) {
+                                print(value.obj);
+                                priceAlert.threshold = value.obj;
+                                priceAlert.link = matches[0];
+                                priceAlert.alertType = PriceAlertType.URL;
+                                addPriceAlert(context, priceAlert);
+                              }
+                            });
+                            break;
+                          case PriceAlertDialogResponseType.INVALID_URL:
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text("Product not found"),
+                                  );
+                                });
+                            break;
+                          default:
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text(
+                                        "Store not supported at the moment"),
+                                  );
+                                });
+                            break;
+                        }
                       });
                     } else {
                       addPriceAlert(
@@ -135,18 +149,22 @@ class _PriceAlertAddViewState extends State<PriceAlertAddView> {
             SizedBox(height: 10),
             Expanded(
               child: GridView.count(
-                crossAxisCount: 3,
+                crossAxisCount: 4,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
                 children: [
                   for (PriceAlertBrand brand in brands)
-                    FlatButton(
-                      child: Image.network(brand.link),
-                      onPressed: () =>
-                          addPriceAlert(
-                              context,
-                              PriceAlert(
-                                  PriceAlertType.BRAND_OR_STORE, brand.name,
-                                  null, null, brand.link, null)),
-                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black38)),
+                      child: FlatButton(
+                        child: Image.network(brand.link),
+                        onPressed: () => addPriceAlert(
+                            context,
+                            PriceAlert(PriceAlertType.BRAND_OR_STORE,
+                                brand.name, null, null, brand.link, null)),
+                      ),
+                    )
                 ],
               ),
             )
@@ -160,8 +178,7 @@ class _PriceAlertAddViewState extends State<PriceAlertAddView> {
     Navigator.pop(context, priceAert);
   }
 
-  Future<PriceAlert> _getItem(url) async {
+  Future<PriceAlertDialogResponse> _getItem(url) async {
     return ApiService.getPricerAlertUrlItem(url);
   }
-
 }

@@ -1,0 +1,3 @@
+enum PriceAlertDialogResponseType {
+  NULL, DELETE, SAVE, LINK, ALERT, INVALID_URL, INVALID_STORE
+}

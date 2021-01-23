@@ -1,6 +1,8 @@
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:dealcircles_flutter/price_alerts_view/price_alert.dart';
 import 'package:dealcircles_flutter/price_alerts_view/price_alert_delete_confirmation_dialog.dart';
+import 'package:dealcircles_flutter/price_alerts_view/price_alert_dialog_response.dart';
+import 'package:dealcircles_flutter/price_alerts_view/price_alert_dialog_response_type.dart';
 import 'package:flutter/material.dart';
 
 class PriceAlertProductDialog extends StatelessWidget {
@@ -10,7 +12,11 @@ class PriceAlertProductDialog extends StatelessWidget {
   final TextEditingController textEditingController = new TextEditingController();
 
   PriceAlertProductDialog(this.priceAlert, this.newAlert, [String threshold]) {
-    textEditingController.text = threshold;
+    if (threshold != null) {
+      textEditingController.text = "\$" + threshold;
+    } else {
+      textEditingController.text = "\$" + priceAlert.price.split(".").first;
+    }
   }
 
   @override
@@ -29,7 +35,8 @@ class PriceAlertProductDialog extends StatelessWidget {
           Text(
             priceAlert.name,
             style: TextStyle(fontSize: 20),
-            maxLines: 2,
+            maxLines: 4,
+            textAlign: TextAlign.center,
             overflow: TextOverflow.ellipsis,
           ),
           SizedBox(height: 20),
@@ -52,14 +59,18 @@ class PriceAlertProductDialog extends StatelessWidget {
                       symbol: '\$'
                   )
                 ],
+                style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.bold,
+                ),
                 decoration: InputDecoration(
-                    contentPadding: EdgeInsets.zero,
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Theme
-                          .of(context)
-                          .primaryColor),
-                    ),
-                    hintText: priceAlert.price // TODO
+                  contentPadding: EdgeInsets.zero,
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Theme
+                        .of(context)
+                        .primaryColor),
+                  ),
+                  // hintText: "\$" + priceAlert.price.split(".").first,
                 )
             ),
           ),
@@ -69,28 +80,32 @@ class PriceAlertProductDialog extends StatelessWidget {
         FlatButton(
           child: Text('Cancel',
               style: TextStyle(fontWeight: FontWeight.bold)),
-          onPressed: () => Navigator.pop(context, false),
+          onPressed: () => Navigator.pop(context,
+              PriceAlertDialogResponse(PriceAlertDialogResponseType.NULL, null)),
         ),
         if (!newAlert)
           FlatButton(
             child: Text('Delete',
                 style: TextStyle(fontWeight: FontWeight.bold)),
             onPressed: () {
-              showDialog(context: context, builder: (BuildContext context) {
+              showDialog<PriceAlertDialogResponse>(context: context, builder: (BuildContext context) {
                 return PriceAlertDeleteConfirmationDialog(priceAlert);
-              }).then((value) => Navigator.pop(context, value));
+              }).then((PriceAlertDialogResponse value) => Navigator.pop(context, value));
             },
           ),
         FlatButton(
           child: Text('Save',
               style: TextStyle(fontWeight: FontWeight.bold)),
-          onPressed: () => Navigator.pop(context, int.parse(textEditingController.text.substring(1))),
+          onPressed: () => Navigator.pop(context,
+              PriceAlertDialogResponse(PriceAlertDialogResponseType.SAVE,
+                  textEditingController.text.replaceAll(new RegExp(r"[$,]"), ""))),
         ),
         if (!newAlert)
           FlatButton(
             child: Text('See Item',
                 style: TextStyle(fontWeight: FontWeight.bold)),
-            onPressed: () => Navigator.pop(context, "link"),
+            onPressed: () => Navigator.pop(context,
+                PriceAlertDialogResponse(PriceAlertDialogResponseType.LINK, null)),
           ),
       ],
     );

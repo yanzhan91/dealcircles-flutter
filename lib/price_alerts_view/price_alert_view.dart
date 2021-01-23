@@ -4,6 +4,8 @@ import 'package:app_settings/app_settings.dart';
 import 'package:dealcircles_flutter/price_alerts_view/price_alert.dart';
 import 'package:dealcircles_flutter/price_alerts_view/price_alert_add_view.dart';
 import 'package:dealcircles_flutter/price_alerts_view/price_alert_alert_dialog.dart';
+import 'package:dealcircles_flutter/price_alerts_view/price_alert_dialog_response.dart';
+import 'package:dealcircles_flutter/price_alerts_view/price_alert_dialog_response_type.dart';
 import 'package:dealcircles_flutter/price_alerts_view/price_alert_product_dialog.dart';
 import 'package:dealcircles_flutter/price_alerts_view/price_alert_type.dart';
 import 'package:dealcircles_flutter/services/api_service.dart';
@@ -60,7 +62,7 @@ class _PriceAlertView extends ResumableState<PriceAlertView> {
               icon: Icon(
                 notificationToggleOn
                     ? Icons.notifications_active_outlined
-                    : Icons.notifications_none,
+                    : Icons.notifications_off_outlined,
                 color: Colors.white,
                 size: 28,
               ),
@@ -137,8 +139,8 @@ class _PriceAlertView extends ResumableState<PriceAlertView> {
         ),
       );
     } else {
-      priceAlerts
-          .sort((a, b) => b.alertType.toString().compareTo(a.alertType.toString()));
+      priceAlerts.sort(
+          (a, b) => b.alertType.toString().compareTo(a.alertType.toString()));
       return Expanded(
         child: ListView.builder(
           controller: _scrollController,
@@ -166,7 +168,7 @@ class _PriceAlertView extends ResumableState<PriceAlertView> {
   }
 
   void showCardDetailDialog(index) {
-    showDialog(
+    showDialog<PriceAlertDialogResponse>(
         context: context,
         builder: (BuildContext context) {
           if (priceAlerts[index].alertType == PriceAlertType.URL) {
@@ -175,21 +177,27 @@ class _PriceAlertView extends ResumableState<PriceAlertView> {
           } else {
             return PriceAlertAlertDialog(priceAlerts[index]);
           }
-        }).then((value) {
-      if (value is bool) {
-        if (value == true) {
-          setState(() {
-            ApiService.deletePriceAlerts(priceAlerts[index].id);
-            priceAlerts.removeAt(index);
-          });
+        }).then((PriceAlertDialogResponse value) {
+      if (value != null) {
+        switch (value.type) {
+          case PriceAlertDialogResponseType.DELETE:
+            setState(() {
+              ApiService.deletePriceAlerts(priceAlerts[index].id);
+              priceAlerts.removeAt(index);
+            });
+            break;
+          case PriceAlertDialogResponseType.SAVE:
+            setState(() {
+              ApiService.modifyPriceAlerts(priceAlerts[index].id, value.obj);
+              priceAlerts[index].threshold = value.obj;
+            });
+            break;
+          case PriceAlertDialogResponseType.LINK:
+            ApiService.openLink(priceAlerts[index].link);
+            break;
+          default:
+            break;
         }
-      } else if (value is int) {
-        setState(() {
-          ApiService.modifyPriceAlerts(priceAlerts[index].id, value.toString());
-          priceAlerts[index].threshold = value.toString();
-        });
-      } else if (value != null) {
-        ApiService.openLink(priceAlerts[index].link);
       }
     });
   }
@@ -228,11 +236,14 @@ class _PriceAlertView extends ResumableState<PriceAlertView> {
                 ),
               ),
             if (priceAlert.alertType != PriceAlertType.KEYWORD)
-              Image.network(
-                priceAlert.img,
-                fit: BoxFit.contain,
-                height: 60,
+              Container(
                 width: 60,
+                height: 60,
+                padding: EdgeInsets.all(5),
+                child: Image.network(
+                  priceAlert.img,
+                  fit: BoxFit.contain,
+                ),
               ),
             SizedBox(width: 15),
             Flexible(

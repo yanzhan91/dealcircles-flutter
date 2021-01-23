@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dealcircles_flutter/price_alerts_view/price_alert.dart';
+import 'package:dealcircles_flutter/price_alerts_view/price_alert_dialog_response.dart';
+import 'package:dealcircles_flutter/price_alerts_view/price_alert_dialog_response_type.dart';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -133,16 +135,21 @@ class ApiService {
     _printUrl("${response.statusCode}");
   }
 
-  static Future<PriceAlert> getPricerAlertUrlItem(String link) async {
+  static Future<PriceAlertDialogResponse> getPricerAlertUrlItem(String link) async {
     String url = "$BASE_URL/fetchproduct?url=${Uri.encodeComponent(link)}";
     print(url);
     final response = await http.get(url);
     if (response.statusCode == 200) {
-      return PriceAlert.fromJson(json.decode(response.body));
-    } else {
-      _printUrl('Failed to get price alert url item $url ${response.statusCode}: ${response.body}');
-      return null;
+      Map<String, dynamic> body = json.decode(response.body);
+      if (body["statusCode"] == 200) {
+        return PriceAlertDialogResponse(PriceAlertDialogResponseType.ALERT, PriceAlert.fromJson(body["body"]));
+      } else if (body["statusCode"] == 400) {
+        return PriceAlertDialogResponse(PriceAlertDialogResponseType.INVALID_URL, null);
+      }
     }
+
+    _printUrl('Failed to get price alert url item $url ${response.statusCode}: ${response.body}');
+    return PriceAlertDialogResponse(PriceAlertDialogResponseType.INVALID_STORE, null);
   }
 
   static Future<void> contactUs(String email, String message) async {

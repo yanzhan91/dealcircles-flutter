@@ -1,4 +1,6 @@
 import 'package:dealcircles_flutter/price_alerts_view/price_alert.dart';
+import 'package:dealcircles_flutter/price_alerts_view/price_alert_dialog_response.dart';
+import 'package:dealcircles_flutter/price_alerts_view/price_alert_dialog_response_type.dart';
 import 'package:dealcircles_flutter/price_alerts_view/price_alert_type.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -50,11 +52,13 @@ class PriceAlertAlertDialog extends StatelessWidget {
       actions: [
         FlatButton(
           child: Text('CANCEL', style: TextStyle(fontWeight: FontWeight.bold),),
-          onPressed: () => Navigator.pop(context, false),
+          onPressed: () => Navigator.pop(context,
+              PriceAlertDialogResponse(PriceAlertDialogResponseType.NULL, null)),
         ),
         FlatButton(
           child: Text('DELETE', style: TextStyle(fontWeight: FontWeight.bold),),
-          onPressed: () => Navigator.pop(context, true)
+          onPressed: () => Navigator.pop(context,
+              PriceAlertDialogResponse(PriceAlertDialogResponseType.DELETE, null))
         ),
       ],
     );
