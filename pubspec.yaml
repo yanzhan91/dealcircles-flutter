@@ -34,6 +34,7 @@ dependencies:
   notification_permissions: ^0.4.8
   app_settings: ^4.0.4
   need_resume: ^1.0.5+1
+  shared_preferences: ^0.5.12+4
 
 dev_dependencies:
   flutter_test:

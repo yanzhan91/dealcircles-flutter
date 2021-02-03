@@ -7,6 +7,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'deals_view/deals_view.dart';
 import 'models/Deal.dart';
@@ -33,6 +34,7 @@ class _DealCirclesAppState extends State<DealCirclesApp> {
     if (!kIsWeb) {
       _setupFirebaseMessage();
     }
+    super.initState();
   }
 
   @override
@@ -98,7 +100,10 @@ class _DealCirclesAppState extends State<DealCirclesApp> {
 
   void _setupFirebaseMessage() {
     _firebaseMessaging.requestNotificationPermissions();
-    _firebaseMessaging.getToken().then((value) => print(value));
+    _firebaseMessaging.getToken().then((token) {
+      print(token);
+      SharedPreferences.getInstance().then((prefs) => prefs.setString("fcm_token", token));
+    });
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
         print('AppPushs onMessage : $message');

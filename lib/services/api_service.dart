@@ -6,6 +6,7 @@ import 'package:dealcircles_flutter/price_alerts_view/price_alert_dialog_respons
 import 'package:device_info/device_info.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/Deal.dart';
 
@@ -84,8 +85,9 @@ class ApiService {
   }
 
   static Future<List<PriceAlert>> loadPriceAlerts() async {
-    Map<String, String> deviceInfo = await _getDeviceId();
-    String url = "$BASE_URL/pricealerts?id=${deviceInfo['deviceId']}";
+    // Map<String, String> deviceInfo = await _getDeviceId();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String url = "$BASE_URL/pricealerts?id=${prefs.getString('fcm_token')}";
     _printUrl("GET: $url");
 
     final response = await http.get(url);
@@ -99,8 +101,9 @@ class ApiService {
   }
 
   static Future<int> addPriceAlerts(PriceAlert priceAlert) async {
-    Map<String, String> deviceInfo = await _getDeviceId();
-    String url = "$BASE_URL/pricealerts?id=${deviceInfo['deviceId']}";
+    // Map<String, String> deviceInfo = await _getDeviceId();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String url = "$BASE_URL/pricealerts?id=${prefs.getString('fcm_token')}";
 
     _printUrl("POST: $url");
     String body = jsonEncode(priceAlert.toJson());
@@ -177,9 +180,6 @@ class ApiService {
           IosDeviceInfo iosDeviceInfo = await DeviceInfoPlugin().iosInfo;
           deviceId = iosDeviceInfo.identifierForVendor;
           deviceName = iosDeviceInfo.isPhysicalDevice ? iosDeviceInfo.name : 'virtual';
-        } else if (kIsWeb) {
-          deviceId = 'web';
-          deviceName = 'web';
         }
       } on Exception {
         deviceId = '';
