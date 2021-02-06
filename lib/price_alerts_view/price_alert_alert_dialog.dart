@@ -27,12 +27,15 @@ class PriceAlertAlertDialog extends StatelessWidget {
               ),
             ),
           if (priceAlert.alertType != PriceAlertType.KEYWORD)
-            Image.network(
-              priceAlert.img,
-              fit: BoxFit.contain,
-              height: 60,
-              width: 60,
-            ),
+            priceAlert.alertType == PriceAlertType.BRAND_OR_STORE ?
+              Image.asset(
+                priceAlert.img,
+                fit: BoxFit.contain,
+              ) :
+              Image.network(
+                priceAlert.img,
+                fit: BoxFit.contain,
+              ),
           SizedBox(height: 10),
           Text(
             priceAlert.alertType == PriceAlertType.BRAND_OR_STORE ?

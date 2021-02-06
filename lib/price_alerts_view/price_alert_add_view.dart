@@ -23,22 +23,18 @@ class _PriceAlertAddViewState extends State<PriceAlertAddView> {
   void initState() {
     super.initState();
     brands = [
-      PriceAlertBrand("Lego",
-          "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/LEGO_logo.svg/1200px-LEGO_logo.svg.png"),
-      PriceAlertBrand("Amazon",
-          "https://assets.stickpng.com/thumbs/580b57fcd9996e24bc43c518.png"),
-      PriceAlertBrand("Nike",
-          "https://i.pinimg.com/originals/33/e6/3d/33e63d5adb0da6b303a83901c8e8463a.png"),
-      PriceAlertBrand("Apple",
-          "https://cdn.iconscout.com/icon/free/png-512/apple-316-226435.png"),
-      PriceAlertBrand("Microsoft",
-          "https://www.freepnglogos.com/uploads/microsoft-logo-png-transparent-background-1.png"),
-      PriceAlertBrand("Google",
-          "https://assets.stickpng.com/images/580b57fcd9996e24bc43c51f.png"),
-      PriceAlertBrand("Best Buy",
-          "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Best_Buy_Logo.svg/1280px-Best_Buy_Logo.svg.png"),
-      PriceAlertBrand("The Home Depot",
-          "https://assets.stickpng.com/images/5cb77aafa7c7755bf004c114.png"),
+      PriceAlertBrand("Adidas", "assets/logos/adidas.png"),
+      PriceAlertBrand("Asics", "assets/logos/asics.png"),
+      PriceAlertBrand("Bose", "assets/logos/bose.png"),
+      PriceAlertBrand("Calphalon", "assets/logos/calphalon.png"),
+      PriceAlertBrand("Lego", "assets/logos/lego.png"),
+      PriceAlertBrand("LG", "assets/logos/lg.png"),
+      PriceAlertBrand("Nike", "assets/logos/nike.png"),
+      PriceAlertBrand("PS5", "assets/logos/ps5.png"),
+      PriceAlertBrand("Sketcher", "assets/logos/skechers.png"),
+      PriceAlertBrand("Sony", "assets/logos/sony.png"),
+      PriceAlertBrand("Under Armour", "assets/logos/under_armour.png"),
+      PriceAlertBrand("Xbox", "assets/logos/xbox.png"),
     ];
   }
 
@@ -120,7 +116,16 @@ class _PriceAlertAddViewState extends State<PriceAlertAddView> {
                                 builder: (BuildContext context) {
                                   return AlertDialog(
                                     title: Text(
-                                        "Store not supported at the moment"),
+                                        "Store not supported at the moment. We will notify when it becomes available. "
+                                            "Please try other popular stores.",
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () => Navigator.pop(context),
+                                          child: Text("OK",
+                                            style: TextStyle(color: Theme.of(context).primaryColor),))
+                                    ],
                                   );
                                 });
                             break;
@@ -157,12 +162,12 @@ class _PriceAlertAddViewState extends State<PriceAlertAddView> {
                     Container(
                       decoration: BoxDecoration(
                           border: Border.all(color: Colors.black38)),
-                      child: FlatButton(
-                        child: Image.network(brand.link),
+                      child: TextButton(
+                        child: Image.asset(brand.img),
                         onPressed: () => addPriceAlert(
                             context,
                             PriceAlert(PriceAlertType.BRAND_OR_STORE,
-                                brand.name, null, null, brand.link, null)),
+                                brand.name, null, null, brand.img, null)),
                       ),
                     )
                 ],

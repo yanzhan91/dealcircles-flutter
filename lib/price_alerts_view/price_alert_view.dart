@@ -229,6 +229,7 @@ class _PriceAlertView extends ResumableState<PriceAlertView> {
               Container(
                 width: 60,
                 height: 60,
+                padding: EdgeInsets.all(5),
                 child: Icon(
                   Icons.bookmark_outline,
                   color: Theme.of(context).primaryColor,
@@ -240,10 +241,16 @@ class _PriceAlertView extends ResumableState<PriceAlertView> {
                 width: 60,
                 height: 60,
                 padding: EdgeInsets.all(5),
-                child: Image.network(
-                  priceAlert.img,
-                  fit: BoxFit.contain,
-                ),
+                child:
+                  priceAlert.alertType == PriceAlertType.BRAND_OR_STORE ?
+                    Image.asset(
+                      priceAlert.img,
+                      fit: BoxFit.contain,
+                    ) :
+                    Image.network(
+                      priceAlert.img,
+                      fit: BoxFit.contain,
+                    ),
               ),
             SizedBox(width: 15),
             Flexible(

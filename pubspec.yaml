@@ -58,6 +58,18 @@ flutter:
     - assets/icon_120.jpg
     - assets/app_store.png
     - assets/google_play.png
+    - assets/logos/adidas.png
+    - assets/logos/asics.png
+    - assets/logos/bose.png
+    - assets/logos/calphalon.png
+    - assets/logos/lego.png
+    - assets/logos/lg.png
+    - assets/logos/nike.png
+    - assets/logos/sony.png
+    - assets/logos/ps5.png
+    - assets/logos/under_armour.png
+    - assets/logos/xbox.png
+    - assets/logos/skechers.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
