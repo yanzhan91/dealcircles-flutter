@@ -20,27 +20,33 @@ class PriceAlertAlertDialog extends StatelessWidget {
             Container(
               width: 60,
               height: 60,
-              child: Icon(
-                Icons.notifications_active_outlined,
-                color: Theme.of(context).primaryColor,
-                size: 40,
-              ),
+              child:
+                Icon(
+                  Icons.bookmark_outline,
+                  color: Theme.of(context).primaryColor,
+                  size: 60,
+                ),
             ),
           if (priceAlert.alertType != PriceAlertType.KEYWORD)
-            priceAlert.alertType == PriceAlertType.BRAND_OR_STORE ?
-              Image.asset(
-                priceAlert.img,
-                fit: BoxFit.contain,
-              ) :
-              Image.network(
-                priceAlert.img,
-                fit: BoxFit.contain,
-              ),
+            Container(
+              width: 120,
+              height: 120,
+              child:
+                priceAlert.alertType == PriceAlertType.BRAND_OR_STORE ?
+                  Image.asset(
+                    priceAlert.img,
+                    fit: BoxFit.contain,
+                  ) :
+                  Image.network(
+                    priceAlert.img,
+                    fit: BoxFit.contain,
+                  ),
+            ),
           SizedBox(height: 10),
           Text(
             priceAlert.alertType == PriceAlertType.BRAND_OR_STORE ?
             "Notify when deals of\nthis brand are posted" :
-            "Notify when deals with\nthis keyword are posted",
+            "Notify when deals with\nthese keywords are posted",
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 10),
