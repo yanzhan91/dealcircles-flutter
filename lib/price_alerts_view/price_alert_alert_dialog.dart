@@ -13,51 +13,51 @@ class PriceAlertAlertDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      title: Text(
+        priceAlert.alertType == PriceAlertType.BRAND_OR_STORE ?
+        "Notify when deals of\nthis brand are posted" :
+        "Notify when deals with\nthese keywords are posted",
+        textAlign: TextAlign.center,
+      ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Text(
+          //   priceAlert.alertType == PriceAlertType.BRAND_OR_STORE ?
+          //   "Notify when deals of\nthis brand are posted" :
+          //   "Notify when deals with\nthese keywords are posted",
+          //   textAlign: TextAlign.center,
+          // ),
+          // SizedBox(height: 10),
           if (priceAlert.alertType == PriceAlertType.KEYWORD)
-            Container(
-              width: 60,
-              height: 60,
-              child:
-                Icon(
-                  Icons.bookmark_outline,
-                  color: Theme.of(context).primaryColor,
-                  size: 60,
-                ),
+            Text(
+              priceAlert.name,
+              style: TextStyle(fontSize: 24),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           if (priceAlert.alertType != PriceAlertType.KEYWORD)
             Container(
-              width: 120,
-              height: 120,
+              width: 100,
+              height: 100,
               child:
-                priceAlert.alertType == PriceAlertType.BRAND_OR_STORE ?
-                  Image.asset(
-                    priceAlert.img,
-                    fit: BoxFit.contain,
-                  ) :
-                  Image.network(
-                    priceAlert.img,
-                    fit: BoxFit.contain,
-                  ),
+              priceAlert.alertType == PriceAlertType.BRAND_OR_STORE ?
+              Image.asset(
+                priceAlert.img,
+                fit: BoxFit.contain,
+              ) :
+              Image.network(
+                priceAlert.img,
+                fit: BoxFit.contain,
+              ),
             ),
-          SizedBox(height: 10),
-          Text(
-            priceAlert.alertType == PriceAlertType.BRAND_OR_STORE ?
-            "Notify when deals of\nthis brand are posted" :
-            "Notify when deals with\nthese keywords are posted",
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 10),
-          Text(
-            priceAlert.name,
-            style: TextStyle(fontSize: 24),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
         ],
       ),
+      // contentPadding: EdgeInsets.zero,
+      // insetPadding: EdgeInsets.zero,
+      // buttonPadding: EdgeInsets.zero,
+      // contentPadding: EdgeInsets.zero,
+      // actionsPadding: EdgeInsets.symmetric(horizontal: 0.0),
       actions: [
         FlatButton(
           child: Text('CANCEL', style: TextStyle(fontWeight: FontWeight.bold),),

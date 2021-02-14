@@ -24,14 +24,14 @@ class _PriceAlertAddViewState extends State<PriceAlertAddView> {
     super.initState();
     brands = [
       PriceAlertBrand("Adidas", "assets/logos/adidas.png"),
+      PriceAlertBrand("Apple", "assets/logos/apple.jpeg"),
       PriceAlertBrand("Asics", "assets/logos/asics.png"),
       PriceAlertBrand("Bose", "assets/logos/bose.png"),
-      PriceAlertBrand("Calphalon", "assets/logos/calphalon.jpg"),
       PriceAlertBrand("Lego", "assets/logos/lego.png"),
       PriceAlertBrand("LG", "assets/logos/lg.png"),
       PriceAlertBrand("Nike", "assets/logos/nike.png"),
       PriceAlertBrand("PlayStation", "assets/logos/playstation.png"),
-      PriceAlertBrand("Sketcher", "assets/logos/skechers.png"),
+      PriceAlertBrand("Skechers", "assets/logos/skechers.png"),
       PriceAlertBrand("Sony", "assets/logos/sony.png"),
       PriceAlertBrand("Under Armour", "assets/logos/under_armour.png"),
       PriceAlertBrand("Xbox", "assets/logos/xbox.png"),
@@ -76,6 +76,9 @@ class _PriceAlertAddViewState extends State<PriceAlertAddView> {
                   icon: Icon(Icons.arrow_forward_rounded),
                   color: Theme.of(context).primaryColor,
                   onPressed: () {
+                    if (textEditingController.text == null || textEditingController.text.isEmpty) {
+                      return;
+                    }
                     RegExpMatch matches =
                         urlReg.firstMatch(textEditingController.text);
                     if (matches != null && matches.groupCount > 0) {

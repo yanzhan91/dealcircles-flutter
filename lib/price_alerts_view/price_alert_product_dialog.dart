@@ -9,7 +9,8 @@ class PriceAlertProductDialog extends StatelessWidget {
   final PriceAlert priceAlert;
   final bool newAlert;
 
-  final TextEditingController textEditingController = new TextEditingController();
+  final TextEditingController textEditingController =
+      new TextEditingController();
 
   PriceAlertProductDialog(this.priceAlert, this.newAlert, [String threshold]) {
     if (threshold != null) {
@@ -22,90 +23,97 @@ class PriceAlertProductDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Image.network(
-            priceAlert.img,
-            fit: BoxFit.contain,
-            height: 200,
-            width: 200,
-          ),
-          SizedBox(height: 10),
-          Text(
-            priceAlert.name,
-            style: TextStyle(fontSize: 20),
-            maxLines: 4,
-            textAlign: TextAlign.center,
-            overflow: TextOverflow.ellipsis,
-          ),
-          SizedBox(height: 20),
-          Text("Current Price"),
-          Text(priceAlert.price),
-          SizedBox(height: 20),
-          Text("Notify when price is at or below:"),
-          SizedBox(height: 10),
-          Container(
-            width: 100,
-            child: TextField(
-                controller: textEditingController,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                keyboardType: TextInputType.number,
-                inputFormatters: [
-                  CurrencyTextInputFormatter(
-                      decimalDigits: 0,
-                      locale: 'en',
-                      symbol: '\$'
-                  )
-                ],
-                style: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                  fontWeight: FontWeight.bold,
-                ),
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.zero,
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Theme
-                        .of(context)
-                        .primaryColor),
-                  ),
-                  // hintText: "\$" + priceAlert.price.split(".").first,
-                )
+      content: SingleChildScrollView(
+        reverse: true,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.network(
+              priceAlert.img,
+              fit: BoxFit.contain,
+              height: 200,
+              width: 200,
             ),
-          ),
-        ],
+            SizedBox(height: 10),
+            Text(
+              priceAlert.name,
+              style: TextStyle(fontSize: 20),
+              maxLines: 4,
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+            ),
+            SizedBox(height: 20),
+            Text("Current Price"),
+            Text(priceAlert.price),
+            SizedBox(height: 20),
+            Text("Notify when price is at or below:"),
+            SizedBox(height: 10),
+            Container(
+              width: 100,
+              child: TextField(
+                  controller: textEditingController,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    CurrencyTextInputFormatter(
+                        decimalDigits: 0, locale: 'en', symbol: '\$')
+                  ],
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.zero,
+                    enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Theme.of(context).primaryColor),
+                    ),
+                    // hintText: "\$" + priceAlert.price.split(".").first,
+                  )),
+            ),
+          ],
+        ),
       ),
       actions: [
         FlatButton(
-          child: Text('Cancel',
-              style: TextStyle(fontWeight: FontWeight.bold)),
-          onPressed: () => Navigator.pop(context,
-              PriceAlertDialogResponse(PriceAlertDialogResponseType.NULL, null)),
+          child: Text('Cancel', style: TextStyle(fontWeight: FontWeight.bold)),
+          onPressed: () => Navigator.pop(
+              context,
+              PriceAlertDialogResponse(
+                  PriceAlertDialogResponseType.NULL, null)),
         ),
         if (!newAlert)
           FlatButton(
-            child: Text('Delete',
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            child:
+                Text('Delete', style: TextStyle(fontWeight: FontWeight.bold)),
             onPressed: () {
-              showDialog<PriceAlertDialogResponse>(context: context, builder: (BuildContext context) {
-                return PriceAlertDeleteConfirmationDialog(priceAlert);
-              }).then((PriceAlertDialogResponse value) => Navigator.pop(context, value));
+              showDialog<PriceAlertDialogResponse>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return PriceAlertDeleteConfirmationDialog(priceAlert);
+                      })
+                  .then((PriceAlertDialogResponse value) =>
+                      Navigator.pop(context, value));
             },
           ),
         FlatButton(
-          child: Text('Save',
-              style: TextStyle(fontWeight: FontWeight.bold)),
-          onPressed: () => Navigator.pop(context,
-              PriceAlertDialogResponse(PriceAlertDialogResponseType.SAVE,
-                  textEditingController.text.replaceAll(new RegExp(r"[$,]"), ""))),
+          child: Text('Save', style: TextStyle(fontWeight: FontWeight.bold)),
+          onPressed: () => Navigator.pop(
+              context,
+              PriceAlertDialogResponse(
+                  PriceAlertDialogResponseType.SAVE,
+                  textEditingController.text
+                      .replaceAll(new RegExp(r"[$,]"), ""))),
         ),
         if (!newAlert)
           FlatButton(
-            child: Text('See Item',
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            onPressed: () => Navigator.pop(context,
-                PriceAlertDialogResponse(PriceAlertDialogResponseType.LINK, null)),
+            child:
+                Text('See Item', style: TextStyle(fontWeight: FontWeight.bold)),
+            onPressed: () => Navigator.pop(
+                context,
+                PriceAlertDialogResponse(
+                    PriceAlertDialogResponseType.LINK, null)),
           ),
       ],
     );
