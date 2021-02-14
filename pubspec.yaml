@@ -11,7 +11,7 @@ description: DealCircles flutter project.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.3.0+15
+version: 1.3.0+24
 
 environment:
   sdk: ">=2.3.0 <3.0.0"
@@ -61,12 +61,12 @@ flutter:
     - assets/logos/adidas.png
     - assets/logos/asics.png
     - assets/logos/bose.png
-    - assets/logos/calphalon.png
+    - assets/logos/calphalon.jpg
     - assets/logos/lego.png
     - assets/logos/lg.png
     - assets/logos/nike.png
     - assets/logos/sony.png
-    - assets/logos/ps5.png
+    - assets/logos/playstation.png
     - assets/logos/under_armour.png
     - assets/logos/xbox.png
     - assets/logos/skechers.png
