@@ -23,6 +23,7 @@ class PriceAlertProductDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      insetPadding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.05),
       content: SingleChildScrollView(
         reverse: true,
         child: Column(
@@ -67,7 +68,7 @@ class PriceAlertProductDialog extends StatelessWidget {
                     contentPadding: EdgeInsets.zero,
                     enabledBorder: OutlineInputBorder(
                       borderSide:
-                          BorderSide(color: Theme.of(context).primaryColor),
+                      BorderSide(color: Theme.of(context).primaryColor),
                     ),
                     // hintText: "\$" + priceAlert.price.split(".").first,
                   )),
@@ -75,9 +76,11 @@ class PriceAlertProductDialog extends StatelessWidget {
           ],
         ),
       ),
+      // actionsOverflowDirection: VerticalDirection.up,
       actions: [
         FlatButton(
           child: Text('Cancel', style: TextStyle(fontWeight: FontWeight.bold)),
+          textColor: Theme.of(context).primaryColor,
           onPressed: () => Navigator.pop(
               context,
               PriceAlertDialogResponse(
@@ -87,6 +90,7 @@ class PriceAlertProductDialog extends StatelessWidget {
           FlatButton(
             child:
                 Text('Delete', style: TextStyle(fontWeight: FontWeight.bold)),
+            textColor: Theme.of(context).primaryColor,
             onPressed: () {
               showDialog<PriceAlertDialogResponse>(
                       context: context,
@@ -99,6 +103,7 @@ class PriceAlertProductDialog extends StatelessWidget {
           ),
         FlatButton(
           child: Text('Save', style: TextStyle(fontWeight: FontWeight.bold)),
+          textColor: Theme.of(context).primaryColor,
           onPressed: () => Navigator.pop(
               context,
               PriceAlertDialogResponse(
@@ -110,6 +115,7 @@ class PriceAlertProductDialog extends StatelessWidget {
           FlatButton(
             child:
                 Text('See Item', style: TextStyle(fontWeight: FontWeight.bold)),
+            textColor: Theme.of(context).primaryColor,
             onPressed: () => Navigator.pop(
                 context,
                 PriceAlertDialogResponse(
